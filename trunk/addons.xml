@@ -16,7 +16,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.Laola1" name="Laola1" version="0.2" provider-name="membrane">
+<addon id="plugin.video.laola1" name="Laola1" version="0.2" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -29,6 +29,22 @@
         <summary lang="en">Laola1</summary>
         <description lang="de">Laola1</description>
         <description lang="en">Laola1</description>
+    </extension>
+</addon>
+
+<addon id="plugin.video.servustv" name="ServusTV" version="0.1" provider-name="membrane">
+    <requires>
+        <import addon="xbmc.python" version="1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">servustv</summary>
+        <summary lang="en">servustv</summary>
+        <description lang="de">servustv</description>
+        <description lang="en">servustv</description>
     </extension>
 </addon>
 
