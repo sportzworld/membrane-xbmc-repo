@@ -105,26 +105,35 @@ def SENDUNG(url):#4
                 
                 
 def VIDEOSELECTION(url):#5
+        print url
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
         #print link
-        match=re.compile('<a href=\'/cs/Satellite\?assetId=(.+?)&c=ST_Video&cid=(.+?)&ida.+?\' class=".+?">.+?\n.+?<img src=\'(.+?)\'.+?\n.+?alt=\'(.+?)\'').findall(link)#i hope some day a prince will find me and make me pretty ;)
-        #match=re.compile("<a href='/cs/Satellite?assetId=(.+?)&c=ST_Video&cid=(.+?)&ida").findall(link)                                       #=.+? class=.+?>.+?img src='(.+?)'.+?lt='(.+?)'
-        #<a href='/cs/Satellite?assetId=1259355999055&c=ST_Video&cid=1259363695275&ida=1259363695275&pagename=servustv%2FST_Video%2FVideoPlayer&programType=vod' class="playControl floatLeft">
-        #vor vid:    http://www.servustv.com/cs/Satellite?articleId=1259356001688&c=ST_Video&cid=1259364551440&pagename=servustv/ST_Video/VideoPlayerDataXML&programType=vod
-        
-	#<img src='/cs/STImages/000/000/564/672/photo150x84/dok_MythSherpas.jpg' 
-	#alt='Mythical Roads 090411 - Nepal: Die Route der Sherpas'
+        match1=re.compile('<ul class="programScrollerSmall">(.+?)</ul>', re.DOTALL).findall(link)
+        #<a href='/cs/Satellite?iCurrentPage=2&pagename=ServusTV%2FAjax%2FMediathekData' class="nachste">nächste</a>
 
-        #match2=re.compile("<a href=\"(.+)\" class=\"teaser_text\">vor</a>").findall(link)
+        #match_next=re.compile('<a href=\'(.+?)\' class="nachste">nächste</a>').findall(link)
         
-        for assetid,videoid,thumbnail,name in match:                                   #,thumbnail,name
-                #print assetid+videoid
-                addDir(name,'http://www.servustv.com/cs/Satellite?articleId='+assetid+'&c=ST_Video&cid='+videoid+'&pagename=servustv/ST_Video/VideoPlayerDataXML&programType=vod',6,'http://www.servustv.com'+thumbnail)
-                #'http://www.servustv.com/cs/Satellite?articleId='+assetid+'&c=ST_Video&cid='+videoid+'&pagename=servustv/ST_Video/VideoPlayerDataXML&programType=vod'
+        for videos in match1:
+                match2=re.compile('<li>(.+?)</li>', re.DOTALL).findall(videos)
+                for video in match2:
+                        print video
+                        print '################################'
+                        match3=re.compile('<a href=\'/cs/Satellite\?assetId=(.+?)&c=ST_Video&cid=(.+?)&ida=.+?&pagename=servustv%2FST_Video%2FVideoPlayer&programType=vod.+?>.+?<img src=\'(.+?)\'.+?<a href=.+?\n									(.+?)</a>.+?<div class="programDescription">.+?\n										(.+?)</div>', re.DOTALL).findall(video)#, re.DOTALL
+                        #.+?<div class="programDescription">.+?\n(.+?)</div>.+?
+                        #<a href=\'/cs/Satellite\?assetId=(.+?)&c=ST_Video&cid=(.+?)&ida=.+?&pagename=servustv%2FST_Video%2FVideoPlayer&programType=vod.+?>.+?<img src=\'(.+?)\'.+?height
+                        #.+?<a href=".+?">.+?\n(.+?)</a>.+?<div.+?\n(.+?)</div>
+                        #/cs/Satellite?assetId=1259356008257&c=ST_Video&cid=1259364585399&ida=1259364585399&pagename=servustv%2FST_Video%2FVideoPlayer&programType=vod
+                        for assetid,videoid,thumbnail,name1,name2 in match3:
+                                addDir(name1+' - '+name2,'http://www.servustv.com/cs/Satellite?articleId='+assetid+'&c=ST_Video&cid='+videoid+'&pagename=servustv/ST_Video/VideoPlayerDataXML&programType=vod',6,'http://www.servustv.com'+thumbnail)
+
+        #TODO: nächste seite implementieren (ruft nur ne "statische" seite auf, infos werden über den referer übertragen)
+        #for nxt in match_next:
+        #        addDir('Nächste Seite','http://www.servustv.com'+nxt,5,'')
+        #Referer	http://www.servustv.com/cs/Satellite/VOD-Mediathek/001259088496198?p=1259088496182
 
 def VIDEOPLAY(url,name):#6
         #print url
