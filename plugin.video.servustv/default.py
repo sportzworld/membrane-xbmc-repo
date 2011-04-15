@@ -92,11 +92,11 @@ def SENDUNG(url):#4
 	#		<option value='1259356338646'>360Five International World Series</option>
 	#	</select>
         for sendungen in match_sendungen:
-                print sendungen
+                #print sendungen
                 match_sendung=re.compile("<option value='(.+?)'>(.+?)</option>").findall(sendungen)
                 #<option value='1259088496301'>Abenteuer & Reisen</option>
                 for value,name in match_sendung:
-                        print value
+                        #print value
                         addDir(name,'http://www.servustv.com/cs/Satellite?pagename=ServusTV%2FAjax%2FMediathekData&nachThemen=all&nachSendung='+value+'&nachThemenNodeId=null&nachThemen_changed=1&nachSendung_changed=2&ajax=true',5,'')
                         #http://www.servustv.com/cs/Satellite?pagename=ServusTV%2FAjax%2FMediathekData&nachThemen=all&nachSendung=1259356338646&nachThemenNodeId=null&nachThemen_changed=1&nachSendung_changed=2&ajax=true
 
@@ -120,8 +120,8 @@ def VIDEOSELECTION(url):#5
         for videos in match1:
                 match2=re.compile('<li>(.+?)</li>', re.DOTALL).findall(videos)
                 for video in match2:
-                        print video
-                        print '################################'
+                        #print video
+                        #print '################################'
                         match3=re.compile('<a href=\'/cs/Satellite\?assetId=(.+?)&c=ST_Video&cid=(.+?)&ida=.+?&pagename=servustv%2FST_Video%2FVideoPlayer&programType=vod.+?>.+?<img src=\'(.+?)\'.+?<a href=.+?\n									(.+?)</a>.+?<div class="programDescription">.+?\n										(.+?)</div>', re.DOTALL).findall(video)#, re.DOTALL
                         #.+?<div class="programDescription">.+?\n(.+?)</div>.+?
                         #<a href=\'/cs/Satellite\?assetId=(.+?)&c=ST_Video&cid=(.+?)&ida=.+?&pagename=servustv%2FST_Video%2FVideoPlayer&programType=vod.+?>.+?<img src=\'(.+?)\'.+?height
@@ -165,7 +165,7 @@ def LIVEPLAY(url,name):#7
         #<param name="playAuthParams" value="auth=daEbibtaqd3bPcPdjczdub9aea.bEaeabcG-bnPDPt-eS-JDJnpywxqABAxtzq&aifp=0001" valuetype="data"/>
         for url,auth in match_video:
                 addLink('Play low',url+'&'+auth,'')
-                print url+'&'+auth
+                #print url+'&'+auth
 
 
                 
