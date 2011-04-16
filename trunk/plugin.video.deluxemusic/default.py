@@ -31,7 +31,6 @@ def CATEGORIES():
                         addDir('News',url,1,thumbnail)
                 elif art == 'STORIES':
                         addDir('Stories',url,1,thumbnail)
-                        addDir('test','url',1,'thumbnail')
 
                
 def INDEX(url):
