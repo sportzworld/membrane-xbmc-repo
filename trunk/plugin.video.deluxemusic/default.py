@@ -30,7 +30,8 @@ def CATEGORIES():
                 elif art == 'NEWS':
                         addDir('News',url,1,thumbnail)
                 elif art == 'STORIES':
-                        addDir('Stories',url,1,thumbnail)                
+                        addDir('Stories',url,1,thumbnail)
+                        addDir('test','url',1,'thumbnail')
 
                
 def INDEX(url):
@@ -62,12 +63,12 @@ def INDEX(url):
                         match_videos=re.compile('<entry(.+?)</entry>', re.DOTALL).findall(link_videos)
                         for videos in match_videos:
 #                                print 'videos: '+videos
-                                match_video=re.compile('CDATA\[(.+?)\]\]>.+?<video width=".+?" height=".+?" href="(.+?)" bandwidth=".+?"/>\n		<screenshot width=".+?" height=".+?" href="(.+?)"/>', re.DOTALL).findall(videos)
+                                match_video=re.compile('CDATA\[(.+?)\]\]>(.+?)<screenshot width=".+?" height=".+?" href="(.+?)"/>', re.DOTALL).findall(videos)
                                 #<video width="768" height="432" href="http://static.cdn.streamfarm.net/13000deluxe/ondemand/app760217600/376045570/742141/742141_on2vp6_768_432_1500kb_de_1500.flv" bandwidth="1500"/>
                                 #<screenshot width="80" height="45" href="http://static.cdn.streamfarm.net/13000deluxe/ondemand/app760217600/376045570/742141/742141_screenshot_80_45_5p.jpeg"/>
-                                for name,url,thumbnail in match_video:
-#                                        print name+url
-                                        addLink(name,url,thumbnail)
+                                for name,urls,thumbnail in match_video:
+                                        match_vid=re.compile('<video width=".+?" height=".+?" href="(.+?)" bandwidth=".+?"/>').findall(urls)
+                                        addLink(name,match_vid[-1],thumbnail)
 
                 
 def get_params():
