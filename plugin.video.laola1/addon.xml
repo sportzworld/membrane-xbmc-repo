@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.laola1" name="Laola1" version="0.1" provider-name="membrane">
+<addon id="plugin.video.laola1" name="Laola1" version="0.3" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -8,9 +8,9 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="de">Laola1</summary>
-        <summary lang="en">Laola1</summary>
-        <description lang="de">Laola1</description>
-        <description lang="en">Laola1</description>
+        <summary lang="de">Laola</summary>
+        <summary lang="en">Laola</summary>
+        <description lang="de">Laola</description>
+        <description lang="en">Laola</description>
     </extension>
 </addon>
