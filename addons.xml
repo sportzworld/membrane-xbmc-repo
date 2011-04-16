@@ -16,7 +16,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.laola1" name="Laola1" version="0.3" provider-name="membrane">
+<addon id="plugin.video.laola1" name="Laola1" version="0.4" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>

@@ -1,11 +1,11 @@
+# -*- coding: latin-1 -*-
 import urllib,urllib2,re,xbmcplugin,xbmcgui
 
-# -*- coding: cp1252 -*-
 
 def CATEGORIES():
-        #addDir('Upcoming Livestreams Deutschland','http://www.laola1.tv/de/de/home/',5,'')
-        #addDir('Upcoming Livestreams Österreich','http://www.laola1.tv/de/at/home/',5,'')
-        #addDir('Upcoming Livestreams International','http://www.laola1.tv/en/int/home/',5,'')
+#        addDir('Upcoming Livestreams Deutschland','http://www.laola1.tv/de/de/home/',5,'')
+#        addDir('Upcoming Livestreams Österreich','http://www.laola1.tv/de/at/home/',5,'')
+#        addDir('Upcoming Livestreams International','http://www.laola1.tv/en/int/home/',5,'')
         addDir('Archiv Deutschland','http://www.laola1.tv/de/de/home/',1,'')
         addDir('Archiv Österreich','http://www.laola1.tv/de/at/home/',1,'')
         addDir('Archiv International','http://www.laola1.tv/en/int/home/',1,'')
