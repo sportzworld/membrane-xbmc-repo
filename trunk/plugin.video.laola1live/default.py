@@ -3,6 +3,7 @@ import urllib,urllib2,re,xbmcplugin,xbmcgui
 
 
 def CATEGORIES():
+        addDir('Live','http://streamaccess.laola1.tv/hdflash/1/hdlaola.xml?t=.smil',7,'')
         addDir('Upcoming Livestreams Deutschland','http://www.laola1.tv/de/de/home/',5,'')
         addDir('Upcoming Livestreams Österreich','http://www.laola1.tv/de/at/home/',5,'')
         addDir('Upcoming Livestreams International','http://www.laola1.tv/en/int/home/',5,'')
@@ -249,8 +250,18 @@ def VIDEOLIVELINKS(url,name):
 
 
                                                         ##...yeah
-
-
+def LIVE(url):
+        req = urllib2.Request(url)
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        response = urllib2.urlopen(req)
+        link=response.read()
+        response.close()
+        print link
+        match_base=re.compile('<meta name="httpBase" content="(.+?)" />').findall(link)
+        match_src=re.compile('<video src="(.+?)" system-bitrate="950000"/>').findall(link)
+        print match_base[0]
+        print match_src[-1]
+        addLink('play',match_base[0]+match_src[-1],'')
 
 
 
@@ -343,5 +354,7 @@ elif mode==6:
         print ""+url
         VIDEOLIVELINKS(url,name)        
 
-
+elif mode==7:
+        print ""+url
+        LIVE(url)   
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
