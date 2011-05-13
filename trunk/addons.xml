@@ -32,22 +32,6 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.laola1" name="Laola1" version="0.5" provider-name="membrane">
-    <requires>
-        <import addon="xbmc.python" version="1.0"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <summary lang="de">Laola</summary>
-        <summary lang="en">Laola</summary>
-        <description lang="de">Laola</description>
-        <description lang="en">Laola</description>
-    </extension>
-</addon>
-
 <addon id="plugin.video.laola1live" name="Laola1 LIVE (Testversion)" version="0.5" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
@@ -61,22 +45,6 @@
         <summary lang="en">Laola LIVE (Testversion)</summary>
         <description lang="de">Laola LIVE (Testversion)</description>
         <description lang="en">Laola LIVE (Testversion)</description>
-    </extension>
-</addon>
-
-<addon id="plugin.video.servustv" name="ServusTV" version="0.5" provider-name="membrane">
-    <requires>
-        <import addon="xbmc.python" version="1.0"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <summary lang="de">servustv</summary>
-        <summary lang="en">servustv</summary>
-        <description lang="de">servustv</description>
-        <description lang="en">servustv</description>
     </extension>
 </addon>
 
