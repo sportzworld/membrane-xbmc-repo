@@ -3,9 +3,10 @@ import urllib,urllib2,re,xbmcplugin,xbmcgui
 
 
 def CATEGORIES():
-#        addDir('Upcoming Livestreams Deutschland','http://www.laola1.tv/de/de/home/',5,'')
-#        addDir('Upcoming Livestreams Österreich','http://www.laola1.tv/de/at/home/',5,'')
-#        addDir('Upcoming Livestreams International','http://www.laola1.tv/en/int/home/',5,'')
+        addDir('Live','http://streamaccess.laola1.tv/hdflash/1/hdlaola.xml?t=.smil',7,'')
+        addDir('Upcoming Livestreams Deutschland','http://www.laola1.tv/de/de/home/',5,'')
+        addDir('Upcoming Livestreams Österreich','http://www.laola1.tv/de/at/home/',5,'')
+        addDir('Upcoming Livestreams International','http://www.laola1.tv/en/int/home/',5,'')
         addDir('Archiv Deutschland','http://www.laola1.tv/de/de/home/',1,'')
         addDir('Archiv Österreich','http://www.laola1.tv/de/at/home/',1,'')
         addDir('Archiv International','http://www.laola1.tv/en/int/home/',1,'')
@@ -173,10 +174,13 @@ def VIDEOLIVELINKS(url,name):
         link=response.read()
         response.close()
         match_playkey=re.compile('"playkey=(.+?)-(.+?)&adv.+?"').findall(link)
+        match_over=re.compile('<p>Lieber LAOLA(.+?)-User,</p>').findall(link)
+        if match_over[0] == '1':
+                addDir('vorbei/zu früh',' ',5,'')
         ##"playkey=47060-Gut1cOWmlyix.&adv=laola1.tv/de/eishockey/ebel&adi=laola1.tv/de/eishockey/ebel&aps=Video1&szo=eishockey&deutschchannel=true&channel=222&teaser=1153&play=47060&fversion=player.v10.2"
         for playkey1,playkey2 in match_playkey:
-                #print 'playkey1 '+playkey1
-                #print 'playkey2 '+playkey2                
+                print 'playkey1 '+playkey1
+                print 'playkey2 '+playkey2                
                 req = urllib2.Request('http://www.laola1.tv/server/ondemand_xml_esi.php?playkey='+playkey1+'-'+playkey2)
                 #print 'http://www.laola1.tv/server/ondemand_xml_esi.php?playkey='+playkey1+'-'+playkey2
                 ##http://www.laola1.tv/server/ondemand_xml_esi.php?playkey=47060-Gut1cOWmlyix.
@@ -187,7 +191,7 @@ def VIDEOLIVELINKS(url,name):
                 response.close()
                 match_video=re.compile('<video.+?>(.+?)</video>', re.DOTALL).findall(link_playkey)
                 for video in match_video:
-                        print 'video '+video
+#                        print 'video '+video
                         match_rtmp=re.compile('<high server="(.+?)/(.+?)" pfad="(.+?)@(.+?)" .+? ptitle="(.+?)"').findall(video)#ugly, but behind low is one space too much: '  '
                         ##<high server="cp77154.edgefcs.net/ondemand" pfad="77154/flash/2011/ebel/20102011/110327_vic_rbs_high" type="V" aifp="v002"
                         ##token="true" ptitle="Eishockey Erste Bank EHL Erste Bank Eishockey Liga" etitle="Vienna Capitals - EC Red Bull Salzburg"
@@ -231,9 +235,9 @@ def VIDEOLIVELINKS(url,name):
                                                 print 'ip '+ip
                                         ##http://cp77154.edgefcs.net/fcs/ident
 #                                                if streamquality == 'high':
-                                                print 'laola_debug - name: '+name
-                                                print 'laola_debug - rtmp-link: rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&aifp='+aifp
-                                                addLink('High: '+name,'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp,'')
+                                                print 'name: '+name
+                                                print 'rtmp-link: rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp
+                                                addLink('High: '+name,'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp+' swfUrl=http://www.laola1.tv/swf/player.v11.3.swf swfVfy=true live=true app=live','')
                                                 #addLink('High: '+name,'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'/'+playpath+'?auth='+auth+'&aifp='+aifp,'')
 
 
@@ -246,8 +250,18 @@ def VIDEOLIVELINKS(url,name):
 
 
                                                         ##...yeah
-
-
+def LIVE(url):
+        req = urllib2.Request(url)
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        response = urllib2.urlopen(req)
+        link=response.read()
+        response.close()
+        print link
+        match_base=re.compile('<meta name="httpBase" content="(.+?)" />').findall(link)
+        match_src=re.compile('<video src="(.+?)" system-bitrate="950000"/>').findall(link)
+        print match_base[0]
+        print match_src[-1]
+        addLink('play',match_base[0]+match_src[-1],'')
 
 
 
@@ -340,5 +354,7 @@ elif mode==6:
         print ""+url
         VIDEOLIVELINKS(url,name)        
 
-
+elif mode==7:
+        print ""+url
+        LIVE(url)   
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
