@@ -1,6 +1,6 @@
+# -*- coding: latin-1 -*-
 import urllib,urllib2,re,xbmcplugin,xbmcgui
 
-# -*- coding: cp1252 -*-
 
 
 
@@ -21,9 +21,9 @@ def MAIN():
         for mediathek_url in match_mediathek:
                 #print mediathek_url
                 addDir('Mediathek','http://www.servustv.com'+mediathek_url,1,'')
-#        for live_url in match_live:
+        for live_url in match_live:
                 #print mediathek_url
-#                addDir('Live','http://www.servustv.com'+live_url,7,'')
+                addDir('Live','http://www.servustv.com'+live_url,7,'')
 
 
 
@@ -36,7 +36,7 @@ def MAIN():
 def INDEX(url):#1
 #        addDir('Top Video: ',url,2,'')#todo
         addDir('Neuste Videos',url,5,'')
-        addDir('Nach Thema',url,2,'')
+#        addDir('Nach Thema',url,2,'')
         addDir('Nach Sparte',url,3,'')
         addDir('Nach Sendung',url,4,'') 
 
@@ -106,7 +106,7 @@ def SENDUNG(url):#4
                 
                 
 def VIDEOSELECTION(url):#5
-        print url
+#        print url
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         req.add_header('Referer', url)
@@ -121,16 +121,19 @@ def VIDEOSELECTION(url):#5
         #match_next=re.compile('<a href=\'(.+?)\' class="nachste">nächste</a>').findall(link)
         
         for videos in match1:
+#                print videos
                 match2=re.compile('<li>(.+?)</li>', re.DOTALL).findall(videos)
                 for video in match2:
-                        #print video
-                        #print '################################'
-                        match3=re.compile('<a href=\'/cs/Satellite\?assetId=(.+?)&c=ST_Video&cid=(.+?)&ida=.+?&pagename=servustv%2FST_Video%2FVideoPlayer&programType=vod.+?>.+?<img src=\'(.+?)\'.+?<a href=.+?\n									(.+?)</a>.+?<div class="programDescription">.+?\n										(.+?)</div>', re.DOTALL).findall(video)#, re.DOTALL
+#                        print video
+#                        print '################################'
+                        match3=re.compile('<a href=\'/cs/Satellite\?assetId=(.+?)&c=ST_Video&cid=(.+?)&ida=.+?<img src=\'(.+?)\'.+?<a href=.+?\n(.+?)</a>.+?<div class="programDescription".+?\n(.+?)</div>', re.DOTALL).findall(video)#, re.DOTALL
                         #.+?<div class="programDescription">.+?\n(.+?)</div>.+?
                         #<a href=\'/cs/Satellite\?assetId=(.+?)&c=ST_Video&cid=(.+?)&ida=.+?&pagename=servustv%2FST_Video%2FVideoPlayer&programType=vod.+?>.+?<img src=\'(.+?)\'.+?height
                         #.+?<a href=".+?">.+?\n(.+?)</a>.+?<div.+?\n(.+?)</div>
                         #/cs/Satellite?assetId=1259356008257&c=ST_Video&cid=1259364585399&ida=1259364585399&pagename=servustv%2FST_Video%2FVideoPlayer&programType=vod
                         for assetid,videoid,thumbnail,name1,name2 in match3:
+                                name1 = name1.replace('	','')
+                                name2 = name2.replace('	','')
                                 addDir(name1+' - '+name2,'http://www.servustv.com/cs/Satellite?articleId='+assetid+'&c=ST_Video&cid='+videoid+'&pagename=servustv/ST_Video/VideoPlayerDataXML&programType=vod',6,'http://www.servustv.com'+thumbnail)
 
         #TODO: nächste seite implementieren (ruft nur ne "statische" seite auf, infos werden über den referer übertragen)
@@ -175,24 +178,38 @@ def LIVEPLAY(url,name):#7
                 req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
                 response = urllib2.urlopen(req)
                 live_xml1=response.read()
+#                print live_xml1
                 response.close()
                 match_live_xml1=re.compile('<high_video_url>(.+?)<').findall(live_xml1)
+                match_ident=re.compile('rtmp\://(.+?)/ondemand/').findall(live_xml1)
+#                print 'match_ident[1]'+match_ident[1]
+                #http://cp81614.edgefcs.net/fcs/ident/
                 #<high_video_url>http://redbullmediahouse.edgeboss.net/flash-live/redbullmediahouse/59353/2100_redbullmediahouse_stv_090817.xml</high_video_url>
                 #<low_video_url>http://redbullmediahouse.edgeboss.net/flash-live/redbullmediahouse/59353/500_redbullmediahouse_stv_090817.xml</low_video_url>
                 for xmlurl in match_live_xml1:
-                        print '2 ok'+xmlurl
-                        req = urllib2.Request(xmlurl)
-                        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-                        response = urllib2.urlopen(req)
-                        live_xml2=response.read()
-                        response.close()
-                        print live_xml2
+                        req1 = urllib2.Request('http://'+match_ident[1]+'/fcs/ident/')
+                        #http://cp81614.edgefcs.net/fcs/ident/
+                        req1.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+                        response1 = urllib2.urlopen(req1)
+                        live_ip=response1.read()
+#                        print live_ip
+                        response1.close()
+                        match_ip=re.compile('ip>(.+?)<', re.DOTALL).findall(live_ip)
+#                        print 'match_ip'+match_ip[0]
+#                        print '2 ok'+xmlurl
+                        req2 = urllib2.Request(xmlurl)
+                        req2.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+                        response2 = urllib2.urlopen(req2)
+                        live_xml2=response2.read()
+                        response2.close()
+#                        print live_xml2
                         match_live_xml2=re.compile('<video src="(.+?)".+?<param name="playAuthParams" value="(.+?)"', re.DOTALL).findall(live_xml2)
                         for rtmp,auth in match_live_xml2:
-                                addLink('Play',rtmp+auth+' swfUrl=http://www.servustv.com/cs/flowplayer/flowplayer/flowplayer.commercial-3.1.3-dev.swf?0.11116168524801251 swfVfy=true live=true','')
+                                addLink('Play',rtmp+auth+' swfUrl=http://www.servustv.com/cs/flowplayer/flowplayer/flowplayer.commercial-3.1.3-dev.swf?0.11116168524801251 swfVfy=true live=true app=ondemand?_fcs_vhost='+match_ident[1]+' tcUrl=rtmp://'+match_ip[0]+'/ondemand?_fcs_vhost='+match_ident[1],'')
                                 addLink('Play2',rtmp+'/ playpath='+auth+' swfUrl=http://www.servustv.com/cs/flowplayer/flowplayer/flowplayer.commercial-3.1.3-dev.swf?0.11116168524801251 swfVfy=true live=true','')
                                 addLink('Play3','rtmp://media2.lsops.net/live/ playpath=bbcworld1_en_high.sdp swfUrl="http://www.livestation.com/flash/player/5.4/player.swf" pageUrl="http://www.livestation.com/channels/10-bbc-world-news-english" swfVfy=true live=true','')
                                 #http://www.servustv.com/cs/flowplayer/flowplayer/flowplayer.commercial-3.1.3-dev.swf
+                                #http://www.servustv.com/cs/flowplayer/flowplayer/flowplayer.commercial-3.1.3-dev.swf?0.11116168524801251
 
 
                 
