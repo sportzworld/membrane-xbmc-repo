@@ -1,0 +1,295 @@
+21:23:04 T:3079497600 M:1999114240  NOTICE: -----------------------------------------------------------------------
+21:23:04 T:3079497600 M:1998860288  NOTICE: Starting XBMC, Platform: Linux (Ubuntu 10.04.2 LTS, 2.6.32-29-generic i686). Built on Dec 17 2010 (SVN:35648)
+21:23:04 T:3079497600 M:1998860288  NOTICE: special://xbmc/ is mapped to: /usr/share/xbmc
+21:23:04 T:3079497600 M:1998860288  NOTICE: special://xbmcbin/ is mapped to: /usr/lib/xbmc
+21:23:04 T:3079497600 M:1998860288  NOTICE: special://masterprofile/ is mapped to: /home/xbmc/.xbmc/userdata
+21:23:04 T:3079497600 M:1998860288  NOTICE: special://home/ is mapped to: /home/xbmc/.xbmc
+21:23:04 T:3079497600 M:1998860288  NOTICE: special://temp/ is mapped to: /home/xbmc/.xbmc/temp
+21:23:04 T:3079497600 M:1998860288  NOTICE: The executable running is: /usr/lib/xbmc/xbmc.bin
+21:23:04 T:3079497600 M:1998860288  NOTICE: Log File is located: /home/xbmc/.xbmc/temp/xbmc.log
+21:23:04 T:3079497600 M:1998860288  NOTICE: -----------------------------------------------------------------------
+21:23:04 T:3079497600 M:1998733312  NOTICE: Setup SDL
+21:23:06 T:3079497600 M:1994616832  NOTICE: load settings...
+21:23:06 T:3079497600 M:1994719232   ERROR: Unable to load libcrystalhd.so.3, reason: libcrystalhd.so.3: cannot open shared object file: No such file or directory
+21:23:06 T:3079497600 M:1994719232  NOTICE: special://profile/ is mapped to: special://masterprofile/
+21:23:06 T:3079497600 M:1994719232  NOTICE: loading special://masterprofile/guisettings.xml
+21:23:06 T:3079497600 M:1994465280  NOTICE: Getting hardware information now...
+21:23:06 T:3079497600 M:1994465280  NOTICE: Checking resolution 12
+21:23:06 T:3079497600 M:1994465280  NOTICE: Loading player core factory settings from special://xbmc/system/playercorefactory.xml.
+21:23:06 T:3079497600 M:1994465280  NOTICE: Loaded playercorefactory configuration
+21:23:06 T:3079497600 M:1994465280  NOTICE: Loading player core factory settings from special://masterprofile/playercorefactory.xml.
+21:23:06 T:3079497600 M:1994465280  NOTICE: special://masterprofile/playercorefactory.xml does not exist. Skipping.
+21:23:06 T:3079497600 M:1994465280  NOTICE: Loaded advancedsettings.xml from special://profile/advancedsettings.xml
+21:23:06 T:3079497600 M:1994465280  NOTICE: Contents of special://profile/advancedsettings.xml are...
+                                            <advancedsettings>
+                                              <network>
+                                                <disableipv6>true</disableipv6>
+                                              </network>
+                                            </advancedsettings>
+21:23:06 T:3079497600 M:1994465280  NOTICE: Getting hardware information now...
+21:23:06 T:3079497600 M:1994465280  NOTICE: Checking resolution 12
+21:23:06 T:3079497600 M:1994465280  NOTICE: Default DVD Player: dvdplayer
+21:23:06 T:3079497600 M:1994465280  NOTICE: Default Video Player: dvdplayer
+21:23:06 T:3079497600 M:1994465280  NOTICE: Default Audio Player: paplayer
+21:23:06 T:3079497600 M:1994465280  NOTICE: Loading media sources from special://masterprofile/sources.xml
+21:23:09 T:3079497600 M:1989627904  NOTICE: Using visual 0x4f
+21:23:09 T:3079497600 M:1988575232  NOTICE: GL_VENDOR = NVIDIA Corporation
+21:23:09 T:3079497600 M:1988575232  NOTICE: GL_RENDERER = GeForce Go 7600/PCI/SSE2
+21:23:09 T:3079497600 M:1988575232  NOTICE: GL_VERSION = 2.1.2 NVIDIA 270.26
+21:23:09 T:3079497600 M:1988575232  NOTICE: GL_SHADING_LANGUAGE_VERSION = 1.20 NVIDIA via Cg compiler
+21:23:09 T:3079497600 M:1988575232  NOTICE: GL_EXTENSIONS = GL_ARB_color_buffer_float GL_ARB_copy_buffer GL_ARB_depth_clamp GL_ARB_depth_texture GL_ARB_draw_buffers GL_ARB_ES2_compatibility GL_ARB_explicit_attrib_location GL_ARB_fragment_program GL_ARB_fragment_program_shadow GL_ARB_fragment_shader GL_ARB_framebuffer_object GL_ARB_half_float_pixel GL_ARB_half_float_vertex GL_ARB_imaging GL_ARB_map_buffer_range GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_occlusion_query2 GL_ARB_pixel_buffer_object GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_provoking_vertex GL_ARB_robustness GL_ARB_sampler_objects GL_ARB_separate_shader_objects GL_ARB_shader_objects GL_ARB_shading_language_100 GL_ARB_shading_language_include GL_ARB_shadow GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_ARB_texture_float GL_ARB_texture_mirrored_repeat GL_ARB_texture_non_power_of_two GL_ARB_texture_rectangle GL_ARB_texture_rg GL_ARB_texture_swizzle GL_ARB_timer_query GL_ARB_transpose_matrix GL_ARB_vertex_array_bgra GL_ARB_vertex_array_object GL_ARB_vertex_buffer_object GL_ARB_vertex_program GL_ARB_vertex_shader GL_ARB_window_pos GL_ATI_draw_buffers GL_ATI_texture_float GL_ATI_texture_mirror_once GL_S3_s3tc GL_EXT_texture_env_add GL_EXT_abgr GL_EXT_bgra GL_EXT_blend_color GL_EXT_blend_equation_separate GL_EXT_blend_func_separate GL_EXT_blend_minmax GL_EXT_blend_subtract GL_EXT_compiled_vertex_array GL_EXT_Cg_shader GL_EXT_depth_bounds_test GL_EXT_direct_state_access GL_EXT_draw_range_elements GL_EXT_fog_coord GL_EXT_framebuffer_blit GL_EXT_framebuffer_multisample GL_EXT_framebuffer_object GL_EXT_gpu_program_parameters GL_EXT_multi_draw_arrays GL_EXT_packed_depth_stencil GL_EXT_packed_pixels GL_EXT_pixel_buffer_object GL_EXT_point_parameters GL_EXT_provoking_vertex GL_EXT_rescale_normal GL_EXT_secondary_color GL_EXT_separate_shader_objects GL_EXT_separate_specular_color GL_EXT_shadow_funcs GL_EXT_stencil_two_side GL_EXT_stencil_wrap GL_EXT_texture3D GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_s3tc GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_env_combine GL_EXT_texture_env_dot3 GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_lod GL_EXT_texture_lod_bias GL_EXT_texture_mirror_clamp GL_EXT_texture_object GL_EXT_texture_sRGB GL_EXT_texture_swizzle GL_EXT_timer_query GL_EXT_vertex_array GL_EXT_vertex_array_bgra GL_IBM_rasterpos_clip GL_IBM_texture_mirrored_repeat GL_KTX_buffer_region GL_NV_alpha_test GL_NV_blend_minmax GL_NV_blend_square GL_NV_complex_primitives GL_NV_copy_depth_to_color GL_NV_depth_clamp GL_NV_fbo_color_attachments GL_NV_fence GL_NV_float_buffer GL_NV_fog_distance GL_NV_fragdepth GL_NV_fragment_program GL_NV_fragment_program_option GL_NV_fragment_program2 GL_NV_framebuffer_multisample_coverage GL_NV_half_float GL_NV_light_max_exponent GL_NV_multisample_filter_hint GL_NV_occlusion_query GL_NV_packed_depth_stencil GL_NV_pixel_data_range GL_NV_point_sprite GL_NV_primitive_restart GL_NV_register_combiners GL_NV_register_combiners2 GL_NV_texgen_reflection GL_NV_texture_barrier GL_NV_texture_compression_vtc GL_NV_texture_env_combine4 GL_NV_texture_expand_normal GL_NV_texture_lod_clamp GL_NV_texture_rectangle GL_NV_texture_shader GL_NV_texture_shader2 GL_NV_texture_shader3 GL_NV_vertex_array_range GL_NV_vertex_array_range2 GL_NV_vertex_program GL_NV_vertex_program1_1 GL_NV_vertex_program2 GL_NV_vertex_program2_option GL_NV_vertex_program3 GL_NVX_conditional_render GL_OES_depth24 GL_OES_depth32 GL_OES_depth_texture GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_rgb8_rgba8 GL_OES_standard_derivatives GL_OES_texture_3D GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_vertex_array_object GL_OES_vertex_half_float GL_SGIS_generate_mipmap GL_SGIS_texture_lod GL_SGIX_depth_texture GL_SGIX_shadow GL_SUN_slice_accum
+21:23:09 T:3079497600 M:1988575232   ERROR: GLX: Same window as before, refreshing context
+21:23:09 T:3079497600 M:1985568768  NOTICE: start dvd mediatype detection
+21:23:09 T:3079497600 M:1985568768  NOTICE: initializing playlistplayer
+21:23:09 T:3079497600 M:1985568768  NOTICE: DONE initializing playlistplayer
+21:23:10 T:3079497600 M:1964126208 WARNING: Skin has invalid include: BackgroundVarsTrailers
+21:23:11 T:3079497600 M:1963720704 WARNING: Previous line repeats 1 times.
+21:23:11 T:3079497600 M:1963720704  NOTICE: initialize done
+21:23:11 T:3079497600 M:1963720704  NOTICE: Running the application...
+21:23:11 T:3079497600 M:1963720704  NOTICE: ES: Starting event server
+21:23:11 T:3079497600 M:1963720704  NOTICE: DS: Starting dbus server
+21:23:11 T:3076709232 M:1963720704  NOTICE: ES: Starting UDP Event server on 127.0.0.1:9777
+21:23:11 T:3076709232 M:1963720704  NOTICE: UDP: Listening on port 9777
+21:23:11 T:3079497600 M:1963593728  NOTICE: starting zeroconf publishing
+21:23:11 T:3012557680 M:1963593728  NOTICE: DS: Starting DBUS server in Run Application aka thread
+21:23:13 T:2929777520 M:1943216128  NOTICE: -->Python Interpreter Initialized<--
+21:23:13 T:2929777520 M:1941696512  NOTICE: {'unplayed': 'True', 'albums': 'True', 'limit': '8', 'totals': 'True'}
+21:26:15 T:2954300272 M:1885917184   ERROR: SMBDirectory->GetDirectory: Unable to open directory : 'smb://sascha:invaderzimrules@PHENOM%2dLINUX/videos/TV%20Shows'
+                                            unix_err:'6e' error : 'Connection timed out'
+21:26:22 T:3079497600 M:1899884544   ERROR: GetDirectory - Error getting smb://PHENOM-LINUX/videos/TV Shows/
+21:26:22 T:3079497600 M:1899884544   ERROR: CGUIMediaWindow::GetDirectory(smb://PHENOM-LINUX/videos/TV Shows/) failed
+21:26:25 T:2954300272 M:1900900352 WARNING: CreateLoader - Unsupported protocol(addons) in addons://sources/poster.jpg
+21:26:26 T:2967559024 M:1901027328 WARNING: Previous line repeats 1 times.
+21:26:26 T:2967559024 M:1901027328 WARNING: Create - Unsupported protocol(script) in script://
+21:26:28 T:3079497600 M:1896681472   ERROR: Texture manager unable to load file: /home/xbmc/.xbmc/addons/plugin.video.kinobild/icon.png
+21:26:28 T:3079497600 M:1896042496   ERROR: Texture manager unable to load file: /home/xbmc/.xbmc/addons/plugin.video.deluxemusic/icon.png
+21:26:29 T:3079497600 M:1896894464   ERROR: Texture manager unable to load file: /home/xbmc/.xbmc/addons/plugin.video.gameone/icon.png
+21:26:30 T:3079497600 M:1893810176   ERROR: Texture manager unable to load file: /home/xbmc/.xbmc/addons/plugin.video.laola1/icon.png
+21:26:30 T:3079497600 M:1893302272   ERROR: Texture manager unable to load file: /home/xbmc/.xbmc/addons/plugin.video.laola1live/icon.png
+21:26:30 T:3079497600 M:1888477184   ERROR: Texture manager unable to load file: /home/xbmc/.xbmc/addons/plugin.video.msnvideo/icon.png
+21:26:30 T:3079497600 M:1888096256   ERROR: Texture manager unable to load file: /home/xbmc/.xbmc/addons/plugin.video.muzu/icon.png
+21:26:30 T:3079497600 M:1886953472   ERROR: Texture manager unable to load file: /home/xbmc/.xbmc/addons/plugin.video.myspass/icon.png
+21:26:32 T:3079497600 M:1898991616   ERROR: Texture manager unable to load file: /home/xbmc/.xbmc/addons/plugin.video.servustv/icon.png
+21:26:34 T:2839427952 M:1893740544  NOTICE: -->Python Interpreter Initialized<--
+21:26:35 T:2839427952 M:1890050048  NOTICE: Mode: None
+21:26:35 T:2839427952 M:1890050048  NOTICE: URL: None
+21:26:35 T:2839427952 M:1890050048  NOTICE: Name:
+21:26:35 T:2839427952 M:1890050048  NOTICE: Seasons
+21:26:35 T:2862607216 M:1888677888 WARNING: CreateLoader - Unsupported protocol(addons) in addons://sources/poster.jpg
+21:26:36 T:2978048880 M:1886920704 WARNING: Previous line repeats 1 times.
+21:26:36 T:2978048880 M:1886920704 WARNING: CreateLoader - Unsupported protocol(plugin) in plugin://plugin.video.southpark.studios/poster.jpg
+21:26:39 T:2839427952 M:1882652672  NOTICE: -->Python Interpreter Initialized<--
+21:26:40 T:2839427952 M:1881538560  NOTICE: Mode: 1
+21:26:40 T:2839427952 M:1881538560  NOTICE: URL: 13
+21:26:40 T:2839427952 M:1881538560  NOTICE: Name: Season 13
+21:26:40 T:2839427952 M:1881538560  NOTICE: Episodes
+21:26:40 T:2839427952 M:1881538560  NOTICE: Southpark Studios --> getURL :: url = http://www.southpark.de/ajax/seasonepisode/13
+21:26:40 T:2839427952 M:1881538560  NOTICE: episodeid: 1301
+21:26:40 T:2839427952 M:1881538560  NOTICE: senumber: 1301
+21:26:40 T:2839427952 M:1881538560  NOTICE: episodeid: 1302
+21:26:40 T:2839427952 M:1881538560  NOTICE: senumber: 1302
+21:26:40 T:2839427952 M:1881538560  NOTICE: episodeid: 1303
+21:26:40 T:2839427952 M:1881538560  NOTICE: senumber: 1303
+21:26:40 T:2839427952 M:1881538560  NOTICE: episodeid: 1304
+21:26:40 T:2839427952 M:1881538560  NOTICE: senumber: 1304
+21:26:40 T:2839427952 M:1881538560  NOTICE: episodeid: 1305
+21:26:40 T:2839427952 M:1881538560  NOTICE: senumber: 1305
+21:26:40 T:2839427952 M:1881538560  NOTICE: episodeid: 1306
+21:26:40 T:2839427952 M:1881538560  NOTICE: senumber: 1306
+21:26:40 T:2839427952 M:1881538560  NOTICE: episodeid: 1307
+21:26:40 T:2839427952 M:1881538560  NOTICE: senumber: 1307
+21:26:40 T:2839427952 M:1881538560  NOTICE: episodeid: 1308
+21:26:40 T:2839427952 M:1881538560  NOTICE: senumber: 1308
+21:26:40 T:2839427952 M:1881538560  NOTICE: episodeid: 1309
+21:26:40 T:2839427952 M:1881538560  NOTICE: senumber: 1309
+21:26:40 T:2839427952 M:1881538560  NOTICE: episodeid: 1310
+21:26:40 T:2839427952 M:1881538560  NOTICE: senumber: 1310
+21:26:40 T:2839427952 M:1881538560  NOTICE: episodeid: 1311
+21:26:40 T:2839427952 M:1881538560  NOTICE: senumber: 1311
+21:26:40 T:2839427952 M:1881538560  NOTICE: episodeid: 1312
+21:26:40 T:2839427952 M:1881538560  NOTICE: senumber: 1312
+21:26:40 T:2839427952 M:1881538560  NOTICE: episodeid: 1313
+21:26:40 T:2839427952 M:1881538560  NOTICE: senumber: 1313
+21:26:40 T:2839427952 M:1881538560  NOTICE: episodeid: 1314
+21:26:40 T:2839427952 M:1881538560  NOTICE: senumber: 1314
+21:26:41 T:2978048880 M:1883316224 WARNING: CreateLoader - Unsupported protocol(plugin) in plugin://plugin.video.southpark.studios/poster.jpg
+21:26:44 T:2839427952 M:1883885568  NOTICE: -->Python Interpreter Initialized<--
+21:26:45 T:2839427952 M:1883746304  NOTICE: Mode: 2
+21:26:45 T:2839427952 M:1883746304  NOTICE: URL: 1301
+21:26:45 T:2839427952 M:1883746304  NOTICE: Name: Der Ring
+21:26:45 T:2839427952 M:1883746304  NOTICE: Get Rtmp
+21:26:45 T:2839427952 M:1883619328  NOTICE: hash?: 3f490062-82b1-4ca5-8bab-37fe73c2201e
+21:26:45 T:2839427952 M:1883619328  NOTICE: Southpark Studios --> getURL :: url = http://www.southpark.de/feeds/video-player/mrss/mgid%3Ahcx%3Acontent%3Asouthparkstudios.de%3A3f490062-82b1-4ca5-8bab-37fe73c2201e
+21:26:45 T:2839427952 M:1883627520  NOTICE: Southpark Studios --> getURL :: url = http://www.southpark.de/feeds/video-player/mediagen/?uri=mgid:hcx:content:southparkstudios.de:113161d4-4e3a-435d-ab1b-a2e1cb935c90
+21:26:45 T:2839427952 M:1883627520  NOTICE: 
+                                            <package version="1.4">
+                                            <video>
+                                            <item startTime="0">
+                                            <rendition duration="0:05" bitrate="1200" width="1280" height="720" type="video/mp4">
+                                            <src>rtmpe://cp75298.edgefcs.net/ondemand/mtvnorigin/gsp.comedystor/com/sp/extras/intros/sp_HD_Show_Open_1280x720_1200kbps.mp4</src>
+                                            </rendition>
+                                            <rendition duration="0:05" bitrate="700" width="768" height="432" type="video/mp4">
+                                            <src>rtmpe://cp75298.edgefcs.net/ondemand/mtvnorigin/gsp.comedystor/com/sp/extras/intros/sp_HD_Show_Open_768x432_700kbps.mp4</src>
+                                            </rendition>
+                                            <rendition duration="0:05" bitrate="400" width="512" height="288" type="video/mp4">
+                                            <src>rtmpe://cp75298.edgefcs.net/ondemand/mtvnorigin/gsp.comedystor/com/sp/extras/intros/sp_HD_Show_Open_512x288_400kbps.mp4</src>
+                                            </rendition>
+                                            <beacons>
+                                            <beacon url="http://www.comedycentral.com/sitewide/droplets/view_gen.jhtml?itemUrl=mgid:hcx:content:southparkstudios.de:113161d4-4e3a-435d-ab1b-a2e1cb935c90&amp;tagParams=tag_action%3Dviewed" startTime="0" />
+                                            </beacons>
+                                            </item>
+                                            </video>
+                                            </package>
+21:26:45 T:2839427952 M:1883627520  NOTICE: rtmpbitrtmpe://cp75298.edgefcs.net/ondemand/mtvnorigin/gsp.comedystor/com/sp/extras/intros/sp_HD_Show_Open_1280x720_1200kbps.mp4
+21:26:45 T:2839427952 M:1883627520  NOTICE: furl: rtmpe://cp75298.edgefcs.net/ondemand/mtvnorigin/gsp.comedystor/com/sp/extras/intros/sp_HD_Show_Open_1280x720_1200kbps.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true
+21:26:45 T:2839427952 M:1883627520  NOTICE: rtmpbitrtmpe://cp75298.edgefcs.net/ondemand/mtvnorigin/gsp.comedystor/com/sp/extras/intros/sp_HD_Show_Open_768x432_700kbps.mp4
+21:26:45 T:2839427952 M:1883627520  NOTICE: furl: rtmpe://cp75298.edgefcs.net/ondemand/mtvnorigin/gsp.comedystor/com/sp/extras/intros/sp_HD_Show_Open_768x432_700kbps.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true
+21:26:45 T:2839427952 M:1883627520  NOTICE: rtmpbitrtmpe://cp75298.edgefcs.net/ondemand/mtvnorigin/gsp.comedystor/com/sp/extras/intros/sp_HD_Show_Open_512x288_400kbps.mp4
+21:26:45 T:2839427952 M:1883627520  NOTICE: stacked_urlstack://rtmpe://cp75298.edgefcs.net/ondemand/mtvnorigin/gsp.comedystor/com/sp/extras/intros/sp_HD_Show_Open_768x432_700kbps.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true ,
+21:26:45 T:2839427952 M:1883627520  NOTICE: Southpark Studios --> getURL :: url = http://www.southpark.de/feeds/video-player/mediagen/?uri=mgid:hcx:content:southparkstudios.de:1f4a562b-6fc9-4874-af36-10bbed381c94
+21:26:46 T:2839427952 M:1889849344  NOTICE: 
+                                            <package version="1.4">
+                                            <video>
+                                            <item startTime="0">
+                                            <rendition duration="8:45" bitrate="1200" width="1280" height="720" type="video/mp4">
+                                            <src>rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act1_DEU_1280x720_1200.mp4</src>
+                                            </rendition>
+                                            <rendition duration="8:45" bitrate="750" width="768" height="432" type="video/mp4">
+                                            <src>rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act1_DEU_768x432_750.mp4</src>
+                                            </rendition>
+                                            <rendition duration="8:45" bitrate="450" width="512" height="288" type="video/mp4">
+                                            <src>rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act1_DEU_512x288_450.mp4</src>
+                                            </rendition>
+                                            <beacons>
+                                            <beacon url="http://www.comedycentral.com/sitewide/droplets/view_gen.jhtml?itemUrl=mgid:hcx:content:southparkstudios.de:1f4a562b-6fc9-4874-af36-10bbed381c94&amp;tagParams=tag_action%3Dviewed" startTime="0" />
+                                            </beacons>
+                                            </item>
+                                            </video>
+                                            </package>
+21:26:46 T:2839427952 M:1889849344  NOTICE: rtmpbitrtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act1_DEU_1280x720_1200.mp4
+21:26:46 T:2839427952 M:1889849344  NOTICE: furl: rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act1_DEU_1280x720_1200.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true
+21:26:46 T:2839427952 M:1889849344  NOTICE: rtmpbitrtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act1_DEU_768x432_750.mp4
+21:26:46 T:2839427952 M:1889849344  NOTICE: furl: rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act1_DEU_768x432_750.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true
+21:26:46 T:2839427952 M:1889849344  NOTICE: rtmpbitrtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act1_DEU_512x288_450.mp4
+21:26:46 T:2839427952 M:1889849344  NOTICE: stacked_urlstack://rtmpe://cp75298.edgefcs.net/ondemand/mtvnorigin/gsp.comedystor/com/sp/extras/intros/sp_HD_Show_Open_768x432_700kbps.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true , rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act1_DEU_768x432_750.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true ,
+21:26:46 T:2839427952 M:1889849344  NOTICE: Southpark Studios --> getURL :: url = http://www.southpark.de/feeds/video-player/mediagen/?uri=mgid:hcx:content:southparkstudios.de:b2297252-0306-458a-a500-0d165258aa2b
+21:26:46 T:2839427952 M:1889849344  NOTICE: 
+                                            <package version="1.4">
+                                            <video>
+                                            <item startTime="0">
+                                            <rendition duration="7:23" bitrate="1200" width="1280" height="720" type="video/mp4">
+                                            <src>rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301acts/sp_1301_act2_DEU_1280x720_1200.mp4</src>
+                                            </rendition>
+                                            <rendition duration="7:23" bitrate="450" width="512" height="288" type="video/mp4">
+                                            <src>rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act2_DEU_512x288_450.mp4</src>
+                                            </rendition>
+                                            <rendition duration="7:23" bitrate="750" width="768" height="432" type="video/mp4">
+                                            <src>rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301acts/sp_1301_act2_DEU_768x432_750.mp4</src>
+                                            </rendition>
+                                            <beacons>
+                                            <beacon url="http://www.comedycentral.com/sitewide/droplets/view_gen.jhtml?itemUrl=mgid:hcx:content:southparkstudios.de:b2297252-0306-458a-a500-0d165258aa2b&amp;tagParams=tag_action%3Dviewed" startTime="0" />
+                                            </beacons>
+                                            </item>
+                                            </video>
+                                            </package>
+21:26:46 T:2839427952 M:1889849344  NOTICE: rtmpbitrtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301acts/sp_1301_act2_DEU_1280x720_1200.mp4
+21:26:46 T:2839427952 M:1889849344  NOTICE: furl: rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301acts/sp_1301_act2_DEU_1280x720_1200.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true
+21:26:46 T:2839427952 M:1889849344  NOTICE: rtmpbitrtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act2_DEU_512x288_450.mp4
+21:26:46 T:2839427952 M:1889849344  NOTICE: furl: rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act2_DEU_512x288_450.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true
+21:26:46 T:2839427952 M:1889849344  NOTICE: rtmpbitrtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301acts/sp_1301_act2_DEU_768x432_750.mp4
+21:26:46 T:2839427952 M:1889849344  NOTICE: furl: rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301acts/sp_1301_act2_DEU_768x432_750.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true
+21:26:46 T:2839427952 M:1889849344  NOTICE: stacked_urlstack://rtmpe://cp75298.edgefcs.net/ondemand/mtvnorigin/gsp.comedystor/com/sp/extras/intros/sp_HD_Show_Open_768x432_700kbps.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true , rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act1_DEU_768x432_750.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true , rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301acts/sp_1301_act2_DEU_768x432_750.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true ,
+21:26:46 T:2839427952 M:1889849344  NOTICE: Southpark Studios --> getURL :: url = http://www.southpark.de/feeds/video-player/mediagen/?uri=mgid:hcx:content:southparkstudios.de:b8b88294-9503-45a3-a42d-525254034fa6
+21:26:46 T:2839427952 M:1889849344  NOTICE: 
+                                            <package version="1.4">
+                                            <video>
+                                            <item startTime="0">
+                                            <rendition duration="5:21" bitrate="1200" width="1280" height="720" type="video/mp4">
+                                            <src>rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act3_DEU_1280x720_1200.mp4</src>
+                                            </rendition>
+                                            <rendition duration="5:21" bitrate="750" width="768" height="432" type="video/mp4">
+                                            <src>rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act3_DEU_768x432_750.mp4</src>
+                                            </rendition>
+                                            <rendition duration="5:21" bitrate="450" width="512" height="288" type="video/mp4">
+                                            <src>rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act3_DEU_512x288_450.mp4</src>
+                                            </rendition>
+                                            <beacons>
+                                            <beacon url="http://www.comedycentral.com/sitewide/droplets/view_gen.jhtml?itemUrl=mgid:hcx:content:southparkstudios.de:b8b88294-9503-45a3-a42d-525254034fa6&amp;tagParams=tag_action%3Dviewed" startTime="0" />
+                                            </beacons>
+                                            </item>
+                                            </video>
+                                            </package>
+21:26:46 T:2839427952 M:1889849344  NOTICE: rtmpbitrtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act3_DEU_1280x720_1200.mp4
+21:26:46 T:2839427952 M:1889849344  NOTICE: furl: rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act3_DEU_1280x720_1200.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true
+21:26:46 T:2839427952 M:1889849344  NOTICE: rtmpbitrtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act3_DEU_768x432_750.mp4
+21:26:46 T:2839427952 M:1889849344  NOTICE: furl: rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act3_DEU_768x432_750.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true
+21:26:46 T:2839427952 M:1889849344  NOTICE: rtmpbitrtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act3_DEU_512x288_450.mp4
+21:26:46 T:2839427952 M:1889849344  NOTICE: stacked_urlstack://rtmpe://cp75298.edgefcs.net/ondemand/mtvnorigin/gsp.comedystor/com/sp/extras/intros/sp_HD_Show_Open_768x432_700kbps.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true , rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act1_DEU_768x432_750.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true , rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301acts/sp_1301_act2_DEU_768x432_750.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true , rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act3_DEU_768x432_750.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true ,
+21:26:46 T:2839427952 M:1889849344  NOTICE: http://southparkstudios-intl.mtvnimages.com/shared/sps/images/south_park/episode_thumbnails/s13e01_480.jpg?
+21:26:46 T:2839427952 M:1889849344  NOTICE: stacked_url idk play?: stack://rtmpe://cp75298.edgefcs.net/ondemand/mtvnorigin/gsp.comedystor/com/sp/extras/intros/sp_HD_Show_Open_768x432_700kbps.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true , rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act1_DEU_768x432_750.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true , rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301acts/sp_1301_act2_DEU_768x432_750.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true , rtmpe://cp75298.edgefcs.net/ondemand/mtviestor/_!/intlod/southpark/video/Deutsche/Season_13/1301/acts/sp_1301_act3_DEU_768x432_750.mp4 swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.7.0.swf swfvfy=true
+21:26:46 T:2839427952 M:1889849344  NOTICE: dnameDer Ring
+21:26:46 T:2839427952 M:1889849344  NOTICE: thumbnailhttp://southparkstudios-intl.mtvnimages.com/shared/sps/images/south_park/episode_thumbnails/s13e01_480.jpg?
+21:26:46 T:2839427952 M:1889849344  NOTICE: season13
+21:26:46 T:2839427952 M:1889849344  NOTICE: episode1
+21:26:46 T:2839427952 M:1889849344  NOTICE: premiered02.07.10
+21:26:46 T:2839427952 M:1889849344  NOTICE: plotKenny will seiner neuen Freundin Tammy gerne an die Wsche und geht dafr sogar auf ein Konzert der Jonas Brothers mit ihr. Doch ein Ring macht ihm einen Strich durch die Rechnung.
+21:26:46 T:2839427952 M:1889849344  NOTICE: TVShowTitleSouth Park
+21:26:49 T:3079497600 M:1886146560  NOTICE: Metadata:
+21:26:49 T:3079497600 M:1886146560  NOTICE:   duration              5.05
+21:26:49 T:3079497600 M:1886146560  NOTICE:   moovPosition          36.00
+21:26:49 T:3079497600 M:1886146560  NOTICE:   width                 768.00
+21:26:49 T:3079497600 M:1886146560  NOTICE:   height                432.00
+21:26:49 T:3079497600 M:1886146560  NOTICE:   videocodecid          avc1
+21:26:49 T:3079497600 M:1886146560  NOTICE:   audiocodecid          mp4a
+21:26:49 T:3079497600 M:1886146560  NOTICE:   avcprofile            66.00
+21:26:49 T:3079497600 M:1886146560  NOTICE:   avclevel              30.00
+21:26:49 T:3079497600 M:1886146560  NOTICE:   aacaot                2.00
+21:26:49 T:3079497600 M:1886146560  NOTICE:   videoframerate        23.98
+21:26:49 T:3079497600 M:1886146560  NOTICE:   audiosamplerate       44100.00
+21:26:49 T:3079497600 M:1886146560  NOTICE:   audiochannels         2.00
+21:26:49 T:3079497600 M:1886146560  NOTICE: trackinfo:
+21:26:49 T:3079497600 M:1886146560  NOTICE:   length                121000.00
+21:26:49 T:3079497600 M:1886146560  NOTICE:   timescale             23976.00
+21:26:49 T:3079497600 M:1886146560  NOTICE: sampledescription:
+21:26:49 T:3079497600 M:1886146560  NOTICE:   sampletype            avc1
+21:26:49 T:3079497600 M:1886146560  NOTICE:   length                221067.00
+21:26:49 T:3079497600 M:1886146560  NOTICE:   timescale             44100.00
+21:26:49 T:3079497600 M:1886146560  NOTICE: sampledescription:
+21:26:49 T:3079497600 M:1886146560  NOTICE:   sampletype            mp4a
+21:26:49 T:3079497600 M:1886146560  NOTICE:   length                600.00
+21:26:49 T:3079497600 M:1886146560  NOTICE:   timescale             600.00
+21:26:49 T:3079497600 M:1886146560  NOTICE: sampledescription:
+21:26:49 T:3079497600 M:1886146560  NOTICE:   length                600.00
+21:26:49 T:3079497600 M:1886146560  NOTICE:   timescale             600.00
+21:26:49 T:3079497600 M:1886146560  NOTICE: sampledescription:
+21:26:51 T:3079497600 M:1885929472  NOTICE: Metadata:
+21:26:51 T:3079497600 M:1885929472  NOTICE:   duration              525.78
+21:26:51 T:3079497600 M:1885929472  NOTICE:   moovPosition          36.00
+21:26:51 T:3079497600 M:1885929472  NOTICE:   width                 768.00
+21:26:51 T:3079497600 M:1885929472  NOTICE:   height                432.00
+21:26:51 T:3079497600 M:1885929472  NOTICE:   videocodecid          avc1
+21:26:51 T:3079497600 M:1885929472  NOTICE:   audiocodecid          mp4a
+21:26:51 T:3079497600 M:1885929472  NOTICE:   avcprofile            77.00
+21:26:51 T:3079497600 M:1885929472  NOTICE:   avclevel              30.00
+21:26:51 T:3079497600 M:1885929472  NOTICE:   aacaot                2.00
+21:26:51 T:3079497600 M:1885929472  NOTICE:   videoframerate        23.97
+21:26:51 T:3079497600 M:1885929472  NOTICE:   audiosamplerate       44100.00
+21:26:51 T:3079497600 M:1885929472  NOTICE:   audiochannels         2.00
+21:26:51 T:3079497600 M:1885929472  NOTICE: trackinfo:
+21:26:51 T:3079497600 M:1885929472  NOTICE:   length                12607000.00
+21:26:51 T:3079497600 M:1885929472  NOTICE:   timescale             23976.00
+21:26:51 T:3079497600 M:1885929472  NOTICE: sampledescription:
+21:26:51 T:3079497600 M:1885929472  NOTICE:   sampletype            avc1
+21:26:51 T:3079497600 M:1885929472  NOTICE:   length                23187035.00
+21:26:51 T:3079497600 M:1885929472  NOTICE:   timescale             44100.00
+21:26:51 T:3079497600 M:1885929472  NOTICE: sampledescription:
+21:26:51 T:3079497600 M:1885929472  NOTICE:   sampletype            mp4a
+21:26:51 T:3079497600 M:1885929472  NOTICE:   length                600.00
+21:26:51 T:3079497600 M:1885929472  NOTICE:   timescale             600.00
+21:26:51 T:3079497600 M:1885929472  NOTICE: sampledescription:
+21:26:51 T:3079497600 M:1885929472  NOTICE:   length                600.00
+21:26:51 T:3079497600 M:1885929472  NOTICE:   timescale             600.00
+21:26:51 T:3079497600 M:1885929472  NOTICE: sampledescription:
+21:26:53 T:3079497600 M:1885970432   ERROR: Closing connection: NetStream.Play.StreamNotFound
+21:26:53 T:3079497600 M:1885970432   ERROR: Playlist Player: skipping unplayable item: 0, path [plugin://plugin.video.southpark.studios/?url=1301&mode=2&name=Der+Ring&season=13&episode=01&premiered=02.07.10&plot=Kenny+will+seiner+neuen+Freundin+Tammy+gerne+an+die+Wsche+und+geht+dafr+sogar+auf+ein+Konzert+der+Jonas+Brothers+mit+ihr.+Doch+ein+Ring+macht+ihm+einen+Strich+durch+die+Rechnung.&thumbnail=http%3A%2F%2Fsouthparkstudios-intl.mtvnimages.com%2Fshared%2Fsps%2Fimages%2Fsouth_park%2Fepisode_thumbnails%2Fs13e01_480.jpg%3F]
+21:27:52 T:3079497600 M:1889255424  NOTICE: Samba is idle. Closing the remaining connections
