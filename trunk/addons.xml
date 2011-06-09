@@ -48,6 +48,22 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.myspass" name="MySpass" version="0.1" provider-name="membrane">
+    <requires>
+        <import addon="xbmc.python" version="1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">MySpass</summary>
+        <summary lang="en">MySpass</summary>
+        <description lang="de">MySpass</description>
+        <description lang="en">MySpass</description>
+    </extension>
+</addon>
+
 <addon id="plugin.video.tv.hockej.cz" name="tv.hockej.cz" version="0.2" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
