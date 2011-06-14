@@ -1,5 +1,6 @@
 # -*- coding: latin-1 -*-
 import urllib,urllib2,re,xbmcplugin,xbmcgui
+from operator import itemgetter
 pluginhandle = int(sys.argv[1])
 
 def CATEGORIES():
@@ -20,7 +21,8 @@ def INDEX(url):#1
         movies=response.read()
         response.close()
         match=re.compile('<a href="(.+?)" target=".+?"><img src="(.+?)" alt="(.+?)" title=".+?" /></a>').findall(movies)
-        for url,thumb,name in match:
+	match_sorted=sorted(match, key=itemgetter(2))
+        for url,thumb,name in match_sorted:
 		name = name.replace("&#039;","'")
 		name = name.replace("&amp;","&")
 		addLink(name,url,2,'http://videokatalog.msn.de'+thumb)
