@@ -1,9 +1,10 @@
 # -*- coding: latin-1 -*-
 import urllib,urllib2,re,xbmcplugin,xbmcgui
 
+pluginhandle = int(sys.argv[1])
 
 def CATEGORIES():
-        addDir('Live','http://streamaccess.laola1.tv/hdflash/1/hdlaola.xml?t=.smil',7,'')
+#        addDir('Live','http://streamaccess.laola1.tv/hdflash/1/hdlaola.xml?t=.smil',7,'')
         addDir('Upcoming Livestreams Deutschland','http://www.laola1.tv/de/de/home/',5,'')
         addDir('Upcoming Livestreams Österreich','http://www.laola1.tv/de/at/home/',5,'')
         addDir('Upcoming Livestreams International','http://www.laola1.tv/en/int/home/',5,'')
@@ -54,7 +55,7 @@ def VIDEOSELECTION(url):
         match2=re.compile("<a href=\"(.+)\" class=\"teaser_text\">vor</a>").findall(link)
         ##<a href="http://www.laola1.tv/de/de/eishockey/erste-bank-ehl/ehc-liwest-bw-linz-ec-red-bull-salzburg/video/222-1153--2.html" class="teaser_text">vor</a>
         for url,thumbnail,date,name in match1:
-                addDir(date+' - '+name,url,4,thumbnail)
+                addLink(date+' - '+name,url,4,thumbnail)
         for url in match2:
                 addDir('Next Site',url,3,'')
 
@@ -123,14 +124,12 @@ def VIDEOLINKS(url,name):
                                         for ip in match_path:
                                                 #print 'ip '+ip
                                         ##http://cp77154.edgefcs.net/fcs/ident
-                                                if streamquality == 'high':
-                                                        addLink('High: '+name,'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'&auth='+auth+'&aifp='+aifp+'&slist='+stream,'')
+                                                item = xbmcgui.ListItem(path='rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'&auth='+auth+'&aifp='+aifp+'&slist='+stream)
+						return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
                                                         ##rtmp://213.198.95.204:1935/ondemand?_fcs_vhost=cp77154.edgefcs.net&auth=db.cibycHcwdEbhaKa4a3bUc7cIbpbLdtal-bnKofS-cOW-eS-CkBwmc-m6ke&p=&e=&u=&t=ondemandvideo&l=&a=
                                                         ##&aifp=v001&slist=77154/flash/2011/ebel/20102011/110327_vic_rbs_high
                                                         ##rtmp://213.198.95.204:1935/ondemand?_fcs_vhost=cp77154.edgefcs.net&auth=db.cibycHcwdEbhaKa4a3bUc7cIbpbLdtal-bnKofS-cOW-eS-CkBwmc-m6ke&p=&e=&u=&t=ondemandvideo&l=&a=&aifp=v001&slist=77154/flash/2011/ebel/20102011/110327_vic_rbs_high
-                                                elif streamquality == 'low':
-                                                        addLink('Low: '+name,'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'&auth='+auth+'&aifp='+aifp+'&slist='+stream,'')
-
+                                                
 
                                                         ##...yeah
         
@@ -162,7 +161,7 @@ def LIVESELECTION(url):
                 match2=re.compile("<a href=\"(.+)\" class=\"teaser_text\">vor</a>").findall(link)
                 ##<a href="http://www.laola1.tv/de/de/eishockey/erste-bank-ehl/ehc-liwest-bw-linz-ec-red-bull-salzburg/video/222-1153--2.html" class="teaser_text">vor</a>
                 for url,thumbnail,date,name in match1:
-                        addDir(date+' - '+name,url,6,thumbnail)
+                        addLink(date+' - '+name,url,6,thumbnail)
                 for url in match2:
                         addDir('Next Site',url,5,'')
 
@@ -174,9 +173,9 @@ def VIDEOLIVELINKS(url,name):
         link=response.read()
         response.close()
         match_playkey=re.compile('"playkey=(.+?)-(.+?)&adv.+?"').findall(link)
-        match_over=re.compile('<p>Lieber LAOLA(.+?)-User,</p>').findall(link)
-        if match_over[0] == '1':
-                addDir('vorbei/zu früh',' ',5,'')
+#        match_over=re.compile('<p>Lieber LAOLA(.+?)-User,</p>').findall(link)
+#        if match_over[0] == '1':
+#                addDir('vorbei/zu früh',' ',5,'')
         ##"playkey=47060-Gut1cOWmlyix.&adv=laola1.tv/de/eishockey/ebel&adi=laola1.tv/de/eishockey/ebel&aps=Video1&szo=eishockey&deutschchannel=true&channel=222&teaser=1153&play=47060&fversion=player.v10.2"
         for playkey1,playkey2 in match_playkey:
                 print 'playkey1 '+playkey1
@@ -235,9 +234,11 @@ def VIDEOLIVELINKS(url,name):
                                                 print 'ip '+ip
                                         ##http://cp77154.edgefcs.net/fcs/ident
 #                                                if streamquality == 'high':
-                                                print 'name: '+name
-                                                print 'rtmp-link: rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp
-                                                addLink('High: '+name,'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp+' swfUrl=http://www.laola1.tv/swf/player.v11.3.swf swfVfy=true live=true app=live','')
+                                                item = xbmcgui.ListItem(path='rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp+' swfUrl=http://www.laola1.tv/swf/player.v11.3.swf swfVfy=true live=true')
+						return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+                                                #print 'name: '+name
+                                                #print 'rtmp-link: rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp
+
                                                 #addLink('High: '+name,'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'/'+playpath+'?auth='+auth+'&aifp='+aifp,'')
 
 
@@ -287,12 +288,21 @@ def get_params():
 
 
 
-def addLink(name,url,iconimage):
+def addLinkOld(name,url,iconimage):
         ok=True
         liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
         liz.setInfo( type="Video", infoLabels={ "Title": name } )
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=liz)
         return ok
+
+def addLink(name,url,mode,iconimage):
+	u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)##
+	ok=True##
+	liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)##
+	liz.setInfo( type="Video", infoLabels={ "Title": name } )##
+	liz.setProperty('IsPlayable', 'true')##
+	ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz)##
+	return ok
 
 
 def addDir(name,url,mode,iconimage):
