@@ -16,7 +16,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.laola1live" name="Laola1 LIVE (Testversion)" version="0.5" provider-name="membrane">
+<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="0.6" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -32,7 +32,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.nhl" name="Nhl Archive" version="0.1" provider-name="membrane">
+<addon id="plugin.video.nhl" name="NHL Archive" version="0.1" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -41,10 +41,10 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="de">Nhl Archive</summary>
-        <summary lang="en">Nhl Archive</summary>
-        <description lang="de">Nhl Archive</description>
-        <description lang="en">Nhl Archive</description>
+        <summary lang="de">NHL Archive</summary>
+        <summary lang="en">NHL Archive</summary>
+        <description lang="de">NHL Archive</description>
+        <description lang="en">NHL Archive</description>
     </extension>
 </addon>
 
