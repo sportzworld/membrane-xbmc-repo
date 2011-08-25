@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.msn.uk" name="MSN Video UK" version="1.0.2" provider-name="ADQ & membrane">
+<addon id="plugin.video.msn.uk" name="MSN Video UK" version="1.0.2" provider-name="ADQ and membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -10,5 +10,5 @@
         <platform>all</platform>
         <summary>Plugin for video.msn.uk</summary>
         <description>Play all episodes from video.msn.uk</description>
-  </extension>
+    </extension>
 </addon>
