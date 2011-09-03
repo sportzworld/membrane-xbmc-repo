@@ -29,6 +29,7 @@ def VIDEOS(url):
 
         match=re.compile('<a href="(.+?)" title="(.+?)">.+?<img alt=".+?" src="(.+?)" />').findall(link)
         for url,name,thumb in match:
+		thumb=thumb.replace('96x54','620x350')
                 addLink(name,'http://www.nuna.tv'+url,3,thumb)
 
 
