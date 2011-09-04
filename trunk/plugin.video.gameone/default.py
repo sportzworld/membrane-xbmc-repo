@@ -43,10 +43,23 @@ def VIDEOLINKS_TV(url):#2
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
-        match=re.compile('src="(.+?).mp4"').findall(link)
+	match_mp4=''
+	match_rtmp=''
+        match_mp4=re.compile('src="(.+?).mp4"').findall(link)
+	for videos in match_mp4:
+		video=videos+'.mp4'
+	match_rtmp=re.compile('src="(.+?).m3u8"').findall(link)
+	for videos in match_rtmp:
+		req = urllib2.Request(videos)
+        	req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        	response = urllib2.urlopen(req)
+        	link=response.read()
+        	response.close()
+		match=re.compile('<src>(.+?)</src>').findall(link)
+		video=match[-1]+' swfurl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.9.0.swf swfvfy=true'
 #        <video width="566" height="424" controls="controls" src="http://cdn.riptide-mtvn.com/production/0016/1260/161262_bff037dd_mp4_640x480_1400.mp4" 
 #poster="http://asset.gameone.de/gameone/assets/video_metas/teaser_images/000/620/792/big/161262_bff037dd_mp4_640x480_1400.mp4_cropped.jpg?1306681883"></video>
-        item = xbmcgui.ListItem(path=match[0]+'.mp4')
+        item = xbmcgui.ListItem(path=video)
 	return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
         #<param name="href" value="http://cdn.riptide-mtvn.com/production/0015/6542/156543_87ac3a65_mp4_640x480_1600.mp4" />
 #        for url in match:
