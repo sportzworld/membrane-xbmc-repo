@@ -1,0 +1,4 @@
+<settings>
+   <setting id="quality" type="enum" lvalues="30005|30006|30007|30008" label="30004" default="1"/>
+   <setting id="sort" type="enum" lvalues="30015|30016|30017|30018|30019" label="30014" default="0"/>
+</settings>
