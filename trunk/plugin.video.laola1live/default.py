@@ -3,17 +3,21 @@ import urllib,urllib2,re,xbmcplugin,xbmcgui
 
 pluginhandle = int(sys.argv[1])
 
-def CATEGORIES():
-#        addDir('Live','http://streamaccess.laola1.tv/hdflash/1/hdlaola.xml?t=.smil',7,'')
-        addDir('Upcoming Livestreams Deutschland','http://www.laola1.tv/de/de/home/',5,'')
-        addDir('Upcoming Livestreams Österreich','http://www.laola1.tv/de/at/home/',5,'')
-        addDir('Upcoming Livestreams International','http://www.laola1.tv/en/int/home/',5,'')
-        addDir('Archiv Deutschland','http://www.laola1.tv/de/de/home/',1,'')
-        addDir('Archiv Österreich','http://www.laola1.tv/de/at/home/',1,'')
-        addDir('Archiv International','http://www.laola1.tv/en/int/home/',1,'')
+if xbmcplugin.getSetting(pluginhandle,"location") == '0':
+	livestream_url = 'http://www.laola1.tv/de/at/home/'
+	videos_url = 'http://www.laola1.tv/de/at/home/'
+elif xbmcplugin.getSetting(pluginhandle,"location") == '1':
+	livestream_url = 'http://www.laola1.tv/de/de/home/'
+	videos_url = 'http://www.laola1.tv/de/de/home/'
+elif xbmcplugin.getSetting(pluginhandle,"location") == '2':
+	livestream_url = 'http://www.laola1.tv/en/int/home/'
+	videos_url = 'http://www.laola1.tv/en/int/home/'
+
+
                        
-def INDEX(url):
-        req = urllib2.Request(url)
+def INDEX():
+        addDir('Live',livestream_url,4,'')
+        req = urllib2.Request(videos_url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urllib2.urlopen(req)
         link=response.read()
@@ -22,7 +26,7 @@ def INDEX(url):
         for something in match:
                 match1=re.compile('href="(.+?)".*?>(.+?)</a>').findall(something)
                 for url,name in match1 or match2:
-                        addDir(name,url,2,'')
+                        addDir(name,url,1,'')
 
 
                 
@@ -37,7 +41,7 @@ def TOPICSELECTION(url):
         for url,name in match1:
                 #print 'url :'+url
                 #print 'name'+name
-                addDir(name,url,3,'')
+                addDir(name,url,2,'')
                 ##<td style="padding-left:15px;" width="316"><h2><a href="http://www.laola1.tv/de/de/erste-bank-eishockey-liga-live/video/222-1154-.html" style="color:#ffffff; font-weight:bold; font-size:12pt;">Erste Bank Eishockey Liga LIVE</a></h2></td>
                 
                 
@@ -55,9 +59,9 @@ def VIDEOSELECTION(url):
         match2=re.compile("<a href=\"(.+)\" class=\"teaser_text\">vor</a>").findall(link)
         ##<a href="http://www.laola1.tv/de/de/eishockey/erste-bank-ehl/ehc-liwest-bw-linz-ec-red-bull-salzburg/video/222-1153--2.html" class="teaser_text">vor</a>
         for url,thumbnail,date,name in match1:
-                addLink(date+' - '+name,url,4,thumbnail)
+                addLink(date+' - '+name,url,3,thumbnail)
         for url in match2:
-                addDir('Next Site',url,3,'')
+                addDir('Next Site',url,2,'')
 
         ##<div class="miniteaser_bild_live "><a href="http://www.laola1.tv/de/de/eishockey/erste-bank-ehl/ec-kac-rekord-fenster-vsv-/video/222-1153-45986.html"><img src="http://www.laola1.tv/cache/img/thumb/45986.jpg" border="0" width="80" /></a></div>
 	##				</td><td style="padding-left:5px;" valign="top">
@@ -161,9 +165,9 @@ def LIVESELECTION(url):
                 match2=re.compile("<a href=\"(.+)\" class=\"teaser_text\">vor</a>").findall(link)
                 ##<a href="http://www.laola1.tv/de/de/eishockey/erste-bank-ehl/ehc-liwest-bw-linz-ec-red-bull-salzburg/video/222-1153--2.html" class="teaser_text">vor</a>
                 for url,thumbnail,date,name in match1:
-                        addLink(date+' - '+name,url,6,thumbnail)
+                        addLink(date+' - '+name,url,5,thumbnail)
                 for url in match2:
-                        addDir('Next Site',url,5,'')
+                        addDir('Next Site',url,4,'')
 
 
 def VIDEOLIVELINKS(url,name):
@@ -338,33 +342,30 @@ print "Name: "+str(name)
 
 if mode==None or url==None or len(url)<1:
         print ""
-        CATEGORIES()
+        INDEX()
        
 elif mode==1:
         print ""+url
-        INDEX(url)
+        TOPICSELECTION(url)
         
 elif mode==2:
         print ""+url
-        TOPICSELECTION(url)
+        VIDEOSELECTION(url)            
 
 elif mode==3:
         print ""+url
-        VIDEOSELECTION(url)            
+        VIDEOLINKS(url,name)
         
 elif mode==4:
         print ""+url
-        VIDEOLINKS(url,name)
+        LIVESELECTION(url)
         
 elif mode==5:
         print ""+url
-        LIVESELECTION(url)
+        VIDEOLIVELINKS(url,name)        
 
 elif mode==6:
         print ""+url
-        VIDEOLIVELINKS(url,name)        
-
-elif mode==7:
-        print ""+url
         LIVE(url)   
+  
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
