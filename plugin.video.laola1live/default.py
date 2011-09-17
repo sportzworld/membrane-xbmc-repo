@@ -1,4 +1,4 @@
-# -*- coding: latin-1 -*-
+
 import urllib,urllib2,re,xbmcplugin,xbmcgui
 
 pluginhandle = int(sys.argv[1])
@@ -13,12 +13,20 @@ elif xbmcplugin.getSetting(pluginhandle,"location") == '2':
 	livestream_url = 'http://www.laola1.tv/en/int/home/'
 	videos_url = 'http://www.laola1.tv/en/int/home/'
 
-
+#xip = xbmcplugin.getSetting(pluginhandle,"ip")
+#print 'xip: '+xip
                        
+#if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#	print 'laola: use trick'
+
+
 def INDEX():
         addDir('Live',livestream_url,4,'')
         req = urllib2.Request(videos_url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#		print 'Try to use X-Forwarded-For trick'
+#		req.add_header('X-Forwarded-For', xip)
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
@@ -34,6 +42,8 @@ def TOPICSELECTION(url):
         #print url
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#		req.add_header('X-Forwarded-For', xip)
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
@@ -48,6 +58,8 @@ def TOPICSELECTION(url):
 def VIDEOSELECTION(url):
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#		req.add_header('X-Forwarded-For', xip)
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
@@ -69,32 +81,40 @@ def VIDEOSELECTION(url):
 	##				<div class="miniteaser_text">EC KAC - REKORD-Fenster VSV </div>
 
 def VIDEOLINKS(url,name):
+	print 'stage 0'
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#		req.add_header('X-Forwarded-For', xip)
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
         match_playkey=re.compile('"playkey=(.+?)-(.+?)&adv.+?"').findall(link)
         ##"playkey=47060-Gut1cOWmlyix.&adv=laola1.tv/de/eishockey/ebel&adi=laola1.tv/de/eishockey/ebel&aps=Video1&szo=eishockey&deutschchannel=true&channel=222&teaser=1153&play=47060&fversion=player.v10.2"
         for playkey1,playkey2 in match_playkey:
+		print 'stage 1'
                 #print 'playkey1 '+playkey1
                 #print 'playkey2 '+playkey2                
                 req = urllib2.Request('http://www.laola1.tv/server/ondemand_xml_esi.php?playkey='+playkey1+'-'+playkey2)
                 #print 'http://www.laola1.tv/server/ondemand_xml_esi.php?playkey='+playkey1+'-'+playkey2
                 ##http://www.laola1.tv/server/ondemand_xml_esi.php?playkey=47060-Gut1cOWmlyix.
                 req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#		if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#			req.add_header('X-Forwarded-For', xip)
                 response = urllib2.urlopen(req)
                 link_playkey=response.read()
                 #print link_playkey
                 response.close()
                 match_video=re.compile('<video.+?>(.+?)</video>', re.DOTALL).findall(link_playkey)
                 for video in match_video:
+			print 'stage 2'
                         #print 'video '+video
                         match_rtmp=re.compile('<(.+?) .+?erver="(.+?)/(.+?)" pfad="(.+?)" .+? ptitle="(.+?)"').findall(video)#ugly, but behind low is one space too much: '  '
                         ##<high server="cp77154.edgefcs.net/ondemand" pfad="77154/flash/2011/ebel/20102011/110327_vic_rbs_high" type="V" aifp="v002"
                         ##token="true" ptitle="Eishockey Erste Bank EHL Erste Bank Eishockey Liga" etitle="Vienna Capitals - EC Red Bull Salzburg"
                         ##firstair="2010/01/01" stype="VOD" cat="video ondemand" vidcat="laola1.tv/at/eishockey/ebel" round="" season="2010/2011" />
                         for streamquality,server,servertype,playpath,title in match_rtmp:
+				print 'stage 3'
                                 #print 'streamquality '+streamquality
                                 #print 'server '+server
                                 #print 'servertype '+servertype
@@ -105,6 +125,8 @@ def VIDEOLINKS(url,name):
                                 ##http://streamaccess.laola1.tv/flash/vod/22/47060_high.xml
                                 ##http://streamaccess.laola1.tv/flash/1/47215_high.xml
                                 req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#				if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#					req.add_header('X-Forwarded-For', xip)
                                 response = urllib2.urlopen(req)
                                 link_token=response.read()
                                 #print link_token
@@ -113,6 +135,7 @@ def VIDEOLINKS(url,name):
                                 ##auth="db.cibycHcwdEbhaKa4a3bUc7cIbpbLdtal-bnKofS-cOW-eS-CkBwmc-m6ke&p=&e=&u=&t=ondemandvideo&l=&a="
                                 ##url="cp77154.edgefcs.net/ondemand" stream="77154/flash/2011/ebel/20102011/110327_vic_rbs_high" status="0" statustext="success" aifp="v001" comment="success"
                                 for auth,url,stream,aifp in match_token:
+					print 'stage 4'
                                         #print 'auth '+auth
                                         #print 'url '+url
                                         #print 'stream '+stream
@@ -120,15 +143,19 @@ def VIDEOLINKS(url,name):
                                         req = urllib2.Request('http://'+server+'/fcs/ident')
                                         ##http://cp77154.edgefcs.net/fcs/ident
                                         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#					if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#						req.add_header('X-Forwarded-For', xip)
                                         response = urllib2.urlopen(req)
                                         link_path=response.read()
                                         response.close()
                                         match_path=re.compile('<ip>(.+?)</ip>').findall(link_path)
                                         ##<ip>213.198.95.204</ip>
                                         for ip in match_path:
+						print 'stage 5'
                                                 #print 'ip '+ip
                                         ##http://cp77154.edgefcs.net/fcs/ident
-                                                item = xbmcgui.ListItem(path='rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'&auth='+auth+'&aifp='+aifp+'&slist='+stream)
+						stream=stream.replace('.mp4','.flv')
+                                                item = xbmcgui.ListItem(path='rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'&auth='+auth+'&aifp='+aifp+'&slist='+stream+' swfUrl=http://www.laola1.tv/swf/player.v12.3.swf swfVfy=true')
 						return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
                                                         ##rtmp://213.198.95.204:1935/ondemand?_fcs_vhost=cp77154.edgefcs.net&auth=db.cibycHcwdEbhaKa4a3bUc7cIbpbLdtal-bnKofS-cOW-eS-CkBwmc-m6ke&p=&e=&u=&t=ondemandvideo&l=&a=
                                                         ##&aifp=v001&slist=77154/flash/2011/ebel/20102011/110327_vic_rbs_high
@@ -145,6 +172,8 @@ def LIVESELECTION(url):
         #print url
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+		req.add_header('X-Forwarded-For', xip)
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
@@ -154,6 +183,8 @@ def LIVESELECTION(url):
                 #print videos
                 req = urllib2.Request('http://www.laola1.tv/'+lang+'/upcoming-livestreams/'+videos)
                 req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#		if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#			req.add_header('X-Forwarded-For', xip)
                 response = urllib2.urlopen(req)
                 link=response.read()
                 #print link
@@ -171,90 +202,125 @@ def LIVESELECTION(url):
 
 
 def VIDEOLIVELINKS(url,name):
+	print url
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#		req.add_header('X-Forwarded-For', xip)
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
+
+	match_streamtype=re.compile('"src", "(.+?)"').findall(link)
         match_playkey=re.compile('"playkey=(.+?)-(.+?)&adv.+?"').findall(link)
+
+	if match_streamtype[0] == 'http://www.laola1.tv/swf/hdplayer_2_0':
+		print 'laola: use streamtype 1.'
+        	for playkey1,playkey2 in match_playkey:
+			req = urllib2.Request('http://streamaccess.laola1.tv/hdflash/1/hdlaola1_'+playkey1+'.xml?streamid='+playkey1+'&partnerid=1&quality=hdlive&t=.smil')
+		        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#			if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#				req.add_header('X-Forwarded-For', xip)
+		        response = urllib2.urlopen(req)
+		        link=response.read()
+		        response.close()
+			print link
+
+		        match_rtmp=re.compile('<meta name="rtmpPlaybackBase" content="(.+?)" />').findall(link)
+			match_http=re.compile('<meta name="httpBase" content="(.+?)" />').findall(link)
+		        match_quality=re.compile('<video src="(.+?)" system-bitrate=".+?"/>').findall(link)
+
+                        item = xbmcgui.ListItem(path=match_http[0]+match_quality[-1])
+			#+' swfUrl=http://www.laola1.tv/swf/hdplayer_2_0.swf swfVfy=true live=true'
+			return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+
+
 #        match_over=re.compile('<p>Lieber LAOLA(.+?)-User,</p>').findall(link)
 #        if match_over[0] == '1':
 #                addDir('vorbei/zu früh',' ',5,'')
         ##"playkey=47060-Gut1cOWmlyix.&adv=laola1.tv/de/eishockey/ebel&adi=laola1.tv/de/eishockey/ebel&aps=Video1&szo=eishockey&deutschchannel=true&channel=222&teaser=1153&play=47060&fversion=player.v10.2"
-        for playkey1,playkey2 in match_playkey:
-                print 'playkey1 '+playkey1
-                print 'playkey2 '+playkey2                
-                req = urllib2.Request('http://www.laola1.tv/server/ondemand_xml_esi.php?playkey='+playkey1+'-'+playkey2)
-                #print 'http://www.laola1.tv/server/ondemand_xml_esi.php?playkey='+playkey1+'-'+playkey2
-                ##http://www.laola1.tv/server/ondemand_xml_esi.php?playkey=47060-Gut1cOWmlyix.
-                req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-                response = urllib2.urlopen(req)
-                link_playkey=response.read()
-                #print link_playkey
-                response.close()
-                match_video=re.compile('<video.+?>(.+?)</video>', re.DOTALL).findall(link_playkey)
-                for video in match_video:
-#                        print 'video '+video
-                        match_rtmp=re.compile('<high server="(.+?)/(.+?)" pfad="(.+?)@(.+?)" .+? ptitle="(.+?)"').findall(video)#ugly, but behind low is one space too much: '  '
-                        ##<high server="cp77154.edgefcs.net/ondemand" pfad="77154/flash/2011/ebel/20102011/110327_vic_rbs_high" type="V" aifp="v002"
-                        ##token="true" ptitle="Eishockey Erste Bank EHL Erste Bank Eishockey Liga" etitle="Vienna Capitals - EC Red Bull Salzburg"
-                        ##firstair="2010/01/01" stype="VOD" cat="video ondemand" vidcat="laola1.tv/at/eishockey/ebel" round="" season="2010/2011" />
-                        for server,servertype,playpath1,playpath2,title in match_rtmp:
-                        #for streamquality,server,servertype,playpath1,playpath2,title in match_rtmp:
-                                #print 'streamquality '+streamquality
-                                print 'server '+server
-                                print 'servertype '+servertype
-                                print 'playpath '+playpath1+'@'+playpath2
-                                print 'title '+title
-                                req = urllib2.Request('http://streamaccess.laola1.tv/flash/1/'+playkey1+'_high.xml')
-                                #req = urllib2.Request('http://streamaccess.laola1.tv/flash/1/'+playkey1+'_'+streamquality+'.xml')
-                                
-                                #print 'http://streamaccess.laola1.tv/flash/1/'+playkey1+'_'+streamquality+'.xml'
-                                ##http://streamaccess.laola1.tv/flash/1/47327_high.xml?partnerid=1&streamid=47327
-                                ##http://streamaccess.laola1.tv/flash/vod/22/47060_high.xml
-                                ##http://streamaccess.laola1.tv/flash/1/47215_high.xml
-                                req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-                                response = urllib2.urlopen(req)
-                                link_token=response.read()
-                                print link_token
-                                response.close()
-                                match_token=re.compile('auth="(.+?)&amp;p=.+?".+?url="(.+?)/live".+?stream="(.+?)".+?status=".+?".+?statustext=".+?".+?aifp="(.+?)"', re.DOTALL).findall(link_token)
-                                ##auth="db.cibycHcwdEbhaKa4a3bUc7cIbpbLdtal-bnKofS-cOW-eS-CkBwmc-m6ke&p=&e=&u=&t=ondemandvideo&l=&a="
-                                ##url="cp77154.edgefcs.net/ondemand" stream="77154/flash/2011/ebel/20102011/110327_vic_rbs_high" status="0" statustext="success" aifp="v001" comment="success"
-                                for auth,url,stream,aifp in match_token:
-                                        print 'auth '+auth
-                                        print 'url '+url
-                                        print 'stream '+stream
-                                        print 'afip '+aifp
-                                        req = urllib2.Request('http://'+server+'/fcs/ident')
-                                        ##http://cp77154.edgefcs.net/fcs/ident
-                                        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-                                        response = urllib2.urlopen(req)
-                                        link_path=response.read()
-                                        response.close()
-                                        match_path=re.compile('<ip>(.+?)</ip>').findall(link_path)
-                                        ##<ip>213.198.95.204</ip>
-                                        for ip in match_path:
-                                                print 'ip '+ip
-                                        ##http://cp77154.edgefcs.net/fcs/ident
-#                                                if streamquality == 'high':
-                                                item = xbmcgui.ListItem(path='rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp+' swfUrl=http://www.laola1.tv/swf/player.v11.3.swf swfVfy=true live=true')
-						return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
-                                                #print 'name: '+name
-                                                #print 'rtmp-link: rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp
+	else:        
+		print 'laola: use streamtype 2.'
+		for playkey1,playkey2 in match_playkey:
+        	        print 'playkey1 '+playkey1
+        	        print 'playkey2 '+playkey2                
+        	        req = urllib2.Request('http://www.laola1.tv/server/ondemand_xml_esi.php?playkey='+playkey1+'-'+playkey2)
+        	        #print 'http://www.laola1.tv/server/ondemand_xml_esi.php?playkey='+playkey1+'-'+playkey2
+        	        ##http://www.laola1.tv/server/ondemand_xml_esi.php?playkey=47060-Gut1cOWmlyix.
+        	        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#			if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#				req.add_header('X-Forwarded-For', xip)
+        	        response = urllib2.urlopen(req)
+        	        link_playkey=response.read()
+        	        #print link_playkey
+        	        response.close()
+        	        match_video=re.compile('<video.+?>(.+?)</video>', re.DOTALL).findall(link_playkey)
+        	        for video in match_video:
+	#                        print 'video '+video
+        	                match_rtmp=re.compile('<high server="(.+?)/(.+?)" pfad="(.+?)@(.+?)" .+? ptitle="(.+?)"').findall(video)#ugly, but behind low is one space too much: '  '
+        	                ##<high server="cp77154.edgefcs.net/ondemand" pfad="77154/flash/2011/ebel/20102011/110327_vic_rbs_high" type="V" aifp="v002"
+        	                ##token="true" ptitle="Eishockey Erste Bank EHL Erste Bank Eishockey Liga" etitle="Vienna Capitals - EC Red Bull Salzburg"
+        	                ##firstair="2010/01/01" stype="VOD" cat="video ondemand" vidcat="laola1.tv/at/eishockey/ebel" round="" season="2010/2011" />
+        	                for server,servertype,playpath1,playpath2,title in match_rtmp:
+        	                #for streamquality,server,servertype,playpath1,playpath2,title in match_rtmp:
+        	                        #print 'streamquality '+streamquality
+        	                        print 'server '+server
+        	                        print 'servertype '+servertype
+        	                        print 'playpath '+playpath1+'@'+playpath2
+        	                        print 'title '+title
+        	                        req = urllib2.Request('http://streamaccess.laola1.tv/flash/1/'+playkey1+'_high.xml')
+        	                        #req = urllib2.Request('http://streamaccess.laola1.tv/flash/1/'+playkey1+'_'+streamquality+'.xml')
+        	                        
+        	                        #print 'http://streamaccess.laola1.tv/flash/1/'+playkey1+'_'+streamquality+'.xml'
+        	                        ##http://streamaccess.laola1.tv/flash/1/47327_high.xml?partnerid=1&streamid=47327
+        	                        ##http://streamaccess.laola1.tv/flash/vod/22/47060_high.xml
+        	                        ##http://streamaccess.laola1.tv/flash/1/47215_high.xml
+        	                        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#					if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#						req.add_header('X-Forwarded-For', xip)
+        	                        response = urllib2.urlopen(req)
+        	                        link_token=response.read()
+        	                        print link_token
+        	                        response.close()
+        	                        match_token=re.compile('auth="(.+?)&amp;p=.+?".+?url="(.+?)/live".+?stream="(.+?)".+?status=".+?".+?statustext=".+?".+?aifp="(.+?)"', re.DOTALL).findall(link_token)
+        	                        ##auth="db.cibycHcwdEbhaKa4a3bUc7cIbpbLdtal-bnKofS-cOW-eS-CkBwmc-m6ke&p=&e=&u=&t=ondemandvideo&l=&a="
+        	                        ##url="cp77154.edgefcs.net/ondemand" stream="77154/flash/2011/ebel/20102011/110327_vic_rbs_high" status="0" statustext="success" aifp="v001" comment="success"
+        	                        for auth,url,stream,aifp in match_token:
+        	                                print 'auth '+auth
+        	                                print 'url '+url
+        	                                print 'stream '+stream
+        	                                print 'afip '+aifp
+        	                                req = urllib2.Request('http://'+server+'/fcs/ident')
+        	                                ##http://cp77154.edgefcs.net/fcs/ident
+        	                                req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#						if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#							req.add_header('X-Forwarded-For', xip)
+        	                                response = urllib2.urlopen(req)
+        	                                link_path=response.read()
+        	                                response.close()
+        	                                match_path=re.compile('<ip>(.+?)</ip>').findall(link_path)
+        	                                ##<ip>213.198.95.204</ip>
+        	                                for ip in match_path:
+        	                                        print 'ip '+ip
+        	                                ##http://cp77154.edgefcs.net/fcs/ident
+	#    	                                         if streamquality == 'high':
+        	                                        item = xbmcgui.ListItem(path='rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp+' swfUrl=http://www.laola1.tv/swf/player.v12.3.swf swfVfy=true live=true')
+							return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+         	                                       #print 'name: '+name
+         	                                       #print 'rtmp-link: rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp
 
-                                                #addLink('High: '+name,'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'/'+playpath+'?auth='+auth+'&aifp='+aifp,'')
+         	                                       #addLink('High: '+name,'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'/'+playpath+'?auth='+auth+'&aifp='+aifp,'')
 
 
 
-                                                        ##rtmp://213.198.95.204:1935/ondemand?_fcs_vhost=cp77154.edgefcs.net&auth=db.cibycHcwdEbhaKa4a3bUc7cIbpbLdtal-bnKofS-cOW-eS-CkBwmc-m6ke&p=&e=&u=&t=ondemandvideo&l=&a=
-                                                        ##&aifp=v001&slist=77154/flash/2011/ebel/20102011/110327_vic_rbs_high
-                                                        ##rtmp://213.198.95.204:1935/ondemand?_fcs_vhost=cp77154.edgefcs.net&auth=db.cibycHcwdEbhaKa4a3bUc7cIbpbLdtal-bnKofS-cOW-eS-CkBwmc-m6ke&p=&e=&u=&t=ondemandvideo&l=&a=&aifp=v001&slist=77154/flash/2011/ebel/20102011/110327_vic_rbs_high
-                                                #elif streamquality == 'low':
-                                                        #addLink('Low: '+name,'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'/'+playpath+'?auth='+auth+'&aifp='+aifp,'')
+         	                                               ##rtmp://213.198.95.204:1935/ondemand?_fcs_vhost=cp77154.edgefcs.net&auth=db.cibycHcwdEbhaKa4a3bUc7cIbpbLdtal-bnKofS-cOW-eS-CkBwmc-m6ke&p=&e=&u=&t=ondemandvideo&l=&a=
+         	                                               ##&aifp=v001&slist=77154/flash/2011/ebel/20102011/110327_vic_rbs_high
+         	                                               ##rtmp://213.198.95.204:1935/ondemand?_fcs_vhost=cp77154.edgefcs.net&auth=db.cibycHcwdEbhaKa4a3bUc7cIbpbLdtal-bnKofS-cOW-eS-CkBwmc-m6ke&p=&e=&u=&t=ondemandvideo&l=&a=&aifp=v001&slist=77154/flash/2011/ebel/20102011/110327_vic_rbs_high
+         	                                       #elif streamquality == 'low':
+         	                                               #addLink('Low: '+name,'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'/'+playpath+'?auth='+auth+'&aifp='+aifp,'')
+	
 
-
-                                                        ##...yeah
+         	                                               ##...yeah
 def LIVE(url):
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
