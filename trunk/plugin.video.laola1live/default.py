@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 
 import urllib,urllib2,re,xbmcplugin,xbmcgui
 
@@ -237,7 +238,7 @@ def VIDEOLIVELINKS(url,name):
 
 #        match_over=re.compile('<p>Lieber LAOLA(.+?)-User,</p>').findall(link)
 #        if match_over[0] == '1':
-#                addDir('vorbei/zu früh',' ',5,'')
+#                addDir('vorbei/zu frueh',' ',5,'')
         ##"playkey=47060-Gut1cOWmlyix.&adv=laola1.tv/de/eishockey/ebel&adi=laola1.tv/de/eishockey/ebel&aps=Video1&szo=eishockey&deutschchannel=true&channel=222&teaser=1153&play=47060&fversion=player.v10.2"
 	else:        
 		print 'laola: use streamtype 2.'
