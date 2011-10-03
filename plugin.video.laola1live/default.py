@@ -212,10 +212,10 @@ def VIDEOLIVELINKS(url,name):
         link=response.read()
         response.close()
 
-	match_streamtype=re.compile('"src", "(.+?)"').findall(link)
+	match_streamtype=re.compile('"src", "(.+?)_').findall(link)
         match_playkey=re.compile('"playkey=(.+?)-(.+?)&adv.+?"').findall(link)
 
-	if match_streamtype[0] == 'http://www.laola1.tv/swf/hdplayer_2_0':
+	if match_streamtype[0] == 'http://www.laola1.tv/swf/hdplayer':
 		print 'laola: use streamtype 1.'
         	for playkey1,playkey2 in match_playkey:
 			req = urllib2.Request('http://streamaccess.laola1.tv/hdflash/1/hdlaola1_'+playkey1+'.xml?streamid='+playkey1+'&partnerid=1&quality=hdlive&t=.smil')
