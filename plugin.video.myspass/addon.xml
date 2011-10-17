@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.myspass" name="MySpass" version="0.1" provider-name="membrane">
+<addon id="plugin.video.myspass" name="MySpass" version="0.2" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>

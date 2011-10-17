@@ -90,8 +90,9 @@ def VIDEOLINKS(url,name):
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
+	print 'got stream links'
 
-	match_streams=re.compile('<streams server="(.+?)" type=".+?">(.+?)</streams>', re.DOTALL).findall(link)
+	match_streams=re.compile('<streams type=".+?" server="(.+?)">(.+?)</streams>', re.DOTALL).findall(link)
 	for rtmp,streams in match_streams:
 		match_video=re.compile('<stream quality=".+?" ref=".+?" label=".+?" bitrate=".+?" width=".+?" height=".+?" duration=".+?">mp4:(.+?)</stream>').findall(streams)
 
