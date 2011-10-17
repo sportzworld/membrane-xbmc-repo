@@ -37,13 +37,42 @@ def STAFFELN(url):#3 #web und tv #vorerst nur staffel listen, spaeter auch clips
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
-        match=re.compile("onclick=\"ajax\('', 'ajax.php', '(.+?)', '.+?\)\">Staffel (.+?)</a></li>").findall(link)
-        for url,staffel in match:
-                urlpretty = url.replace("&amp;","&")
+
+	match=re.compile('<ul class="episodeListSeasonList">(.+?)</ul>', re.DOTALL).findall(link)
+
+	
+	for stuff in match:
+		print "inhalt gefunden"
+        	match_videos=re.compile("onclick=\"ajax\('', 'ajax.php', '(.+?)', '.+?\)\">(.+?)</a></li>").findall(stuff)
+	        for url,name in match_videos:
+			print "video gefunden"
+                	urlpretty = url.replace("&amp;","&")
+			lastname = name
+			if "clip" in stuff:
+				name = name.replace("Bestbewertet","Bestbewertete Clips")
+				name = name.replace("Meistgesehen","Meistgesehenen Clips")
+				name = name.replace("Staffel","Clips aus Staffel")
+			else:
+				name = name.replace("Bestbewertet","Bestbewertete Folgen")
+				name = name.replace("Meistgesehen","Meistgesehenen Folgen")
+	                addDir(name,'http://www.myspass.de/myspass/includes/php/ajax.php?action='+urlpretty,4,'')
+		
+
+
+"""
+        for url,name in match_seasons:
+
 #                print urlpretty
-                addDir('Staffel '+staffel,'http://www.myspass.de/myspass/includes/php/ajax.php?action='+urlpretty,4,'')
+                addDir(name,'http://www.myspass.de/myspass/includes/php/ajax.php?action='+urlpretty,4,'')
                 #http://www.myspass.de/myspass/includes/php/ajax.php?action=getEpisodeListFromSeason&format=Der+kleine+Mann&season=1&category=full_episode&id=&ajax=true&sortBy=episode_asc
 
+	match_clips_list=re.compile('<ul class="episodeListSeasonList">(.+?)</ul>').findall(link)
+        match_clips=re.compile("onclick=\"ajax\('', 'ajax.php', '(.+?)', '.+?\)\">(.+?)</a></li>").findall(match_clips_list[0])
+        for url,name in match_clips:
+                urlpretty = url.replace("&amp;","&")
+#                print urlpretty
+                addDir(name,'http://www.myspass.de/myspass/includes/php/ajax.php?action='+urlpretty,4,'')
+"""
 
 def VIDEOSELECTION(url):#4 #web und tv #videoauswahl
 #        print 'deb url: '+url
