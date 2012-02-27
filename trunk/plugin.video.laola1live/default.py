@@ -22,7 +22,7 @@ elif xbmcplugin.getSetting(pluginhandle,"location") == '2':
 
 
 def INDEX():
-        addDir('Live',livestream_url,4,'')
+#        addDir('Live',livestream_url,4,'')
         req = urllib2.Request(videos_url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
 #	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
@@ -64,7 +64,10 @@ def VIDEOSELECTION(url):
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
-        match1=re.compile('<div class=".+?" title=".+?"><a href="(.+?)"><img src="(.+?)" border=".+?" /></a></div>.+?<div class="teaser_head_video" title=".+?">(.+?)</div>.+?<div class="teaser_text" title=".+?">(.+?)</div>', re.DOTALL).findall(link)
+
+
+        match1=re.compile('<div class="teaser_bild_video" title=".+?"><a href="(.+?)"><img src="(.+?)" border=".+?" /></a></div>.+?<div class="teaser_head_video" title=".+?">(.+?)</div>.+?<div class="teaser_text" title=".+?"><a href=".+?>(.+?)</a>', re.DOTALL).findall(link)
+
         #<div class="teaser_bild_video" title="Eishockey, Erste Bank Eishockey Liga, EC KAC - EC Red Bull Salzburg - Bild: LAOLA1"><a href="http://www.laola1.tv/de/de/eishockey/erste-bank-ehl/ec-kac-ec-red-bull-salzburg/video/222-1153-48060.html"><img src="http://www.laola1.tv/cache/img/thumb/48060.jpg" border="0"></a></div>
         #<div class="teaser_head_video" title="Eishockey, Erste Bank Eishockey Liga, EC KAC - EC Red Bull Salzburg - Bild: LAOLA1">Di, 05.04.2011</div>
         #<div class="teaser_text" title="Eishockey, Erste Bank Eishockey Liga, EC KAC - EC Red Bull Salzburg">EC KAC - EC Red Bull Salzburg</div>
@@ -82,6 +85,7 @@ def VIDEOSELECTION(url):
 	##				<div class="miniteaser_text">EC KAC - REKORD-Fenster VSV </div>
 
 def VIDEOLINKS(url,name):
+	pageurl = url #this is messy
 	print 'stage 0'
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
@@ -155,8 +159,20 @@ def VIDEOLINKS(url,name):
 						print 'stage 5'
                                                 #print 'ip '+ip
                                         ##http://cp77154.edgefcs.net/fcs/ident
-						stream=stream.replace('.mp4','.flv')
-                                                item = xbmcgui.ListItem(path='rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'&auth='+auth+'&aifp='+aifp+'&slist='+stream+' swfUrl=http://www.laola1.tv/swf/player.v12.3.swf swfVfy=true')
+#						stream=stream.replace('.mp4','.flv')
+
+#####new
+						rtmpbody = 'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'&auth='+auth+'&aifp='+aifp+'&slist='+stream
+						swf = ' swfUrl=http://www.laola1.tv/swf/player.v12.4.swf swfVfy=true'
+						app = ' app='+servertype+'?_fcs_vhost='+server+'&auth='+auth+'&aifp='+aifp+'&slist='+stream
+						page = ' pageUrl='+pageurl
+						playpath = ' playpath=mp4:'+stream
+						flashver = ' flashver=LNX\ 10,3,162,29'
+						rtmppath = rtmpbody+swf+app+page+playpath
+						rtmppath = rtmppath.replace('&amp;','&')
+						rtmppath = rtmppath.replace('&p=','&p=22')
+						rtmppath = rtmppath.replace('&e=','&e='+playkey1)
+                                                item = xbmcgui.ListItem(path=rtmppath)
 						return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
                                                         ##rtmp://213.198.95.204:1935/ondemand?_fcs_vhost=cp77154.edgefcs.net&auth=db.cibycHcwdEbhaKa4a3bUc7cIbpbLdtal-bnKofS-cOW-eS-CkBwmc-m6ke&p=&e=&u=&t=ondemandvideo&l=&a=
                                                         ##&aifp=v001&slist=77154/flash/2011/ebel/20102011/110327_vic_rbs_high
@@ -190,13 +206,12 @@ def LIVESELECTION(url):
                 link=response.read()
                 #print link
                 response.close()
-                match1=re.compile('<div class=".+?" title=".+?"><a href="(.+?)"><img src="(.+?)" border=".+?" /></a></div>.+?<div class="teaser_head_live" title=".+?">(.+?)</div>.+?<div class="teaser_text" title=".+?">(.+?)</div>', re.DOTALL).findall(link)
-                #<div class="teaser_bild_live" title="LIVE: Eishockey, Erste Bank Eishockey Liga, EC RedBull Salzburg vs EC KAC - Bild: Gepa"><a href="http://www.laola1.tv/de/de/eishockey/erste-bank-ehl/ec-redbull-salzburg-vs-ec-kac/video/222-1369-47327.html"><img src="http://www.laola1.tv/cache/img/thumb/47327.jpg" border="0" /></a></div>
-                #<div class="teaser_head_live" title="LIVE: Eishockey, Erste Bank Eishockey Liga, EC RedBull Salzburg vs EC KAC - Bild: Gepa">Do, 07.04.2011, 19:15 CET</div>
-                #<div class="teaser_text" title="LIVE: Eishockey, Erste Bank Eishockey Liga, EC RedBull Salzburg vs EC KAC">EC RedBull Salzburg vs EC KAC</div>
+        	match1=re.compile('<div class="teaser_bild_live" title=".+?"><a href="(.+?)"><img src="(.+?)" border=".+?" /></a></div>.+?<div class="teaser_head_live" title=".+?">(.+?)</div>.+?<div class="teaser_text" title=".+?"><a href=".+?>(.+?)</a>', re.DOTALL).findall(link)
+#                match1=re.compile('<div class=".+?" title=".+?"><a href="(.+?)"><img src="(.+?)" border=".+?" /></a></div>.+?<div class="teaser_head_live" title=".+?">(.+?)</div>.+?<div class="teaser_text" title=".+?">(.+?)</div>', re.DOTALL).findall(link)
+
                 match2=re.compile("<a href=\"(.+)\" class=\"teaser_text\">vor</a>").findall(link)
-                ##<a href="http://www.laola1.tv/de/de/eishockey/erste-bank-ehl/ehc-liwest-bw-linz-ec-red-bull-salzburg/video/222-1153--2.html" class="teaser_text">vor</a>
-                for url,thumbnail,date,name in match1:
+	        for url,thumbnail,date,name in match1:
+#                for url,thumbnail,date,name in match1:
                         addLink(date+' - '+name,url,5,thumbnail)
                 for url in match2:
                         addDir('Next Site',url,4,'')
@@ -216,8 +231,9 @@ def VIDEOLIVELINKS(url,name):
         match_playkey=re.compile('"playkey=(.+?)-(.+?)&adv.+?"').findall(link)
 
 	if match_streamtype[0] == 'http://www.laola1.tv/swf/hdplayer':
-		print 'laola: use streamtype 1.'
+
         	for playkey1,playkey2 in match_playkey:
+			print 'laola: use streamtype 1a'
 			req = urllib2.Request('http://streamaccess.laola1.tv/hdflash/1/hdlaola1_'+playkey1+'.xml?streamid='+playkey1+'&partnerid=1&quality=hdlive&t=.smil')
 		        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
 #			if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
@@ -232,8 +248,30 @@ def VIDEOLIVELINKS(url,name):
 		        match_quality=re.compile('<video src="(.+?)" system-bitrate=".+?"/>').findall(link)
 
                         item = xbmcgui.ListItem(path=match_http[0]+match_quality[-1])
-			#+' swfUrl=http://www.laola1.tv/swf/hdplayer_2_0.swf swfVfy=true live=true'
+
 			return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+
+		print 'laola: use streamtype 1b'
+		match_live_1b=re.compile('isLiveStream=true&videopfad=(.+?)&sendeerkennung').findall(link)
+		req = urllib2.Request(match_live_1b[0])
+		req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#		if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#			req.add_header('X-Forwarded-For', xip)
+		response = urllib2.urlopen(req)
+		link=response.read()
+		response.close()
+		print link
+
+
+		match_rtmp=re.compile('<meta name="rtmpPlaybackBase" content="(.+?)" />').findall(link)
+		match_http=re.compile('<meta name="httpBase" content="(.+?)" />').findall(link)
+		match_quality=re.compile('<video src="(.+?)" system-bitrate=".+?"/>').findall(link)
+
+##http://sportsmanlive-f.akamaihd.net/khl_2_1_450@s7077?primaryToken=1327601291_6d4b5709d7c7b8c364cad2036168a57a&p=1&e=74022&i=&q=&k=&c=DE&a=&u=&t=&l=&v=2.4.5&fp=LNX%2010,3,162,29&r=UEEBM&g=UICJXUGLJHOM
+		http = match_http[0].replace("&i=&q=&k=&c=DE&a=&u=&t=&l=","&i=&q=&k=&c=DE&a=&u=&t=&l=&v=2.4.5&fp=LNX%2010,3,162,29&r=UEEBM&g=UICJXUGLJHOM")
+                item = xbmcgui.ListItem(path=http+match_quality[-1])
+
+		return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 
 
 #        match_over=re.compile('<p>Lieber LAOLA(.+?)-User,</p>').findall(link)
@@ -241,7 +279,7 @@ def VIDEOLIVELINKS(url,name):
 #                addDir('vorbei/zu frueh',' ',5,'')
         ##"playkey=47060-Gut1cOWmlyix.&adv=laola1.tv/de/eishockey/ebel&adi=laola1.tv/de/eishockey/ebel&aps=Video1&szo=eishockey&deutschchannel=true&channel=222&teaser=1153&play=47060&fversion=player.v10.2"
 	else:        
-		print 'laola: use streamtype 2.'
+		print 'laola: use streamtype 2'
 		for playkey1,playkey2 in match_playkey:
         	        print 'playkey1 '+playkey1
         	        print 'playkey2 '+playkey2                
@@ -305,7 +343,7 @@ def VIDEOLIVELINKS(url,name):
         	                                        print 'ip '+ip
         	                                ##http://cp77154.edgefcs.net/fcs/ident
 	#    	                                         if streamquality == 'high':
-        	                                        item = xbmcgui.ListItem(path='rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp+' swfUrl=http://www.laola1.tv/swf/player.v12.3.swf swfVfy=true live=true')
+        	                                        item = xbmcgui.ListItem(path='rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp+' swfUrl=http://www.laola1.tv/swf/player.v12.4.swf swfVfy=true live=true')
 							return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
          	                                       #print 'name: '+name
          	                                       #print 'rtmp-link: rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp
