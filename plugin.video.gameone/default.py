@@ -1,3 +1,4 @@
+# -*- coding: iso-8859-1 -*-
 import urllib,urllib2,re,xbmcplugin,xbmcgui
 
 pluginhandle = int(sys.argv[1])
@@ -43,14 +44,9 @@ def VIDEOLINKS_TV(url):#2
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
-	match_mp4=''
-	match_rtmp=''
-        match_mp4=re.compile('src="(.+?).mp4"').findall(link)
-	for videos in match_mp4:
-		video=videos+'.mp4'
-	match_rtmp=re.compile('src="(.+?).m3u8"').findall(link)
-	for videos in match_rtmp:
-		req = urllib2.Request(videos)
+	match_id=re.compile('riptide_video_id: "(.+?)"').findall(link)
+	for video_id in match_id:
+		req = urllib2.Request("http://riptide.mtvnn.com/mediagen/"+video_id)
         	req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         	response = urllib2.urlopen(req)
         	link=response.read()
