@@ -43,22 +43,23 @@ def INDEX():
 
                 
 def TOPICSELECTION_A(url):
-	addDir('News','http://freecaster.tv/autosports?tab=news&ajax=1&filter='+sort+'&ajax=1',2,'')
-	addDir('Pro Videos','http://freecaster.tv/autosports?tab=pro&ajax=1&filter='+sort+'&ajax=1',2,'')
-	addDir('Member Videos','http://freecaster.tv/autosports?tab=member&ajax=1&filter='+sort+'&ajax=1',2,'')
+	addDir('News','http://extreme.com'+url+'?tab=news&ajax=1&filter='+sort+'&ajax=1',2,'')
+	addDir('Pro Videos','http://extreme.com'+url+'?tab=pro&ajax=1&filter='+sort+'&ajax=1',2,'')
+	addDir('Member Videos','http://extreme.com'+url+'?tab=member&ajax=1&filter='+sort+'&ajax=1',2,'')
 	#http://freecaster.tv/autosports?filter=latest&ajax=1&ajax=1
-        req = urllib2.Request('http://freecaster.tv'+url+'?filter='+sort+'&ajax=1&ajax=1')
+        req = urllib2.Request('http://extreme.com'+url+'?filter='+sort+'&ajax=1&ajax=1')
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
-        match=re.compile('<li class="node_item video"><a href="(.+?)" class=".+?"><img class=".+?" src="(.+?)" .+? title="(.+?)" />').findall(link) 
+        match=re.compile('<li class="node_item video "><a href="(.+?)" class=".+?"><img class=".+?" src="(.+?)" .+? title="(.+?)" />').findall(link) 
 	match_next=re.compile('<a href="(.+?)">next&nbsp;&raquo;</a>').findall(link) 
 
         for url,thumb,name in match:
-                addLink(name,'http://freecaster.tv'+url,3,thumb)
+                addLink(name,'http://extreme.com'+url,3,thumb)
 	for next in match_next:
-		addDir('Next','http://freecaster.tv'+next,2,'')
+		addDir('Next','http://extreme.com'+next,2,'')
+
 
 def TOPICSELECTION_B(url):
 	#http://freecaster.tv/autosports?filter=latest&ajax=1&ajax=1
@@ -71,9 +72,9 @@ def TOPICSELECTION_B(url):
 	match_next=re.compile('<a href="(.+?)">next&nbsp;&raquo;</a>').findall(link) 
 
         for url,thumb,name in match:
-                addLink(name,'http://freecaster.tv'+url,3,thumb)
+                addLink(name,'http://extreme.com'+url,3,thumb)
 	for next in match_next:
-		addDir('Next','http://freecaster.tv'+next,2,'')
+		addDir('Next','http://extreme.com'+next,2,'')
 
 
 def VIDEOLINKS(url,name):
@@ -83,33 +84,66 @@ def VIDEOLINKS(url,name):
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
-        match_id=re.compile('<param name="flashvars" value="id=(.+?)&').findall(link)
+#        match_id=re.compile('<param name="flashvars" value="id=(.+?)&').findall(link)
+        match_id=re.compile('<meta property="og:video" content="http://player.extreme.com/FCPlayer.swf\?id=(.+?)&').findall(link)
 
-        req = urllib2.Request('http://player.freecaster.com/info/'+match_id[0]+'?source=freecaster&source%5Furl='+url)
+        req = urllib2.Request('http://player.extreme.com/info/'+match_id[0]+'?source=freecaster&source%5Furl='+url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
 	print 'got stream links'
 
-	match_streams=re.compile('<streams type=".+?" server="(.+?)">(.+?)</streams>', re.DOTALL).findall(link)
-	for rtmp,streams in match_streams:
-		match_video=re.compile('<stream quality=".+?" ref=".+?" label=".+?" bitrate=".+?" width=".+?" height=".+?" duration=".+?">mp4:(.+?)</stream>').findall(streams)
+	match_streams=re.compile('<streams type="(.+?)"(.+?)</streams>', re.DOTALL).findall(link)
+	for streamtype,streams in match_streams:
+		print "streamtype[0]: "+streamtype[0]
+		print match_streams[0]
+		if "youtu" in streams:
+			match_videoid=re.compile('http://youtu.be/(.+?)</stream>').findall(streams)
+			print "youtube video:"+match_videoid[0]
+			play_youtube_video(match_videoid[0], name)
+			"""
+			#plugin://plugin.video.youtube?path=/root&action=play_video&videoid=
+			url = 'plugin://plugin.video.youtube/?action=play_video&videoid=%s' % (match_videoid[0])
+#			item = xbmcgui.ListItem(path=url)
 
-		if xbmcplugin.getSetting(pluginhandle,"quality") == '3':
-			video = match_video[-1]
+			listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ), path=url )
+			infolabels = { "title": name, "plot": name}
 
-		elif xbmcplugin.getSetting(pluginhandle,"quality") == '2':
-			video = match_video[2]
+			listitem.setInfo( type="Video", infoLabels=infolabels)
+			xbmc.Player( xbmc.PLAYER_CORE_DVDPLAYER ).play( str(url), listitem)
+			"""
+#			return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+#			item = xbmcgui.ListItem(path=rtmp+video+' swfurl=http://player.freecaster.com/FCPlayer.swf?id='+match_id[0]+' swfvfy=true')
+#			return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+		else:
+			match_video=re.compile('<stream quality=".+?" ref=".+?" label=".+?" bitrate=".+?" width=".+?" height=".+?" duration=".+?">(.+?)</stream>').findall(streams)
+			match_rtmp=re.compile('server="(.+?)"').findall(streams)
+	
+			if xbmcplugin.getSetting(pluginhandle,"quality") == '3':
+				video = match_video[-1]
+	
+			elif xbmcplugin.getSetting(pluginhandle,"quality") == '2':
+				video = match_video[2]
+	
+			elif xbmcplugin.getSetting(pluginhandle,"quality") == '1':
+				video = match_video[1]
+	
+			elif xbmcplugin.getSetting(pluginhandle,"quality") == '0':
+				video = match_video[0]
+			url=match_rtmp[0]+video
+			item = xbmcgui.ListItem(path=url)
+#			item = xbmcgui.ListItem(path=match_rtmp[0]+video+' swfurl=http://player.freecaster.com/FCPlayer.swf?id='+match_id[0]+' swfvfy=true')
+			return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 
-		elif xbmcplugin.getSetting(pluginhandle,"quality") == '1':
-			video = match_video[1]
 
-		elif xbmcplugin.getSetting(pluginhandle,"quality") == '0':
-			video = match_video[0]
-		
-		item = xbmcgui.ListItem(path=rtmp+video+' swfurl=http://player.freecaster.com/FCPlayer.swf?id='+match_id[0]+' swfvfy=true')
-		return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+def play_youtube_video(video_id, name):
+        print ("Playing video " + name + " id: " + video_id)
+        url = 'plugin://plugin.video.youtube/?action=play_video&videoid=%s' % (video_id)
+        listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ), path=url )
+        infolabels = { "title": name, "plot": name}
+        listitem.setInfo( type="Video", infoLabels=infolabels)
+        xbmc.Player( xbmc.PLAYER_CORE_DVDPLAYER ).play( str(url), listitem)
 
 
 def get_params():
