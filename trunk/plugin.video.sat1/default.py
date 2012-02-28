@@ -83,21 +83,26 @@ def VIDEOLINKS(url):#1
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
+
+	
 	match_videos=re.compile('<div class="video_teaser trackable_teaser">(.+?)</div>', re.DOTALL).findall(link)
 	match_next=re.compile('<a class="next" href="(.+?)">', re.DOTALL).findall(link)
 
 	for video in match_videos:
-		match_video=re.compile('<a href="(.+?)".+?src="(.+?)".+?title="(.+?)"', re.DOTALL).findall(video)
+		match_video=re.compile('<a href="(.+?)".+?src="(.+?)".+?<strong>(.+?)</strong>', re.DOTALL).findall(video)
 		for url,thumb,name in match_video:
 			if hd_logo == '1':
 				thumb = thumb.replace('154x87.jpg','410x250.jpg')
                 	addLink(name,baseurl+url,2,thumb)
-
+	"""
 	x = "0"
-	for url in match_next:
+	for next in match_next:
 		if x == "0":
+			url = next
+		if x == "1":
 			addDir('Nächste Seite',baseurl+url,1,'')
 		x = x + "1"
+	"""
 
 		
 
