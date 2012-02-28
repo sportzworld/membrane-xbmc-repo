@@ -32,7 +32,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="0.11" provider-name="membrane">
+<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="0.12" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -48,7 +48,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.freecaster" name="Freecaster.tv" version="0.3" provider-name="membrane">
+<addon id="plugin.video.freecaster" name="Freecaster.tv" version="0.4" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -128,6 +128,22 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.sat1" name="Sat1" version="0.1" provider-name="membrane">
+    <requires>
+        <import addon="xbmc.python" version="1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">Sat1</summary>
+        <summary lang="en">Sat1</summary>
+        <description lang="de">Sat1</description>
+        <description lang="en">Sat1</description>
+    </extension>
+</addon>
+
 <addon id="plugin.video.nuna" name="Nuna.tv" version="0.2" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
@@ -174,7 +190,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.gameone" name="Gameone" version="0.6" provider-name="membrane">
+<addon id="plugin.video.gameone" name="Gameone" version="0.7" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
