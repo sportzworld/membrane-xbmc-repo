@@ -4,6 +4,13 @@ import urllib,urllib2,re,xbmcplugin,xbmcgui
 
 pluginhandle = int(sys.argv[1])
 
+if xbmcplugin.getSetting(pluginhandle,"quality") == '0':
+	quality = '0'
+elif xbmcplugin.getSetting(pluginhandle,"quality") == '1':
+	quality = '1'
+elif xbmcplugin.getSetting(pluginhandle,"quality") == '2':
+	quality = '2'
+
 if xbmcplugin.getSetting(pluginhandle,"location") == '0':
 	livestream_url = 'http://www.laola1.tv/de/at/home/'
 	videos_url = 'http://www.laola1.tv/de/at/home/'
@@ -22,7 +29,7 @@ elif xbmcplugin.getSetting(pluginhandle,"location") == '2':
 
 
 def INDEX():
-#        addDir('Live',livestream_url,4,'')
+        addDir('Live',livestream_url,4,'')
         req = urllib2.Request(videos_url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
 #	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
@@ -269,7 +276,15 @@ def VIDEOLIVELINKS(url,name):
 
 ##http://sportsmanlive-f.akamaihd.net/khl_2_1_450@s7077?primaryToken=1327601291_6d4b5709d7c7b8c364cad2036168a57a&p=1&e=74022&i=&q=&k=&c=DE&a=&u=&t=&l=&v=2.4.5&fp=LNX%2010,3,162,29&r=UEEBM&g=UICJXUGLJHOM
 		http = match_http[0].replace("&i=&q=&k=&c=DE&a=&u=&t=&l=","&i=&q=&k=&c=DE&a=&u=&t=&l=&v=2.4.5&fp=LNX%2010,3,162,29&r=UEEBM&g=UICJXUGLJHOM")
-                item = xbmcgui.ListItem(path=http+match_quality[-1])
+
+                if quality == '0':
+			video = match_quality[0]
+                if quality == '1':
+			video = match_quality[1]
+                if quality == '2':
+			video = match_quality[-1]
+
+		item = xbmcgui.ListItem(path=http+video)
 
 		return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 

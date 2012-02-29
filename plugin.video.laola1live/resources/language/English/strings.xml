@@ -4,4 +4,8 @@
 	<string id="30005">Austria</string>
 	<string id="30006">Germany</string>
 	<string id="30007">International</string>
+	<string id="30008">Livestream Quality</string>
+	<string id="30009">Low</string>
+	<string id="30010">Med</string>
+	<string id="30011">High</string>
 </strings>
