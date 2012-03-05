@@ -176,6 +176,22 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.kika3" name="Kika 3+" version="0.1" provider-name="membrane">
+    <requires>
+        <import addon="xbmc.python" version="1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">Kika 3+</summary>
+        <summary lang="en">Kika 3+</summary>
+        <description lang="de">Kika 3+</description>
+        <description lang="en">Kika 3+</description>
+    </extension>
+</addon>
+
 <addon id="plugin.video.msn.uk" name="MSN Video UK" version="1.0.3" provider-name="ADQ and membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
