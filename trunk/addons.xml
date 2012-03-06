@@ -128,7 +128,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.nhlvideocenter" name="NHL Videocenter" version="0.1" provider-name="membrane">
+<addon id="plugin.video.nhlvideocenter" name="NHL Videocenter" version="0.2" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
