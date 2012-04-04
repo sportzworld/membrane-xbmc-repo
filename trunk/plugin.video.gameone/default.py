@@ -5,7 +5,8 @@ pluginhandle = int(sys.argv[1])
 #gameone
 
 def CATEGORIES():
-        addDir('Ganze Folgen','http://gameone.de/tv',1,'http://assets.gameone.de/images/element_bg/logo-game-one.png')
+		INDEX_TV('http://gameone.de/tv')
+        #addDir('Ganze Folgen','http://gameone.de/tv',1,'http://assets.gameone.de/images/element_bg/logo-game-one.png')
 #        addDir('Blog (nur teilweise mit Videos)','http://gameone.de/blog',5,'http://assets.gameone.de/images/element_bg/logo-game-one.png')
 #        addDir('Blog: Games','http://gameone.de/blog/categories/games',5,'http://gameone.de/images/dummys/games.jpg')
 #        addDir('Blog: Unplugged','http://gameone.de/blog/categories/unplugged',5,'http://gameone.de/images/dummys/unplugged.jpg')
