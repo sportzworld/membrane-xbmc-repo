@@ -1,15 +1,31 @@
 import urllib,urllib2,re,xbmcplugin,xbmcgui
+from operator import itemgetter
 
 pluginhandle = int(sys.argv[1])
-
+baselink = 'http://www.myspass.de'
 
 def CATEGORIES():
         #addDir('Neuste Folgen','http://www.myspass.de/myspass/includes/php/ajax.php?action=getVideoList&sortBy=newest&category=full_episodes&ajax=true&timeSpan=all',1,'')
         #addDir('Meistgesehen','http://www.myspass.de/myspass/includes/php/ajax.php?action=getVideoList&sortBy=views&category=all&ajax=true&tpl=home',1,'')#alle
         #addDir('Bestbewerted','http://www.myspass.de/myspass/includes/php/ajax.php?action=getVideoList&sortBy=votes&category=all&ajax=true&tpl=home',1,'')#alle
-        addDir('TV Shows','http://www.myspass.de/myspass/includes/php/ajax.php?action=getFormatList&showType=tvshow&sortBy=format&ajax=true',2,'')
-        addDir('Webshows','http://www.myspass.de/myspass/includes/php/ajax.php?action=getFormatList&showType=webshow&sortBy=format&ajax=true',2,'')
-                       
+        #addDir('TV Shows','http://www.myspass.de/myspass/includes/php/ajax.php?action=getFormatList&showType=tvshow&sortBy=format&ajax=true',2,'')
+        #addDir('Webshows','http://www.myspass.de/myspass/includes/php/ajax.php?action=getFormatList&showType=webshow&sortBy=format&ajax=true',2,'')
+        #addDir('Ganze Folgen','http://www.myspass.de/myspass/ganze-folgen/',2,'')
+		
+		
+		
+		req = urllib2.Request('http://www.myspass.de/myspass/ganze-folgen/')
+		req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+		response = urllib2.urlopen(req)
+		link=response.read()
+		response.close()
+		match=re.compile('<div class="threeTWTInnerHeadline">(.+?)</div>.+?<a href="(.+?)".+?<img src="(.+?)"', re.DOTALL).findall(link)
+		match_sorted=sorted(match, key=itemgetter(0))
+		for name,url,thumb in match_sorted:
+			if name != '&nbsp;':
+				addDir(name,baselink+url,3,baselink+thumb)
+				
+				
 def INDEX(url):#1 #neuste videos, meisgesehen, usw
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
@@ -21,14 +37,16 @@ def INDEX(url):#1 #neuste videos, meisgesehen, usw
                 addDir(name,'http://www.myspass.de/myspass'+url,5,thumb)
 
 def SERIEN(url):#2 #web und tv
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urllib2.urlopen(req)
-        link=response.read()
-        response.close()
-        match=re.compile('<tr onclick=\'location.href="(.+?)"\'>.+?<td class="title">(.+?)</td>', re.DOTALL).findall(link)
-        for url,name in match:
-                addDir(name,'http://www.myspass.de'+url,3,'')
+		req = urllib2.Request(url)
+		req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+		response = urllib2.urlopen(req)
+		link=response.read()
+		response.close()
+		match=re.compile('<div class="threeTWTInnerHeadline">(.+?)</div>.+?<a href="(.+?)".+?<img src="(.+?)"', re.DOTALL).findall(link)
+		match_sorted=sorted(match, key=itemgetter(0))
+		for name,url,thumb in match_sorted:
+			if name != '&nbsp;':
+				addDir(name,baselink+url,3,baselink+thumb)
 
 
 def STAFFELN(url):#3 #web und tv #vorerst nur staffel listen, spaeter auch clips

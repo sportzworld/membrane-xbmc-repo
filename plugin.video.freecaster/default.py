@@ -99,9 +99,16 @@ def VIDEOLINKS(url,name):
 		print "streamtype[0]: "+streamtype[0]
 		print match_streams[0]
 		if "youtu" in streams:
-			match_videoid=re.compile('http://youtu.be/(.+?)</stream>').findall(streams)
-			print "youtube video:"+match_videoid[0]
-			play_youtube_video(match_videoid[0], name)
+			try:
+				match_videoid=re.compile('http://youtu.be/(.+?)</stream>').findall(streams)
+				videoid = match_videoid[0]
+			except:
+				match_videoid=re.compile('http://www.youtube.com/watch\?v=(.+?)</stream>').findall(streams)
+				videoid = match_videoid[0]
+
+			
+			print "youtube video:"+videoid
+			play_youtube_video(videoid, name)
 			"""
 			#plugin://plugin.video.youtube?path=/root&action=play_video&videoid=
 			url = 'plugin://plugin.video.youtube/?action=play_video&videoid=%s' % (match_videoid[0])

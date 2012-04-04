@@ -1,75 +1,156 @@
 import urllib,urllib2,re,random,xbmcplugin,xbmcgui
 
+pluginhandle = int(sys.argv[1])
 
 
-nums = '0123456789'
-strNumber = ''
-count = 0
-while (count < 11):
-	strNumber += nums[random.randrange(len(nums))]
-	count += 1
+baseurl = 'http://deluxemusic.tv'
 
-
+mainreq = urllib2.Request(baseurl+'/programm/')
+mainreq.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+mainresponse = urllib2.urlopen(mainreq)
+mainlink=mainresponse.read()
+mainresponse.close()
 
 def CATEGORIES():
-        req = urllib2.Request('http://deluxemusic.tv/')
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urllib2.urlopen(req)
-        sender_link=response.read()
-        response.close()
-        match=re.compile('horizontal tv_scroll_item.+?onclick="changeStationTV\(0,\'(.+?)\'.+?>DELUXE<br>(.+?)</a>.+?<img src="(.+?)"', re.DOTALL).findall(sender_link)
-        #onclick="changeStationTV(0,'761036802',0,'101', '<a href=\'/video/item/54-deluxe-lounge\'>DELUXE<br>LOUNGE</a>'
-        #<img src="/images/deluxe/DELUXE_TELEVISION_LOUNGE_free_stream.png" alt="DELUXE_TELEVISION_LOUNGE_free_stream" width="45" height="48" />
-        for url,art,thumbnail in match:
-                if art == 'LOUNGE':
-                        addDir('Lounge',url,1,thumbnail)
-#                        print 'loungeurl: '+url
-                elif art == 'TRAILER':
-                        addDir('Trailer',url,1,thumbnail)
-#                        print 'trailerurl: '+url
-                elif art == 'NEWS':
-                        addDir('News',url,1,thumbnail)
-                elif art == 'STORIES':
-                        addDir('Stories',url,1,thumbnail)
+	addLink('Live',baseurl,1,'')
+	addDir('Channels',baseurl,2,'')
+	addDir('Shows',baseurl,4,'')
 
-               
-def INDEX(url):
-        req = urllib2.Request('http://deluxemusic.tv/modules/mod_dlx_player/embeddedobjects.js')
-        #http://deluxemusic.tv/modules/mod_dlx_player/embeddedobjects.js
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urllib2.urlopen(req)
-        link_appid=response.read()
-        response.close()
-        match_appid=re.compile('application=(.+?)&').findall(link_appid)
-        for appid in match_appid:
-#                print 'appid: '+appid
-                req = urllib2.Request('http://www.contentforce.de/iptv/player/macros/_x_s-'+appid+'/_s_defaultPlayer_update/_v_f_0_de/xflv/configv2.xml?r=r&r=rjQueryforcedWidth&rd=13'+strNumber)###############random number!!!!!
-                #http://www.contentforce.de/iptv/player/macros/_x_s-760217600/_s_defaultPlayer_update/_v_f_0_de/xflv/configv2.xml?r=r&r=rjQueryforcedWidth&rd=1302884352296
-                req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-                response = urllib2.urlopen(req)
-                link_xasx=response.read()
-                response.close()
-                match_xasx=re.compile('<link type="xasx">(.+?)</link>').findall(link_xasx)
-                #<link type="xasx">http://www.contentforce.de/player/macros/_v_f_0_de/_s_defaultPlayer_update/_x_s-760217600/xflv/xasxv2.xml</link>
-                for xasx in match_xasx:
-#                        print 'xasx: '+xasx
-                        req = urllib2.Request(xasx+'?r=r&rd=13'+strNumber+'&pl='+url)##################random!!
-                        #http://www.contentforce.de/player/macros/_v_f_750_de/_s_defaultPlayer_update/_x_s-760217600/xflv/xasxv2.xml?r=r&rd=1302882687218&pl=761036802
-                        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-                        response = urllib2.urlopen(req)
-                        link_videos=response.read()
-                        response.close()
-                        match_videos=re.compile('<entry(.+?)</entry>', re.DOTALL).findall(link_videos)
-                        for videos in match_videos:
-#                                print 'videos: '+videos
-                                match_video=re.compile('CDATA\[(.+?)\]\]>(.+?)<screenshot width=".+?" height=".+?" href="(.+?)"/>', re.DOTALL).findall(videos)
-                                #<video width="768" height="432" href="http://static.cdn.streamfarm.net/13000deluxe/ondemand/app760217600/376045570/742141/742141_on2vp6_768_432_1500kb_de_1500.flv" bandwidth="1500"/>
-                                #<screenshot width="80" height="45" href="http://static.cdn.streamfarm.net/13000deluxe/ondemand/app760217600/376045570/742141/742141_screenshot_80_45_5p.jpeg"/>
-                                for name,urls,thumbnail in match_video:
-                                        match_vid=re.compile('<video width=".+?" height=".+?" href="(.+?)" bandwidth=".+?"/>').findall(urls)
-                                        addLink(name,match_vid[-1],thumbnail)
+						
+def PLAY_LIVE(url,name):#1	
+	match=re.compile('<script type="text/javascript" src="/modules/mod_dlx_player/embeddedobjects.js\?(.+?)"></script>', re.DOTALL).findall(mainlink)
+	
+	req = urllib2.Request('http://deluxemusic.tv/modules/mod_dlx_player/embeddedobjects.js?'+match[0])
+	req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+	response = urllib2.urlopen(req)
+	link=response.read()
+	response.close()
+	
+	match=re.compile('if\(Itemid == 1\) startcontent = (.+?);', re.DOTALL).findall(link)
+	
+	req = urllib2.Request('http://deluxemusic.tv.staging.ipercast.net/?ContentId='+match[0])
+	req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+	response = urllib2.urlopen(req)
+	link=response.read()
+	response.close()
+	
+	match=re.compile('file: "(.+?)"', re.DOTALL).findall(link)
+	
+	req = urllib2.Request(match[0])
+	req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+	response = urllib2.urlopen(req)
+	link=response.read()
+	response.close()
+	
+	match_location=re.compile('<location>(.+?)</location>', re.DOTALL).findall(link)
+	match_rtmp=re.compile('<meta rel="streamer">(.+?)</meta>', re.DOTALL).findall(link)
+	
+	location = match_location[0]
+	rtmp = match_rtmp[0]
+	
+	item = xbmcgui.ListItem(path=rtmp+location)
+	return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+	
+def CHANNELS(url):#2
+	match=re.compile('<li class="horizontal tv_scroll_item ">.+?href = "(.+?)">.+?img src="(.+?)".+?<span>(.+?)</span>', re.DOTALL).findall(mainlink)
+	for url,thumb,name in match:
+		if name != 'DELUXE MUSIK':
+			name = name.replace('<br>','')
+			addLink(name,baseurl+url,3,baseurl+thumb)
+		
+		
+def PLAY_CHANNEL(url,name):#3
+	playlistplayer(url)
+	
+
+
+def SHOWS(url):#4
+	match_shows=re.compile('<ul id="show_scroll" class="horizontal shows">(.+?)</ul>', re.DOTALL).findall(mainlink)
+	for shows in match_shows:
+		match_show=re.compile('<div class="show_item smalltext"><a(.+?)</a>', re.DOTALL).findall(shows)
+		for show in match_show:
+
+			try:
+				match_url=re.compile('href="(.+?)">').findall(show)
+				url = match_url[0]	
+			except:
+				url = 'error'
+				
+			if url != 'error':
+				try:
+					match_thumb=re.compile('<img.+?src="(.+?)"').findall(show)
+					match_name=re.compile('<img.+?alt="(.+?)"').findall(show)
+					thumb = match_thumb[0]	
+					name = match_name[0]	
+				except:
+					name = 'Scraping Fehler, bitte melden ;)'
+					thumb = 'Scraping Fehler, bitte melden ;)'
+					
+				try:
+					match_text=re.compile('<p>(.+?)</p>').findall(show)
+					text = match_text[0]	
+				except:
+					text = 'Scraping Fehler, bitte melden ;)'
+
+			
+			addLink(name,baseurl+'/'+url,5,baseurl+'/'+thumb)
+		
+def PLAY_SHOW(url,name):#5
+	playlistplayer(url)
 
                 
+				
+				
+				
+def playlistplayer(url):
+	req = urllib2.Request(url)
+	req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+	response = urllib2.urlopen(req)
+	link=response.read()
+	response.close()
+
+	match=re.compile("changeStationTV\(0,'(.+?)'", re.DOTALL).findall(link)
+	
+	id = match[0]
+
+	req = urllib2.Request('http://deluxemusic.tv.staging.ipercast.net/live_playlist/getLivePlaylistXml/live_playlist_id/'+id)
+	req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+	response = urllib2.urlopen(req)
+	link=response.read()
+	response.close()
+	
+	match_track=re.compile('<track>(.+?)</track>', re.DOTALL).findall(link)
+	
+	for track in match_track:
+		try:
+			match_title=re.compile('<title>(.+?)</title>').findall(track)
+			title = match_title[0]	
+		except:
+			title = 'Scraping Fehler, bitte melden ;)'
+			
+		try:
+			match_location=re.compile('<location>(.+?)</location>').findall(track)
+			location = match_location[0]	
+		except:
+			location = 'Scraping Fehler, bitte melden ;)'
+			
+		try:
+			match_streamer=re.compile('<meta rel="streamer">(.+?)</meta>').findall(track)
+			streamer = match_streamer[0]	
+		except:
+			streamer = 'Scraping Fehler, bitte melden ;)'
+			
+		try:
+			match_thumb=re.compile('<image>(.+?)</image>').findall(track)
+			thumb = match_thumb[0]	
+		except:
+			thumb = 'Scraping Fehler, bitte melden ;)'
+			
+		url = streamer+'/'+location
+		url = url.replace(' ','%20')
+		listitem = xbmcgui.ListItem(title,thumbnailImage=thumb)
+		xbmc.PlayList(1).add(url, listitem)
+				
 def get_params():
         param=[]
         paramstring=sys.argv[2]
@@ -89,15 +170,21 @@ def get_params():
         return param
 
 
-
-
-def addLink(name,url,iconimage):
+def addLinkOld(name,url,iconimage):
         ok=True
         liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
         liz.setInfo( type="Video", infoLabels={ "Title": name } )
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=liz)
         return ok
 
+def addLink(name,url,mode,iconimage):
+	u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
+	ok=True
+	liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
+	liz.setInfo( type="Video", infoLabels={ "Title": name } )
+	liz.setProperty('IsPlayable', 'true')
+	ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz)
+	return ok
 
 def addDir(name,url,mode,iconimage):
         u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
@@ -136,12 +223,22 @@ if mode==None or url==None or len(url)<1:
        
 elif mode==1:
         print ""+url
-        INDEX(url)
-        
+        PLAY_LIVE(url,name)
+
 elif mode==2:
         print ""+url
-        VIDEOLINKS(url,name)
-
-
+        CHANNELS(url)
+		
+elif mode==3:
+        print ""+url
+        PLAY_CHANNEL(url,name)
+		
+elif mode==4:
+        print ""+url
+        SHOWS(url)
+		
+elif mode==5:
+        print ""+url
+        PLAY_SHOW(url,name)
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))

@@ -12,7 +12,7 @@ elif xbmcplugin.getSetting(pluginhandle,"hd_logo") == '1':
 
 
 def CATEGORIES():
-	print "###########################################################################hdlogo"+hd_logo
+	#print "###########################################################################hdlogo"+hd_logo
         req = urllib2.Request(baseurl+'/tv')
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urllib2.urlopen(req)
@@ -39,6 +39,7 @@ def CATEGORIES():
 				name = name.replace('citylight_Britt_Neu','Britt')
 				name = name.replace('danni-lowinski-citylight','Danni Lowinski')
 				name = name.replace('Das groﬂe Allgemeinwissensquiz - dasgrosseallgemeinwissensquiz_citylight','Das groﬂe Allgemeinwissensquiz')
+				name = name.replace(' - dasgrosseallgemeinwissensquiz_citylight','')
 				name = name.replace('sat1-magazin','Das Sat1 Magazin')
 				name = name.replace('der-letzte-bulle','Der letzte Bulle')
 				name = name.replace('die-dreisten-drei-citylight','Die dreisten Drei')
@@ -93,7 +94,7 @@ def VIDEOLINKS(url,name):#1
                	#	addLink(name,baseurl+url,2,thumb)
 	else:
 
-		match_videos=re.compile('<div class="video_teaser trackable_teaser">(.+?)</div>', re.DOTALL).findall(link)
+		match_videos=re.compile('<div class="video_teaser class-clip">(.+?)</div>', re.DOTALL).findall(link)
 
 		match_next=re.compile('<a class="next" href="(.+?)">', re.DOTALL).findall(link)
 
