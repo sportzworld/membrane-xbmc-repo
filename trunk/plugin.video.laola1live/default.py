@@ -173,7 +173,12 @@ def VIDEOLINKS(url,name):
 						swf = ' swfUrl=http://www.laola1.tv/swf/player.v12.4.swf swfVfy=true'
 						app = ' app='+servertype+'?_fcs_vhost='+server+'&auth='+auth+'&aifp='+aifp+'&slist='+stream
 						page = ' pageUrl='+pageurl
-						playpath = ' playpath=mp4:'+stream
+
+						if '.mp4' in stream:
+							playpath = ' playpath=mp4:'+stream
+						else:
+							playpath = ' playpath='+stream #fix for beachvolleyball
+
 						flashver = ' flashver=LNX\ 10,3,162,29'
 						rtmppath = rtmpbody+swf+app+page+playpath
 						rtmppath = rtmppath.replace('&amp;','&')
