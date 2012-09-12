@@ -206,7 +206,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.gameone" name="Gameone" version="0.8" provider-name="membrane">
+<addon id="plugin.video.gameone" name="Gameone" version="0.9" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
