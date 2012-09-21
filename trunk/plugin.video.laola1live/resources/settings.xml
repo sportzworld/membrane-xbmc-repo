@@ -1,4 +1,6 @@
 <settings>
-   <setting id="location" type="enum" lvalues="30005|30006|30007" label="30004" default="2"/>
-   <setting id="quality" type="enum" lvalues="30009|30010|30011" label="30008" default="2"/>
+   <setting id="location" type="enum" lvalues="30205|30206|30207" label="30204" default="2"/>
+   <setting id="streamquality" type="enum" lvalues="30213|30214" label="30212" default="1"/>
+   <setting id="livequality" type="enum" lvalues="30209|30210|30211" label="30208" default="2"/>
+   <setting id="debug" type="enum" lvalues="30216|30217" label="30215" default="0"/>
 </settings>
