@@ -10,13 +10,13 @@ def CATEGORIES():
         addDir('Sci-Fi','http://videokatalog.msn.de/movies/teaser/katalog/3/6/7',1,'')
         addDir('Thriller','http://videokatalog.msn.de/movies/teaser/katalog/3/6/8',1,'')
         addDir('Western','http://videokatalog.msn.de/movies/teaser/katalog/3/6/9',1,'')
-        addDir('Kids','http://videokatalog.msn.de/movies/teaser/katalog/3/6/10',1,'')
+        #addDir('Kids','http://videokatalog.msn.de/movies/teaser/katalog/3/6/10',1,'')
 
                        
 def INDEX(url):#1
         req = urllib2.Request(url)
 #        print url
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        req.add_header('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/17.0 Firefox/17.0')
         response = urllib2.urlopen(req)
         movies=response.read()
         response.close()
@@ -29,13 +29,24 @@ def INDEX(url):#1
 
 def VIDEOLINKS(url,name):#2
         req = urllib2.Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        req.add_header('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/17.0 Firefox/17.0')
         response = urllib2.urlopen(req)
-        link_video=response.read()
+        link=response.read()
         response.close()
-	#print match
-#        match=re.compile("formatCode: (.+?), url: '(.+?)'").findall(link_video)
-        match=re.compile("formatCode: .+?, url: '(.+?)'").findall(link_video)
+	print link
+
+        match=re.compile('<iframe.+?src="(.+?)">', re.DOTALL).findall(link)
+	print match[0]
+        req = urllib2.Request(match[0])
+        req.add_header('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/17.0 Firefox/17.0')
+        response = urllib2.urlopen(req)
+        link=response.read()
+        response.close()
+
+
+
+
+        match=re.compile("formatCode: .+?, url: '(.+?)'").findall(link)
 	#{formatCode: 1002, url: 'http\x3a\x2f\x2fcontent5.catalog.video.msn.com\x2fe2\x2fds\x2fde-de\x2fDEDE_Videovalis\x2fDEDE_Videovalis_Thriller\x2fa7dc35a1-bc31-4de5-8768-431b30353cc0.mp4'}
 
         #formatCode: 1002, url: 'http\x3a\x2f\x2fcontent4.catalog.video.msn.com\x2fe2\x2fds\x2fde-de\x2fDEDE_Videovalis\x2fDEDE_Videovalis_SciFi\x2f5d05254d-67aa-447e-a9e4-da8e4e6eae42.mp4

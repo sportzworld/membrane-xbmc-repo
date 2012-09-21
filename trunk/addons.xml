@@ -128,7 +128,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.msnfilme" name="MSN Filme" version="0.3" provider-name="membrane">
+<addon id="plugin.video.msnfilme" name="MSN Filme" version="0.4" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -222,7 +222,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="0.14" provider-name="membrane">
+<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="0.15" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>

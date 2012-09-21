@@ -4,12 +4,17 @@ import urllib,urllib2,re,xbmcplugin,xbmcgui
 
 pluginhandle = int(sys.argv[1])
 
-if xbmcplugin.getSetting(pluginhandle,"quality") == '0':
-	quality = '0'
-elif xbmcplugin.getSetting(pluginhandle,"quality") == '1':
-	quality = '1'
-elif xbmcplugin.getSetting(pluginhandle,"quality") == '2':
-	quality = '2'
+if xbmcplugin.getSetting(pluginhandle,"streamquality") == '0':
+	setting_streamquality = '0'
+elif xbmcplugin.getSetting(pluginhandle,"streamquality") == '1':
+	setting_streamquality = '1'
+
+if xbmcplugin.getSetting(pluginhandle,"livequality") == '0':
+	livequality = '0'
+elif xbmcplugin.getSetting(pluginhandle,"livequality") == '1':
+	livequality = '1'
+elif xbmcplugin.getSetting(pluginhandle,"livequality") == '2':
+	livequality = '2'
 
 if xbmcplugin.getSetting(pluginhandle,"location") == '0':
 	livestream_url = 'http://www.laola1.tv/de/at/home/'
@@ -21,6 +26,11 @@ elif xbmcplugin.getSetting(pluginhandle,"location") == '2':
 	livestream_url = 'http://www.laola1.tv/en/int/home/'
 	videos_url = 'http://www.laola1.tv/en/int/home/'
 
+if xbmcplugin.getSetting(pluginhandle,"debug") == '0':
+	debug = '0'
+elif xbmcplugin.getSetting(pluginhandle,"debug") == '1':
+	debug = '1'
+
 #xip = xbmcplugin.getSetting(pluginhandle,"ip")
 #print 'xip: '+xip
                        
@@ -28,173 +38,138 @@ elif xbmcplugin.getSetting(pluginhandle,"location") == '2':
 #	print 'laola: use trick'
 
 
+
 def INDEX():
         addDir('Live',livestream_url,4,'')
-        req = urllib2.Request(videos_url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-#	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
-#		print 'Try to use X-Forwarded-For trick'
-#		req.add_header('X-Forwarded-For', xip)
-        response = urllib2.urlopen(req)
-        link=response.read()
-        response.close()
-        match=re.compile('<div id="sitemap"><a (.+?)</div>').findall(link)
+
+        response = get_url(videos_url)
+
+        match=re.compile('<div id="sitemap"><a (.+?)</div>').findall(response)
+
         for something in match:
                 match1=re.compile('href="(.+?)".*?>(.+?)</a>').findall(something)
                 for url,name in match1 or match2:
                         addDir(name,url,1,'')
 
 
-                
+
 def TOPICSELECTION(url):
-        #print url
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-#	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
-#		req.add_header('X-Forwarded-For', xip)
-        response = urllib2.urlopen(req)
-        link=response.read()
-        response.close()
-        match1=re.compile("<td style=\".+?\" width=\".+?\"><h2><a href=\"(.+?)\" style=\".+?\">(.+?)</a></h2></td>").findall(link) 
-        for url,name in match1:
-                #print 'url :'+url
-                #print 'name'+name
+	response = get_url(url)
+
+        match=re.compile("<td style=\".+?\" width=\".+?\"><h2><a href=\"(.+?)\" style=\".+?\">(.+?)</a></h2></td>").findall(response) 
+
+        for url,name in match:
                 addDir(name,url,2,'')
-                ##<td style="padding-left:15px;" width="316"><h2><a href="http://www.laola1.tv/de/de/erste-bank-eishockey-liga-live/video/222-1154-.html" style="color:#ffffff; font-weight:bold; font-size:12pt;">Erste Bank Eishockey Liga LIVE</a></h2></td>
+
                 
-                
+
 def VIDEOSELECTION(url):
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-#	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
-#		req.add_header('X-Forwarded-For', xip)
-        response = urllib2.urlopen(req)
-        link=response.read()
-        response.close()
+	response = get_url(url)
 
+        match1=re.compile('<div class="teaser_bild_video" title=".+?"><a href="(.+?)"><img src="(.+?)" border=".+?" /></a></div>.+?<div class="teaser_head_video" title=".+?">(.+?)</div>.+?<div class="teaser_text" title=".+?"><a href=".+?>(.+?)</a>', re.DOTALL).findall(response)
 
-        match1=re.compile('<div class="teaser_bild_video" title=".+?"><a href="(.+?)"><img src="(.+?)" border=".+?" /></a></div>.+?<div class="teaser_head_video" title=".+?">(.+?)</div>.+?<div class="teaser_text" title=".+?"><a href=".+?>(.+?)</a>', re.DOTALL).findall(link)
+        match2=re.compile("<a href=\"(.+)\" class=\"teaser_text\">vor</a>").findall(response)
 
-        #<div class="teaser_bild_video" title="Eishockey, Erste Bank Eishockey Liga, EC KAC - EC Red Bull Salzburg - Bild: LAOLA1"><a href="http://www.laola1.tv/de/de/eishockey/erste-bank-ehl/ec-kac-ec-red-bull-salzburg/video/222-1153-48060.html"><img src="http://www.laola1.tv/cache/img/thumb/48060.jpg" border="0"></a></div>
-        #<div class="teaser_head_video" title="Eishockey, Erste Bank Eishockey Liga, EC KAC - EC Red Bull Salzburg - Bild: LAOLA1">Di, 05.04.2011</div>
-        #<div class="teaser_text" title="Eishockey, Erste Bank Eishockey Liga, EC KAC - EC Red Bull Salzburg">EC KAC - EC Red Bull Salzburg</div>
-
-        match2=re.compile("<a href=\"(.+)\" class=\"teaser_text\">vor</a>").findall(link)
-        ##<a href="http://www.laola1.tv/de/de/eishockey/erste-bank-ehl/ehc-liwest-bw-linz-ec-red-bull-salzburg/video/222-1153--2.html" class="teaser_text">vor</a>
         for url,thumbnail,date,name in match1:
                 addLink(date+' - '+name,url,3,thumbnail)
+
         for url in match2:
                 addDir('Next Site',url,2,'')
 
-        ##<div class="miniteaser_bild_live "><a href="http://www.laola1.tv/de/de/eishockey/erste-bank-ehl/ec-kac-rekord-fenster-vsv-/video/222-1153-45986.html"><img src="http://www.laola1.tv/cache/img/thumb/45986.jpg" border="0" width="80" /></a></div>
-	##				</td><td style="padding-left:5px;" valign="top">
-        ##            <div class="miniteaser_datum">15.03.2011 19:00 CET</div>
-	##				<div class="miniteaser_text">EC KAC - REKORD-Fenster VSV </div>
+
+
+def get_playkeys(url):
+	log("GET playkey1,playkey2")
+
+	response = get_url(url)
+	playkeys=re.compile('"playkey=(.+?)-(.+?)&adv.+?"').findall(response)
+
+	for playkey1,playkey2 in playkeys:
+		log('playkey1: "'+playkey1+'"')
+		log('playkey2: "'+playkey2+'"')
+
+	return playkeys
 
 def VIDEOLINKS(url,name):
 	pageurl = url #this is messy
-	print 'stage 0'
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-#	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
-#		req.add_header('X-Forwarded-For', xip)
-        response = urllib2.urlopen(req)
-        link=response.read()
-        response.close()
-        match_playkey=re.compile('"playkey=(.+?)-(.+?)&adv.+?"').findall(link)
-        ##"playkey=47060-Gut1cOWmlyix.&adv=laola1.tv/de/eishockey/ebel&adi=laola1.tv/de/eishockey/ebel&aps=Video1&szo=eishockey&deutschchannel=true&channel=222&teaser=1153&play=47060&fversion=player.v10.2"
-        for playkey1,playkey2 in match_playkey:
-		print 'stage 1'
-                #print 'playkey1 '+playkey1
-                #print 'playkey2 '+playkey2                
-                req = urllib2.Request('http://www.laola1.tv/server/ondemand_xml_esi.php?playkey='+playkey1+'-'+playkey2)
-                #print 'http://www.laola1.tv/server/ondemand_xml_esi.php?playkey='+playkey1+'-'+playkey2
-                ##http://www.laola1.tv/server/ondemand_xml_esi.php?playkey=47060-Gut1cOWmlyix.
-                req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-#		if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
-#			req.add_header('X-Forwarded-For', xip)
-                response = urllib2.urlopen(req)
-                link_playkey=response.read()
-                #print link_playkey
-                response.close()
-                match_video=re.compile('<video.+?>(.+?)</video>', re.DOTALL).findall(link_playkey)
-                for video in match_video:
-			print 'stage 2'
-                        #print 'video '+video
-                        match_rtmp=re.compile('<(.+?) .+?erver="(.+?)/(.+?)" pfad="(.+?)" .+? ptitle="(.+?)"').findall(video)#ugly, but behind low is one space too much: '  '
-                        ##<high server="cp77154.edgefcs.net/ondemand" pfad="77154/flash/2011/ebel/20102011/110327_vic_rbs_high" type="V" aifp="v002"
-                        ##token="true" ptitle="Eishockey Erste Bank EHL Erste Bank Eishockey Liga" etitle="Vienna Capitals - EC Red Bull Salzburg"
-                        ##firstair="2010/01/01" stype="VOD" cat="video ondemand" vidcat="laola1.tv/at/eishockey/ebel" round="" season="2010/2011" />
-                        for streamquality,server,servertype,playpath,title in match_rtmp:
-				print 'stage 3'
-                                #print 'streamquality '+streamquality
-                                #print 'server '+server
-                                #print 'servertype '+servertype
-                                #print 'playpath '+playpath
-                                #print 'title '+title
-                                req = urllib2.Request('http://streamaccess.laola1.tv/flash/vod/22/'+playkey1+'_'+streamquality+'.xml')
-                                #print 'http://streamaccess.laola1.tv/flash/vod/22/'+playkey1+'_'+streamquality+'.xml'
-                                ##http://streamaccess.laola1.tv/flash/vod/22/47060_high.xml
-                                ##http://streamaccess.laola1.tv/flash/1/47215_high.xml
-                                req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-#				if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
-#					req.add_header('X-Forwarded-For', xip)
-                                response = urllib2.urlopen(req)
-                                link_token=response.read()
-                                #print link_token
-                                response.close()
-                                match_token=re.compile('auth="(.+?)".+?url="(.+?)".+?stream="(.+?)".+?status=".+?".+?statustext=".+?".+?aifp="(.+?)"', re.DOTALL).findall(link_token)
-                                ##auth="db.cibycHcwdEbhaKa4a3bUc7cIbpbLdtal-bnKofS-cOW-eS-CkBwmc-m6ke&p=&e=&u=&t=ondemandvideo&l=&a="
-                                ##url="cp77154.edgefcs.net/ondemand" stream="77154/flash/2011/ebel/20102011/110327_vic_rbs_high" status="0" statustext="success" aifp="v001" comment="success"
-                                for auth,url,stream,aifp in match_token:
-					print 'stage 4'
-                                        #print 'auth '+auth
-                                        #print 'url '+url
-                                        #print 'stream '+stream
-                                        #print 'afip '+aifp
-                                        req = urllib2.Request('http://'+server+'/fcs/ident')
-                                        ##http://cp77154.edgefcs.net/fcs/ident
-                                        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-#					if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
-#						req.add_header('X-Forwarded-For', xip)
-                                        response = urllib2.urlopen(req)
-                                        link_path=response.read()
-                                        response.close()
-                                        match_path=re.compile('<ip>(.+?)</ip>').findall(link_path)
-                                        ##<ip>213.198.95.204</ip>
-                                        for ip in match_path:
-						print 'stage 5'
-                                                #print 'ip '+ip
-                                        ##http://cp77154.edgefcs.net/fcs/ident
-#						stream=stream.replace('.mp4','.flv')
 
-#####new
-						rtmpbody = 'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'&auth='+auth+'&aifp='+aifp+'&slist='+stream
-						swf = ' swfUrl=http://www.laola1.tv/swf/player.v12.4.swf swfVfy=true'
-						app = ' app='+servertype+'?_fcs_vhost='+server+'&auth='+auth+'&aifp='+aifp+'&slist='+stream
-						page = ' pageUrl='+pageurl
+	playkeys = get_playkeys(url)
 
-						if '.mp4' in stream:
-							playpath = ' playpath=mp4:'+stream
-						else:
-							playpath = ' playpath='+stream #fix for beachvolleyball
+	for playkey1,playkey2 in playkeys:
+		playkey1 = playkey1
+		playkey2 = playkey2
+	
 
-						flashver = ' flashver=LNX\ 10,3,162,29'
-						rtmppath = rtmpbody+swf+app+page+playpath
-						rtmppath = rtmppath.replace('&amp;','&')
-						rtmppath = rtmppath.replace('&p=','&p=22')
-						rtmppath = rtmppath.replace('&e=','&e='+playkey1)
-                                                item = xbmcgui.ListItem(path=rtmppath)
-						return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
-                                                        ##rtmp://213.198.95.204:1935/ondemand?_fcs_vhost=cp77154.edgefcs.net&auth=db.cibycHcwdEbhaKa4a3bUc7cIbpbLdtal-bnKofS-cOW-eS-CkBwmc-m6ke&p=&e=&u=&t=ondemandvideo&l=&a=
-                                                        ##&aifp=v001&slist=77154/flash/2011/ebel/20102011/110327_vic_rbs_high
-                                                        ##rtmp://213.198.95.204:1935/ondemand?_fcs_vhost=cp77154.edgefcs.net&auth=db.cibycHcwdEbhaKa4a3bUc7cIbpbLdtal-bnKofS-cOW-eS-CkBwmc-m6ke&p=&e=&u=&t=ondemandvideo&l=&a=&aifp=v001&slist=77154/flash/2011/ebel/20102011/110327_vic_rbs_high
-                                                
+	log('GET streamquality,server,servertype,playpath,title')
+	response = get_url('http://www.laola1.tv/server/ondemand_xml_esi.php?playkey='+playkey1+'-'+playkey2)
 
-                                                        ##...yeah
-        
+	match_video=re.compile('<video.+?>(.+?)</video>', re.DOTALL).findall(response)
+
+	video = match_video[0]
+
+	match_rtmp=re.compile('<(.+?) .+?erver="(.+?)/(.+?)" pfad="(.+?)" .+? ptitle="(.+?)"').findall(video)#ugly, but behind low is one space too much: '  '
+
+	for streamquality,server,servertype,playpath,title in match_rtmp:
+		streamquality = streamquality
+		server = server
+		servertype = servertype
+		playpath = playpath
+		title = title
+		if setting_streamquality == '1':
+			break
+
+	log('streamquality: "'+streamquality+'"')
+	log('server: "'+server+'"')
+	log('servertype: "'+servertype+'"')
+	log('playpath: "'+playpath+'"')
+	log('title: "'+title+'"')
 
 
+	log('GET auth,url,stream,aifp')
+	response = get_url('http://streamaccess.laola1.tv/flash/vod/22/'+playkey1+'_'+streamquality+'.xml')
+
+	match_token=re.compile('auth="(.+?)".+?url="(.+?)".+?stream="(.+?)".+?status=".+?".+?statustext=".+?".+?aifp="(.+?)"', re.DOTALL).findall(response)
+
+	for auth,url,stream,aifp in match_token:
+		auth = auth
+		url = url
+		stream = stream
+		aifp = aifp
+
+	log('auth: "'+auth+'"')
+	log('url: "'+url+'"')
+	log('stream: "'+stream+'"')
+	log('aifp: "'+aifp+'"')
+
+
+	log('GET ip')
+	response = get_url('http://'+server+'/fcs/ident')
+
+	match_path=re.compile('<ip>(.+?)</ip>').findall(response)
+
+	ip = match_path[0]
+
+	log('ip: "'+ip+'"')
+
+
+	log('assembling rtmp')
+	rtmpbody = 'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'&auth='+auth+'&aifp='+aifp+'&slist='+stream
+	swf = ' swfUrl=http://www.laola1.tv/swf/player.v12.4.swf swfVfy=true'
+	app = ' app='+servertype+'?_fcs_vhost='+server+'&auth='+auth+'&aifp='+aifp+'&slist='+stream
+	page = ' pageUrl='+pageurl
+
+	if '.mp4' in stream:
+		playpath = ' playpath=mp4:'+stream
+	else:
+		playpath = ' playpath='+stream #fix for beachvolleyball
+
+	flashver = ' flashver=LNX\ 10,3,162,29'
+	rtmppath = rtmpbody+swf+app+page+playpath
+	rtmppath = rtmppath.replace('&amp;','&')
+	rtmppath = rtmppath.replace('&p=','&p=22')
+	rtmppath = rtmppath.replace('&e=','&e='+playkey1)
+	item = xbmcgui.ListItem(path=rtmppath)
+	return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 
 
 def LIVESELECTION(url):
@@ -238,8 +213,16 @@ def VIDEOLIVELINKS(url,name):
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
+	print link
 
-	match_streamtype=re.compile('"src", "(.+?)_').findall(link)
+	#break if livestream isn't ready
+	match_ready=re.compile('Dieser Stream beginnt am (.+?), (.+?) um (.+?) Uhr CET.').findall(link)
+	for weekday,date,time in match_ready:
+		#xbmcplugin.getSetting(pluginhandle,"streamquality") == '1':
+		xbmc.executebuiltin("Notification(Livestream has not started,This stream starts on "+weekday+", "+date+" at "+time+" CET,14000)")
+		return
+
+	match_streamtype=re.compile('"src", "(.+?)"').findall(link)
         match_playkey=re.compile('"playkey=(.+?)-(.+?)&adv.+?"').findall(link)
 
 	if match_streamtype[0] == 'http://www.laola1.tv/swf/hdplayer':
@@ -282,11 +265,11 @@ def VIDEOLIVELINKS(url,name):
 ##http://sportsmanlive-f.akamaihd.net/khl_2_1_450@s7077?primaryToken=1327601291_6d4b5709d7c7b8c364cad2036168a57a&p=1&e=74022&i=&q=&k=&c=DE&a=&u=&t=&l=&v=2.4.5&fp=LNX%2010,3,162,29&r=UEEBM&g=UICJXUGLJHOM
 		http = match_http[0].replace("&i=&q=&k=&c=DE&a=&u=&t=&l=","&i=&q=&k=&c=DE&a=&u=&t=&l=&v=2.4.5&fp=LNX%2010,3,162,29&r=UEEBM&g=UICJXUGLJHOM")
 
-                if quality == '0':
+                if livequality == '0':
 			video = match_quality[0]
-                if quality == '1':
+                if livequality == '1':
 			video = match_quality[1]
-                if quality == '2':
+                if livequality == '2':
 			video = match_quality[-1]
 
 		item = xbmcgui.ListItem(path=http+video)
@@ -414,6 +397,23 @@ def get_params():
                                 
         return param
 
+
+def get_url(url):
+        req = urllib2.Request(url)
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+#	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
+#		print 'Try to use X-Forwarded-For trick'
+#		req.add_header('X-Forwarded-For', xip)
+        response = urllib2.urlopen(req)
+        link=response.read()
+        response.close()
+	return link
+
+
+def log(message):
+	if debug == '1':
+		print "#####Laola1 Debug: "+message
+	return
 
 
 
