@@ -205,7 +205,7 @@ def LIVESELECTION(url):
 
 
 def VIDEOLIVELINKS(url,name):
-	print url
+	#print url
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
 #	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
@@ -213,7 +213,7 @@ def VIDEOLIVELINKS(url,name):
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
-	print link
+	#print link
 
 	#break if livestream isn't ready
 	match_ready=re.compile('Dieser Stream beginnt am (.+?), (.+?) um (.+?) Uhr CET.').findall(link)
@@ -236,7 +236,7 @@ def VIDEOLIVELINKS(url,name):
 		        response = urllib2.urlopen(req)
 		        link=response.read()
 		        response.close()
-			print link
+			#print link
 
 		        match_rtmp=re.compile('<meta name="rtmpPlaybackBase" content="(.+?)" />').findall(link)
 			match_http=re.compile('<meta name="httpBase" content="(.+?)" />').findall(link)
@@ -255,7 +255,7 @@ def VIDEOLIVELINKS(url,name):
 		response = urllib2.urlopen(req)
 		link=response.read()
 		response.close()
-		print link
+		#print link
 
 
 		match_rtmp=re.compile('<meta name="rtmpPlaybackBase" content="(.+?)" />').findall(link)
@@ -369,7 +369,7 @@ def LIVE(url):
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
-        print link
+        #print link
         match_base=re.compile('<meta name="httpBase" content="(.+?)" />').findall(link)
         match_src=re.compile('<video src="(.+?)" system-bitrate="950000"/>').findall(link)
         print match_base[0]
