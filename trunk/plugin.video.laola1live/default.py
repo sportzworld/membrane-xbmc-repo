@@ -41,7 +41,7 @@ elif xbmcplugin.getSetting(pluginhandle,"debug") == '1':
 
 def INDEX():
         addDir('Live',livestream_url,4,'')
-
+	"""
         response = get_url(videos_url)
 
         match=re.compile('<div id="sitemap"><a (.+?)</div>').findall(response)
@@ -49,7 +49,7 @@ def INDEX():
         for something in match:
                 match1=re.compile('href="(.+?)".*?>(.+?)</a>').findall(something)
                 for url,name in match1 or match2:
-                        addDir(name,url,1,'')
+                        addDir(name,url,1,'')"""
 
 
 
