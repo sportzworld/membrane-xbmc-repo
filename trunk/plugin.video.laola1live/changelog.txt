@@ -1,0 +1,5 @@
+0.18
+- Added Changelog
+- Removed VOD because of CDN change
+0.19
+- Fixed VOD
