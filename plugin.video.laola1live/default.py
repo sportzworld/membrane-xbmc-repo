@@ -1,8 +1,10 @@
 # -*- coding: utf8 -*-
 
-import urllib,urllib2,re,xbmcplugin,xbmcgui
+import urllib,urllib2,re,xbmcplugin,xbmcgui,xbmcaddon,base64,socket,sys,string,random
 
 pluginhandle = int(sys.argv[1])
+addon = xbmcaddon.Addon(id='plugin.video.laola1live')
+akamaiProxyServer = xbmc.translatePath(addon.getAddonInfo('path')+"/akamaiSecureHD.py")
 
 if xbmcplugin.getSetting(pluginhandle,"streamquality") == '0':
 	setting_streamquality = '0'
@@ -41,36 +43,44 @@ elif xbmcplugin.getSetting(pluginhandle,"debug") == '1':
 
 def INDEX():
         addDir('Live',livestream_url,4,'')
-	"""
-        response = get_url(videos_url)
+
+        response = getUrl(videos_url)
 
         match=re.compile('<div id="sitemap"><a (.+?)</div>').findall(response)
 
         for something in match:
                 match1=re.compile('href="(.+?)".*?>(.+?)</a>').findall(something)
                 for url,name in match1 or match2:
-                        addDir(name,url,1,'')"""
+                        addDir(name,url,1,'')
 
 
 
 def TOPICSELECTION(url):
-	response = get_url(url)
+	response = getUrl(url)
 
         match=re.compile("<td style=\".+?\" width=\".+?\"><h2><a href=\"(.+?)\" style=\".+?\">(.+?)</a></h2></td>").findall(response) 
 
         for url,name in match:
-                addDir(name,url,2,'')
+		if not "LIVE" in name:
+			if not "Live" in name:
+				addDir(name,url,2,'')
 
                 
 
 def VIDEOSELECTION(url):
-	response = get_url(url)
+	response = getUrl(url)
 
         match1=re.compile('<div class="teaser_bild_video" title=".+?"><a href="(.+?)"><img src="(.+?)" border=".+?" /></a></div>.+?<div class="teaser_head_video" title=".+?">(.+?)</div>.+?<div class="teaser_text" title=".+?"><a href=".+?>(.+?)</a>', re.DOTALL).findall(response)
 
         match2=re.compile("<a href=\"(.+)\" class=\"teaser_text\">vor</a>").findall(response)
 
         for url,thumbnail,date,name in match1:
+		"""
+		splits = url.split("-")
+		video_id = splits[-1].replace('.html','')
+		#new_url = "http://streamaccess.unas.tv/hdflash/vod/22/"+video_id+".xml?t=.smil"
+                addLink(date+' - '+name,video_id,3,thumbnail)
+		"""
                 addLink(date+' - '+name,url,3,thumbnail)
 
         for url in match2:
@@ -81,7 +91,8 @@ def VIDEOSELECTION(url):
 def get_playkeys(url):
 	log("GET playkey1,playkey2")
 
-	response = get_url(url)
+	response = getUrl(url)
+	print response
 	playkeys=re.compile('"playkey=(.+?)-(.+?)&adv.+?"').findall(response)
 
 	for playkey1,playkey2 in playkeys:
@@ -90,7 +101,74 @@ def get_playkeys(url):
 
 	return playkeys
 
-def VIDEOLINKS(url,name):
+def VIDEOLINKS(video_id,name):
+	response = getUrl(url)
+	"""
+	url = "http://streamaccess.unas.tv/hdflash/vod/22/"+video_id+".xml?t=.smil"
+	content = getUrl(url)
+        if url.find(".smil")>0:
+          print content
+          match=re.compile('<meta name="httpBase" content="(.+?)"', re.DOTALL).findall(content)
+          match_vod=re.compile('<meta name="vod" content="true" value="/hdflash/(.+?)"', re.DOTALL).findall(content)
+          print '#################################'+match_vod[0]
+          base=match[0]
+          maxBitrate=0
+          match=re.compile('<video src="(.+?)" system-bitrate="(.+?)"/>', re.DOTALL).findall(content)
+          for urlTemp, bitrateTemp in match:
+            bitrate=int(bitrateTemp)
+            if bitrate>maxBitrate:
+              match_urlTemp=re.compile('hdflash/(.+?)primaryToken', re.DOTALL).findall(urlTemp)
+              #urlTemp = urlTemp.replace(match_urlTemp[0],match_vod[0]+'?')
+              maxBitrate=bitrate
+              url=urlTemp
+          fullUrl=base+url
+          fullUrl = fullUrl.replace("&amp;","&")
+          fullUrl = fullUrl.replace("&p=","&p=22")
+          fullUrl = fullUrl.replace("&e=","&e="+video_id)
+          fullUrl = fullUrl.replace("&l=","&l=L1TV")
+          fullUrl = fullUrl.replace("&a=","&a=l1tvespfbliga1213")#TODO!!!
+          fullUrl = fullUrl + "&v=2.10.3&fp=LNX%2011,1,102,63&&r=KABKG&g=FOUKCDLEDPAW" #r=SHSYD&g=KYTYICOEFWDD
+	  print "#################################"+fullUrl
+          swfUrl="http://www.laola1.tv/swf/hdplayer.swf"
+          VIDb64 = base64.encodestring(fullUrl).replace('\n','')
+          SWFb64 = base64.encodestring(swfUrl).replace('\n','')
+          fullUrl = 'http://127.0.0.1:64653/secureconne/%s/%s' % (VIDb64,SWFb64)
+	"""
+	"""
+        elif url.find(".xml")>0:
+          playpath=url[url.find("gjmf=")+5:]
+          match=re.compile('<hostname>(.+?)</hostname>', re.DOTALL).findall(content)
+          base=match[0]
+          match=re.compile('<appName>(.+?)</appName>', re.DOTALL).findall(content)
+          app=match[0]
+          match=re.compile('<authParams>(.+?)</authParams>', re.DOTALL).findall(content)
+          auth=match[0].replace("&amp;","&")
+          if app=="live":
+            fullUrl="rtmp://"+base+"/"+app+" playpath="+playpath+"?"+auth+" swfurl=http://www.eurovisionsports.tv/london2012/site/Digotel.4.3.0.swf swfVfy=true live=true"
+          elif app=="ondemand":
+            fullUrl="rtmp://"+base+"/"+app+"?"+auth+" playpath="+playpath+" swfurl=http://www.eurovisionsports.tv/london2012/site/Digotel.4.3.0.swf swfVfy=true"
+	"""
+	match=re.compile('videopfad=(.+?)&sendeerkennung=', re.DOTALL).findall(response)
+	response = getUrl(match[0])
+	print response
+
+
+
+	match_httpBase=re.compile('<meta name="httpBase" content="(.+?)"', re.DOTALL).findall(response)
+	match_vod=re.compile('<meta name="vod" content="true" value="/(.+?)"', re.DOTALL).findall(response)
+	match_src=re.compile('<video src=".+?primaryToken=(.+?)" system-bitrate=".+?"/>', re.DOTALL).findall(response)
+
+	fullUrl = match_httpBase[0]+match_vod[0]+"?primaryToken="+match_src[-1]
+	fullUrl = fullUrl.replace("&amp;","&")
+	fullUrl = fullUrl + "&v=2.10.3&fp=LNX%2011,1,102,63"
+	fullUrl = fullUrl + "&r="+char_gen(5)#random uppercase string
+	fullUrl = fullUrl + "&g="+char_gen(12)#random uppercase string
+
+
+        listitem = xbmcgui.ListItem(path=fullUrl)
+	listitem.setProperty('mimetype', 'video/x-flv')
+        return xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+"""
 	pageurl = url #this is messy
 
 	playkeys = get_playkeys(url)
@@ -101,7 +179,7 @@ def VIDEOLINKS(url,name):
 	
 
 	log('GET streamquality,server,servertype,playpath,title')
-	response = get_url('http://www.laola1.tv/server/ondemand_xml_esi.php?playkey='+playkey1+'-'+playkey2)
+	response = getUrl('http://www.laola1.tv/server/ondemand_xml_esi.php?playkey='+playkey1+'-'+playkey2)
 
 	match_video=re.compile('<video.+?>(.+?)</video>', re.DOTALL).findall(response)
 
@@ -126,7 +204,7 @@ def VIDEOLINKS(url,name):
 
 
 	log('GET auth,url,stream,aifp')
-	response = get_url('http://streamaccess.laola1.tv/flash/vod/22/'+playkey1+'_'+streamquality+'.xml')
+	response = getUrl('http://streamaccess.laola1.tv/flash/vod/22/'+playkey1+'_'+streamquality+'.xml')
 
 	match_token=re.compile('auth="(.+?)".+?url="(.+?)".+?stream="(.+?)".+?status=".+?".+?statustext=".+?".+?aifp="(.+?)"', re.DOTALL).findall(response)
 
@@ -143,7 +221,7 @@ def VIDEOLINKS(url,name):
 
 
 	log('GET ip')
-	response = get_url('http://'+server+'/fcs/ident')
+	response = getUrl('http://'+server+'/fcs/ident')
 
 	match_path=re.compile('<ip>(.+?)</ip>').findall(response)
 
@@ -170,6 +248,7 @@ def VIDEOLINKS(url,name):
 	rtmppath = rtmppath.replace('&e=','&e='+playkey1)
 	item = xbmcgui.ListItem(path=rtmppath)
 	return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+"""
 
 
 def LIVESELECTION(url):
@@ -222,10 +301,9 @@ def VIDEOLIVELINKS(url,name):
 		xbmc.executebuiltin("Notification(Livestream has not started,This stream starts on "+weekday+", "+date+" at "+time+" CET,14000)")
 		return
 
-	match_streamtype=re.compile('"src", "(.+?)"').findall(link)
         match_playkey=re.compile('"playkey=(.+?)-(.+?)&adv.+?"').findall(link)
 
-	if match_streamtype[0] == 'http://www.laola1.tv/swf/hdplayer':
+	if '"src", "http://www.laola1.tv/swf/hdplayer",' in link:
 
         	for playkey1,playkey2 in match_playkey:
 			print 'laola: use streamtype 1a'
@@ -397,8 +475,11 @@ def get_params():
                                 
         return param
 
+def char_gen(size=1, chars=string.ascii_uppercase):
+	return ''.join(random.choice(chars) for x in range(size))
 
-def get_url(url):
+
+def getUrl(url):
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
 #	if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
@@ -430,6 +511,7 @@ def addLink(name,url,mode,iconimage):
 	liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)##
 	liz.setInfo( type="Video", infoLabels={ "Title": name } )##
 	liz.setProperty('IsPlayable', 'true')##
+	liz.setProperty('mimetype', 'video/x-flv')
 	ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz)##
 	return ok
 
