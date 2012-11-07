@@ -64,6 +64,38 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.dbtg_tv" name="BundestagsTV" version="0.1" provider-name="membrane">
+    <requires>
+        <import addon="xbmc.python" version="1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">BundestagsTV</summary>
+        <summary lang="en">BundestagsTV</summary>
+        <description lang="de">BundestagsTV</description>
+        <description lang="en">BundestagsTV</description>
+    </extension>
+</addon>
+
+<addon id="plugin.video.dorkly" name="Dorkly" version="0.1" provider-name="membrane">
+    <requires>
+        <import addon="xbmc.python" version="1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">dorkly</summary>
+        <summary lang="en">dorkly</summary>
+        <description lang="de">dorkly</description>
+        <description lang="en">dorkly</description>
+    </extension>
+</addon>
+
 <addon id="plugin.video.tv.hockej.cz" name="tv.hokej.cz" version="0.3" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
