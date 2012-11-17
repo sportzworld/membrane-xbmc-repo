@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.dbtg_tv" name="BundestagsTV" version="0.1" provider-name="membrane">
+<addon id="plugin.video.dbtg_tv" name="BundestagsTV" version="0.2" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -10,7 +10,7 @@
         <platform>all</platform>
         <summary lang="de">BundestagsTV</summary>
         <summary lang="en">BundestagsTV</summary>
-        <description lang="de">BundestagsTV</description>
-        <description lang="en">BundestagsTV</description>
+        <description lang="de">Die kostenlose Mediathek des Deutschen Bundestags hält Live-Streams und Videos zu aktuellen Themen der Politik bereit.</description>
+        <description lang="en">Die kostenlose Mediathek des Deutschen Bundestags hält Live-Streams und Videos zu aktuellen Themen der Politik bereit.</description>
     </extension>
 </addon>
