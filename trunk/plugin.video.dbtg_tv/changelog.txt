@@ -1,2 +1,6 @@
 0.1
-- Initial Release
+- Erste Version des Addons
+0.2
+- Livestreams hinzugefügt
+- Sonderbehandlung für die Kategorie "Plenarsitzungen"
+- Icon hinzugefügt

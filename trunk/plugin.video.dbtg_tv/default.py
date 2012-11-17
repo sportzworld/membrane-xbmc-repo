@@ -8,7 +8,7 @@ baseurl = 'http://www.bundestag.de'
 
 
 def MAIN():
-	#addDir('Live',baseurl+'/Mediathek/index.jsp?action=tv',1,'')
+	addDir('Live',baseurl+'/Mediathek/index.jsp?action=tv',1,'')
 	#addDir('Neuste Videos',baseurl+match_next[0],1,'')
 
 	response=getUrl(baseurl+'/Mediathek/')
@@ -22,12 +22,17 @@ def MAIN():
 		url = baseurl+'/Mediathek/index.jsp'+match_url[0].replace('&amp;','&')
 
 		if match_name[0] == 'Plenarsitzungen':#wechselt, beobachten!
-			addDir(match_name[0],url,3,baseurl+match_thumb[-1])
+			addDir(match_name[0],url,4,baseurl+match_thumb[-1])
 		else:
 			addDir(match_name[0],url,3,baseurl+match_thumb[-1])
 
 
 def LIVE(url):#1
+	addLink('Kanal 1','http://webtv.bundestag.de/player/_x_/xasx_live.xml',2,'')
+	addLink('Kanal 2','http://webtv.bundestag.de/player/_x_/xasx_live_ch2.xml',2,'')
+	"""
+
+
 	response=getUrl(baseurl+'/Mediathek/index.jsp?action=tv')
 	match_chan=re.compile('<div class="mediathekVideoText liveTvText">(.+?)</div>', re.DOTALL).findall(response)
 	n='1'
@@ -39,12 +44,21 @@ def LIVE(url):#1
 		addLink('Kanal '+n+': '+match_name[0]+' - '+match_desc[0],baseurl+match_next[0],2,baseurl+'/includes/datasources/stream_0'+n+'.jpg')
 
 		n='2'
-
+	"""
 
 def PLAY_LIVE(url,name):#2
+	response=getUrl(url)
+	match_video=re.compile('<video width="512" height="288" href="(.+?)" bandwidth=".+?"/>').findall(response)
+	video = match_video[-1]
+	bananasplit = video.split('/')#rtmp://x3777parlac13014.f.l.f.lb.core-cdn.net/13014bundestag/live/3777parlamentsfernsehen/live_1000.flv
 
+	playpath = bananasplit[-3]+'/'+bananasplit[-2]+'/'+bananasplit[-1].replace('.flv','')
+	app = bananasplit[-4]
 
-        listitem = xbmcgui.ListItem(path=match_video[0])
+	#video=match_video[0]+' swfurl=http://webtv.bundestag.de/iptv/swf/xflv/showIt3_10.swf' + ' swfvfy=true app=13014bundestag/live'
+	video=match_video[0]+' swfurl=http://webtv.bundestag.de/iptv/swf/xflv/showIt3_10.swf' + ' swfvfy=true pageUrl=http://www.bundestag.de live=true'+' app='+app+' playpath='+playpath
+	#' app=13014bundestag playpath=live/3777parlamentsfernsehen/live_1000'
+        listitem = xbmcgui.ListItem(path=video)
         return xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
 
@@ -77,24 +91,27 @@ def THEMEN(url):#3
 
 
 def THEMEN_PLENAR(url):#4
-	response=getUrl(url)
-	match_list=re.compile('<div class="mediathekPlenarErgebnisse">(.+?)<div class="mediathekBorder">', re.DOTALL).findall(response)
-	match_entry=re.compile('<div class=.+?mediathekPlenarItem">(.+?)<br class="clear" />', re.DOTALL).findall(match_list[0])
+	try:
+		response=getUrl(url)
+		match_list=re.compile('<div class="mediathekPlenarErgebnisse">(.+?)<div class="mediathekBorder">', re.DOTALL).findall(response)
+		match_entry=re.compile('<div class=.+?mediathekPlenarItem">(.+?)<br class="clear" />', re.DOTALL).findall(match_list[0])
 
-	for entry in match_entry:
-		match_thumb=re.compile('<img src="(.+?)"', re.DOTALL).findall(entry)
-		match_name=re.compile('<h2><a href=".+?">(.+?)</a>', re.DOTALL).findall(entry)
-		match_desc=re.compile('<strong> (.+?) </strong>', re.DOTALL).findall(entry)
-		match_url=re.compile('<a href="(.+?)"', re.DOTALL).findall(entry)
-		url = baseurl+'/Mediathek/index.jsp'+match_url[0].replace('&amp;','&')
-		name = replace(match_name[0]+' - '+match_desc[0])
-		addLink(name,url,5,baseurl+match_thumb[0])
+		for entry in match_entry:
+			match_thumb=re.compile('<img src="(.+?)"', re.DOTALL).findall(entry)
+			match_name=re.compile('<h2><a href=".+?">(.+?)</a>', re.DOTALL).findall(entry)
+			match_desc=re.compile('<strong> (.+?) </strong>', re.DOTALL).findall(entry)
+			match_url=re.compile('<a href="(.+?)"', re.DOTALL).findall(entry)
+			url = baseurl+'/Mediathek/index.jsp'+match_url[0].replace('&amp;','&')
+			name = replace(match_name[0]+' - '+match_desc[0])
+			addLink(name,url,5,baseurl+match_thumb[0])
 
-	match_next=re.compile('<a href="(.+?)" title="Ergebnisliste weiter">').findall(response)
+		match_next=re.compile('<a href="(.+?)" title="Ergebnisliste weiter">').findall(response)
 
-	for next in match_next:
-		url = baseurl+'/Mediathek/index.jsp'+next.replace('&amp;','&')
-		addDir('Nächste Seite',url,4,'')
+		for next in match_next:
+			url = baseurl+'/Mediathek/index.jsp'+next.replace('&amp;','&')
+			addDir('Nächste Seite',url,4,'')
+	except:
+		THEMEN(url)
 
 
 def PLAY_THEMEN(url,name):#5
