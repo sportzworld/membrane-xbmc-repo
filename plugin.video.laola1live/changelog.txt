@@ -3,3 +3,5 @@
 - Removed VOD because of CDN change
 0.19
 - Fixed VOD
+0.20
+- Fixed Livestreams

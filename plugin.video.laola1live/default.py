@@ -103,6 +103,7 @@ def get_playkeys(url):
 
 def VIDEOLINKS(video_id,name):
 	response = getUrl(url)
+	get_doubleclick(response)
 	"""
 	url = "http://streamaccess.unas.tv/hdflash/vod/22/"+video_id+".xml?t=.smil"
 	content = getUrl(url)
@@ -158,7 +159,14 @@ def VIDEOLINKS(video_id,name):
 	match_vod=re.compile('<meta name="vod" content="true" value="/(.+?)"', re.DOTALL).findall(response)
 	match_src=re.compile('<video src=".+?primaryToken=(.+?)" system-bitrate=".+?"/>', re.DOTALL).findall(response)
 
-	fullUrl = match_httpBase[0]+match_vod[0]+"?primaryToken="+match_src[-1]
+	if setting_streamquality == '0':
+		src = match_src[0]
+		print "low quality"
+	else:
+		src = match_src[-1]
+		print "high quality"
+	
+	fullUrl = match_httpBase[0]+match_vod[0]+"?primaryToken="+src
 	fullUrl = fullUrl.replace("&amp;","&")
 	fullUrl = fullUrl + "&v=2.10.3&fp=LNX%2011,1,102,63"
 	fullUrl = fullUrl + "&r="+char_gen(5)#random uppercase string
@@ -325,7 +333,7 @@ def VIDEOLIVELINKS(url,name):
 			return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 
 		print 'laola: use streamtype 1b'
-		match_live_1b=re.compile('isLiveStream=true&videopfad=(.+?)&sendeerkennung').findall(link)
+		match_live_1b=re.compile('isLiveStream=true&videopfad=(.+?)&').findall(link)
 		req = urllib2.Request(match_live_1b[0])
 		req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
 #		if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
@@ -341,7 +349,7 @@ def VIDEOLIVELINKS(url,name):
 		match_quality=re.compile('<video src="(.+?)" system-bitrate=".+?"/>').findall(link)
 
 ##http://sportsmanlive-f.akamaihd.net/khl_2_1_450@s7077?primaryToken=1327601291_6d4b5709d7c7b8c364cad2036168a57a&p=1&e=74022&i=&q=&k=&c=DE&a=&u=&t=&l=&v=2.4.5&fp=LNX%2010,3,162,29&r=UEEBM&g=UICJXUGLJHOM
-		http = match_http[0].replace("&i=&q=&k=&c=DE&a=&u=&t=&l=","&i=&q=&k=&c=DE&a=&u=&t=&l=&v=2.4.5&fp=LNX%2010,3,162,29&r=UEEBM&g=UICJXUGLJHOM")
+		http = match_http[0].replace("&i=&q=&k=&c=DE&a=&u=&t=&l=","&i=&q=&k=&c=DE&a=&u=&t=&l=&v=2.4.5&fp=LNX%2010,3,162,29&r="+char_gen(5)+"&g="+char_gen(12))
 
                 if livequality == '0':
 			video = match_quality[0]
@@ -350,7 +358,7 @@ def VIDEOLIVELINKS(url,name):
                 if livequality == '2':
 			video = match_quality[-1]
 
-		item = xbmcgui.ListItem(path=http+video)
+		item = xbmcgui.ListItem(path=http+video+" live=true")
 
 		return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 
@@ -489,6 +497,10 @@ def getUrl(url):
         link=response.read()
         response.close()
 	return link
+
+def get_doubleclick(page):
+	match_preroll1_pfad_sma=re.compile('preroll1_pfad_sma=(.+?)&').findall(page)
+	print "#######################"+getUrl(match_preroll1_pfad_sma[0])
 
 
 def log(message):
