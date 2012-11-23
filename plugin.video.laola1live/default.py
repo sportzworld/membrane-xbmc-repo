@@ -149,7 +149,7 @@ def VIDEOLINKS(video_id,name):
           elif app=="ondemand":
             fullUrl="rtmp://"+base+"/"+app+"?"+auth+" playpath="+playpath+" swfurl=http://www.eurovisionsports.tv/london2012/site/Digotel.4.3.0.swf swfVfy=true"
 	"""
-	match=re.compile('videopfad=(.+?)&sendeerkennung=', re.DOTALL).findall(response)
+	match=re.compile('videopfad=(.+?)&', re.DOTALL).findall(response)
 	response = getUrl(match[0])
 	print response
 
