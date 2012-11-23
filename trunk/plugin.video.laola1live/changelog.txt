@@ -5,3 +5,5 @@
 - Fixed VOD
 0.20
 - Fixed Livestreams
+0.21
+- Fixed VOD
