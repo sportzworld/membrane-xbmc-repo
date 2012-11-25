@@ -1,10 +1,17 @@
 # -*- coding: utf8 -*-
 
-import urllib,urllib2,re,xbmcplugin,xbmcgui,xbmcaddon,base64,socket,sys,string,random
+import urllib,urllib2,re,xbmcplugin,xbmcgui,xbmcaddon,base64,socket,sys,string,random,cookielib
+
+#xbmc.PLAYER_CORE_MPLAYER
 
 pluginhandle = int(sys.argv[1])
 addon = xbmcaddon.Addon(id='plugin.video.laola1live')
-akamaiProxyServer = xbmc.translatePath(addon.getAddonInfo('path')+"/akamaiSecureHD.py")
+#akamaiProxyServer = xbmc.translatePath(addon.getAddonInfo('path')+"/akamaiSecureHD.py")
+
+COOKIEFILE = xbmc.translatePath(addon.getAddonInfo('path')+"/cookies.lwp")
+#USERFILE = xbmc.translatePath(addon.getAddonInfo('path')+"/userfile.js")
+
+
 
 if xbmcplugin.getSetting(pluginhandle,"streamquality") == '0':
 	setting_streamquality = '0'
@@ -33,11 +40,27 @@ if xbmcplugin.getSetting(pluginhandle,"debug") == '0':
 elif xbmcplugin.getSetting(pluginhandle,"debug") == '1':
 	debug = '1'
 
+
+if xbmcplugin.getSetting(pluginhandle,"autoplay") == '0':
+	autoPlay = 0
+elif xbmcplugin.getSetting(pluginhandle,"autoplay") == '1':
+	autoPlay = 8
+elif xbmcplugin.getSetting(pluginhandle,"autoplay") == '2':
+	autoPlay = 10
+elif xbmcplugin.getSetting(pluginhandle,"autoplay") == '3':
+	autoPlay = 15
+elif xbmcplugin.getSetting(pluginhandle,"autoplay") == '4':
+	autoPlay = 20
+elif xbmcplugin.getSetting(pluginhandle,"autoplay") == '5':
+	autoPlay = 30
+
+
 #xip = xbmcplugin.getSetting(pluginhandle,"ip")
 #print 'xip: '+xip
                        
 #if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
 #	print 'laola: use trick'
+
 
 
 
@@ -101,60 +124,71 @@ def get_playkeys(url):
 
 	return playkeys
 
-def VIDEOLINKS(video_id,name):
+def VIDEOLINKS(url,name):
+	ad_length = 0
+
+
+	if xbmcplugin.getSetting(pluginhandle,"ads") == '1':
+		try:
+			ad_url,ad_length = get_video_ad()
+			#stacked_url += ad_url + ' , '
+			item=xbmcgui.ListItem('Werbung', thumbnailImage='')
+			xbmc.PlayList(1).add(ad_url, item)
+		except:
+			print 'no ad'
+
+	enc_url = url
+	enc_url = enc_url.replace(':','%3A')
+	enc_url = enc_url.replace('/','%2F')
+	item=xbmcgui.ListItem(name, thumbnailImage='')
+	xbmc.PlayList(1).add('plugin://plugin.video.laola1live/?url='+enc_url+'&mode=10&name='+name, item)
+
+def PLAY_VIDEO(url,name):
+
 	response = getUrl(url)
-	get_doubleclick(response)
-	"""
-	url = "http://streamaccess.unas.tv/hdflash/vod/22/"+video_id+".xml?t=.smil"
-	content = getUrl(url)
-        if url.find(".smil")>0:
-          print content
-          match=re.compile('<meta name="httpBase" content="(.+?)"', re.DOTALL).findall(content)
-          match_vod=re.compile('<meta name="vod" content="true" value="/hdflash/(.+?)"', re.DOTALL).findall(content)
-          print '#################################'+match_vod[0]
-          base=match[0]
-          maxBitrate=0
-          match=re.compile('<video src="(.+?)" system-bitrate="(.+?)"/>', re.DOTALL).findall(content)
-          for urlTemp, bitrateTemp in match:
-            bitrate=int(bitrateTemp)
-            if bitrate>maxBitrate:
-              match_urlTemp=re.compile('hdflash/(.+?)primaryToken', re.DOTALL).findall(urlTemp)
-              #urlTemp = urlTemp.replace(match_urlTemp[0],match_vod[0]+'?')
-              maxBitrate=bitrate
-              url=urlTemp
-          fullUrl=base+url
-          fullUrl = fullUrl.replace("&amp;","&")
-          fullUrl = fullUrl.replace("&p=","&p=22")
-          fullUrl = fullUrl.replace("&e=","&e="+video_id)
-          fullUrl = fullUrl.replace("&l=","&l=L1TV")
-          fullUrl = fullUrl.replace("&a=","&a=l1tvespfbliga1213")#TODO!!!
-          fullUrl = fullUrl + "&v=2.10.3&fp=LNX%2011,1,102,63&&r=KABKG&g=FOUKCDLEDPAW" #r=SHSYD&g=KYTYICOEFWDD
-	  print "#################################"+fullUrl
-          swfUrl="http://www.laola1.tv/swf/hdplayer.swf"
-          VIDb64 = base64.encodestring(fullUrl).replace('\n','')
-          SWFb64 = base64.encodestring(swfUrl).replace('\n','')
-          fullUrl = 'http://127.0.0.1:64653/secureconne/%s/%s' % (VIDb64,SWFb64)
-	"""
-	"""
-        elif url.find(".xml")>0:
-          playpath=url[url.find("gjmf=")+5:]
-          match=re.compile('<hostname>(.+?)</hostname>', re.DOTALL).findall(content)
-          base=match[0]
-          match=re.compile('<appName>(.+?)</appName>', re.DOTALL).findall(content)
-          app=match[0]
-          match=re.compile('<authParams>(.+?)</authParams>', re.DOTALL).findall(content)
-          auth=match[0].replace("&amp;","&")
-          if app=="live":
-            fullUrl="rtmp://"+base+"/"+app+" playpath="+playpath+"?"+auth+" swfurl=http://www.eurovisionsports.tv/london2012/site/Digotel.4.3.0.swf swfVfy=true live=true"
-          elif app=="ondemand":
-            fullUrl="rtmp://"+base+"/"+app+"?"+auth+" playpath="+playpath+" swfurl=http://www.eurovisionsports.tv/london2012/site/Digotel.4.3.0.swf swfVfy=true"
-	"""
 	match=re.compile('videopfad=(.+?)&', re.DOTALL).findall(response)
-	response = getUrl(match[0])
-	print response
+	print '#########################################'+match[0]
+	#link = getUrl(match[0])
+
+        req = urllib2.Request(match[0])
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        req.add_header('Host', 'streamaccess.unas.tv')
+        #req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        response = urllib2.urlopen(req)
+        link=response.read()
+        response.close()
+
+	print link
 
 
+	match_httpBase=re.compile('<meta name="httpBase" content="(.+?)"', re.DOTALL).findall(link)
+	match_vod=re.compile('<meta name="vod" content="true" value="/(.+?)"', re.DOTALL).findall(link)
+	match_src=re.compile('<video src=".+?primaryToken=(.+?)" system-bitrate=".+?"/>', re.DOTALL).findall(link)
+	match_srcb=re.compile('<video src="(.+?)" system-bitrate=".+?"/>', re.DOTALL).findall(link)
+	if setting_streamquality == '0':
+		src = match_src[0]
+		print "low quality"
+	else:
+		src = match_src[-1]
+		print "high quality"
+	vod = match_vod[0]
+	#vod = match_vod[0].replace('bitrate=0','bitrate=950000')
+	#vod = vod.replace('bitrate=0','bitrate=950000')
 
+
+	fullUrl = match_httpBase[0]+vod+"?primaryToken="+src
+	#fullUrl = match_httpBase[0]+match_srcb[0]
+	fullUrl = fullUrl.replace("&amp;","&")
+	#fullUrl = fullUrl.replace("&p=","&p=22")
+	#fullUrl = fullUrl.replace("&e=","&e=104258")
+	#fullUrl = fullUrl.replace("&a=","&a=l1tvgerfbbl")
+	#fullUrl = fullUrl.replace("&l=","&l=L1TV")
+	fullUrl = fullUrl + "&v=2.10.3&fp=LNX%2011,1,102,63"
+	fullUrl = fullUrl + "&r="+char_gen(5)#random uppercase string
+	g = char_gen(12)#random uppercase string
+	fullUrl = fullUrl + "&g="+g
+
+	"""
 	match_httpBase=re.compile('<meta name="httpBase" content="(.+?)"', re.DOTALL).findall(response)
 	match_vod=re.compile('<meta name="vod" content="true" value="/(.+?)"', re.DOTALL).findall(response)
 	match_src=re.compile('<video src=".+?primaryToken=(.+?)" system-bitrate=".+?"/>', re.DOTALL).findall(response)
@@ -171,11 +205,88 @@ def VIDEOLINKS(video_id,name):
 	fullUrl = fullUrl + "&v=2.10.3&fp=LNX%2011,1,102,63"
 	fullUrl = fullUrl + "&r="+char_gen(5)#random uppercase string
 	fullUrl = fullUrl + "&g="+char_gen(12)#random uppercase string
+	"""
+
+        #listitem = xbmcgui.ListItem(path=fullUrl)
 
 
-        listitem = xbmcgui.ListItem(path=fullUrl)
+	#print int(float(ad_length)*float(1000))
+	item=xbmcgui.ListItem(name, thumbnailImage='', path=fullUrl)
+	#xbmc.Player().play( fullUrl , item)		
+
+	xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+	#deb_time = 'debug time\n'
+
+	#deb_time += 'adlength time in ms\n'
+	#deb_time += str(int(float(ad_length)*float(1000)))+'\n'
+
+
+	if autoPlay>0:
+		xbmc.sleep(autoPlay*100)
+		if xbmc.Player().isPlaying()==True and int(xbmc.Player().getTime())==0:
+			xbmc.Player().pause()
+	"""
+	xbmc.sleep(5000)
+
+	mod_vod = vod.replace('mp4.csmil/bitrate=0','mp4.csmil_0_1@14')
+	mod_vod = mod_vod+'?cmd=throttle,100&v=2.10.3&r='+char_gen(5)+'&g='+g+'&lvl1=9.84,10,15.458,11.49,12.66,NaN,1488,1488,1,950,16.353,1353800347.83,14.92,16.378,14.945,393.68,1445'
+
+	control = match_httpBase[0]+mod_vod
+	print '#################################control'+control
+	print getUrl(control)
+	"""
+
+#'http://hdvodlaola1tv-f.akamaihd.net/control/hdflash/2012/eishockey/121123_man_kec_,low,high,.mp4.csmil_0_1@14?cmd=throttle,108&v=2.10.3&r=EYXCI&g=RVBLUXVNVBLK&lvl1=9.84,10,15.458,11.49,12.66,NaN,1488,1488,1,950,16.353,1353800347.83,14.92,16.378,14.945,393.68,1445,3.03,0,155,122,15003,u,false')
+
+
+
+	"""
+	if autoPlay>0:
+		xbmc.sleep(autoPlay*100+int(float(ad_length)*float(1000)))
+		time_difference = int(xbmc.Player().getTime())*1000 - int(float(ad_length)*float(1000))
+		#deb_time += 'player time\n'
+		#deb_time += str(int(xbmc.Player().getTime()))+'\n'
+		#deb_time += 'time difference\n'
+		#deb_time += str(time_difference)+'\n'
+		#deb_time += 'round time\n'
+		#deb_time += str(round(time_difference))+'\n'
+		#deb_time += 'round time/100\n'
+		#deb_time += str(round(time_difference/100))
+		#print deb_time
+		if xbmc.Player().isPlaying()==True and round(time_difference/1000)==0:
+
+			xbmc.Player().pause()
+	"""
+	"""
+    	#core_player = xbmc.PLAYER_CORE_MPLAYER
+    	core_player = xbmc.PLAYER_CORE_DVDPLAYER
+	stacked_url = stacked_url[:-3] 
+	item=xbmcgui.ListItem(name, iconImage='', thumbnailImage='')
+
+	ok=xbmc.Player( core_player ).play( stacked_url , item)
+	autoPlay = 5
+	if autoPlay>0:
+		xbmc.sleep(autoPlay*1000)
+		if xbmc.Player().isPlaying()==True and int(xbmc.Player().getTime())==0:
+			xbmc.Player().pause()	
+
+	return
+	#item=xbmcgui.ListItem(name, thumbnailImage='', path=stacked_url)
+	#xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+
+	#listitem = xbmcgui.ListItem(name,thumbnailImage='')#TODO:thumb
+	#xbmc.PlayList(1).add(fullUrl, listitem)
+	"""
+
+
+
+	"""
 	listitem.setProperty('mimetype', 'video/x-flv')
         return xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+	"""
+
+
+
 """
 	pageurl = url #this is messy
 
@@ -486,6 +597,9 @@ def get_params():
 def char_gen(size=1, chars=string.ascii_uppercase):
 	return ''.join(random.choice(chars) for x in range(size))
 
+def num_gen(size=1, chars=string.digits):
+	return ''.join(random.choice(chars) for x in range(size))
+
 
 def getUrl(url):
         req = urllib2.Request(url)
@@ -498,9 +612,55 @@ def getUrl(url):
         response.close()
 	return link
 
-def get_doubleclick(page):
-	match_preroll1_pfad_sma=re.compile('preroll1_pfad_sma=(.+?)&').findall(page)
-	print "#######################"+getUrl(match_preroll1_pfad_sma[0])
+
+
+def getUrlCookie( url , extraheader=True):
+    cj = cookielib.LWPCookieJar()
+    if os.path.isfile(COOKIEFILE):
+        print '#####################readcookie'
+        cj.load(COOKIEFILE, ignore_discard=True)
+
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+    opener.addheaders = [('User-Agent', 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2;)')]
+    opener.addheaders = [('Host', 'ad.smartclip.net')]
+    """
+    opener.addheaders = [('Referer', 'http://www.vevo.com'),
+                         ('User-Agent', 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2;)')]
+
+    if extraheader:
+        opener.addheaders = [('X-Requested-With', 'XMLHttpRequest')]
+    if addoncompat.get_setting('location')==1:
+        opener.addheaders = [('X-Forwarded-For', '12.13.14.15')]
+    """
+    usock=opener.open(url)
+    response=usock.read()
+    usock.close()
+    #if os.path.isfile(COOKIEFILE):
+    print '#####################write'
+    cj.save(COOKIEFILE, ignore_discard=True)
+    return response
+
+
+
+
+def get_video_ad():
+	response = getUrlCookie('http://ad.de.doubleclick.net/ad/pushbackde.smartclip/laola1.tv.as3.smartclip/;scadn=0;sccat=adnpbk;scsid=1036492;sz=400x320;dcmt=text/xml;ord='+num_gen(11))
+	match_designTheme=re.compile('<adDataURL>(.+?)</adDataURL>').findall(response)
+	response = getUrl(match_designTheme[0])
+	match_videoPath=re.compile('<videoPath>(.+?)</videoPath>').findall(response)
+	match_videoID=re.compile('<videoID>(.+?)</videoID>').findall(response)
+	match_videoName=re.compile('<videoName>(.+?)</videoName>').findall(response)
+	match_realAdId=re.compile('<realAdId>(.+?)</realAdId>').findall(response)
+	match_adId=re.compile('<adId>(.+?)</adId>').findall(response)
+	match_videoLength=re.compile('<videoLength>(.+?)</videoLength>').findall(response)
+
+	return match_videoPath[0]+match_videoID[0]+'/fl8_'+match_videoName[0]+'-600.flv?ewadid='+match_realAdId[0]+'&eid='+match_adId[0],match_videoLength[0]
+
+def force_play(url):
+	if autoPlay>0:
+		xbmc.sleep(autoPlay*1000)
+		if xbmc.Player().isPlaying()==True and int(xbmc.Player().getTime())==0:
+			xbmc.Player().pause()
 
 
 def log(message):
@@ -585,6 +745,10 @@ elif mode==5:
 
 elif mode==6:
         print ""+url
-        LIVE(url)   
+        LIVE(url)  
+
+elif mode==10:
+        print ""+url
+        PLAY_VIDEO(url,name)  
   
 xbmcplugin.endOfDirectory(int(sys.argv[1]))

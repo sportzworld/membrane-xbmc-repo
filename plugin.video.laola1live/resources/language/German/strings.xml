@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+	<!-- Category strings -->
+	<string id="30001">Nächste Seite</string>
+
+	<!-- Plugin settings strings -->
+	<string id="30204">Standort</string>
+	<string id="30205">Österreich</string>
+	<string id="30206">Deutschland</string>
+	<string id="30207">International</string>
+
+	<string id="30208">Livestream Qualität</string>
+	<string id="30209">Niedrig</string>
+	<string id="30210">Mittel</string>
+	<string id="30211">Hoch</string>
+
+	<string id="30212">Video Qualität</string>
+	<string id="30213">Niedrig</string>
+	<string id="30214">Hoch</string>
+
+	<string id="30215">Debug</string>
+	<string id="30216">Aus</string>
+	<string id="30217">An</string>
+
+	<string id="30218">Werbung</string>
+	<string id="30219">Aus</string>
+	<string id="30220">An</string>
+
+	<string id="30221">Automatisches abspielen erzwingen - Verzögerung in s</string>
+	<string id="30222">Aus</string>
+	<string id="30223">0.8</string>
+	<string id="30224">1</string>
+	<string id="30225">1.5</string>
+	<string id="30226">2</string>
+	<string id="30227">3</string>
+
+
+	<!-- messages -->
+</strings>
