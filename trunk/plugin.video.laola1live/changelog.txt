@@ -7,3 +7,6 @@
 - Fixed Livestreams
 0.21
 - Fixed VOD
+0.22
+- Workaround for pausing videos added (thanks to AddonScriptorDE)
+- Commercials added to support Laola1.tv
