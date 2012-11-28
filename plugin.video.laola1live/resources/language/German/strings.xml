@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
 	<!-- Category strings -->
-	<string id="30001">Nächste Seite</string>
+	<string id="30001">Naechste Seite</string>
+
+	<string id="30002">Werbung</string>
+
+	<string id="30003">Livestream hat noch nicht begonnen</string>
+	<string id="30004">Das Spiel beginnt am</string>
+	<string id="30005">um</string>
+	<string id="30006">Uhr CET</string>
+
+	<string id="30007">Lieber LAOLA1-User,</string>
+	<string id="30008">Dieser Stream ist bereits beendet.</string>
+
 
 	<!-- Plugin settings strings -->
 	<string id="30204">Standort</string>
@@ -28,11 +39,13 @@
 
 	<string id="30221">Automatisches abspielen erzwingen - Verzögerung in s</string>
 	<string id="30222">Aus</string>
-	<string id="30223">0.8</string>
+	<string id="30223">0,8</string>
 	<string id="30224">1</string>
-	<string id="30225">1.5</string>
+	<string id="30225">1,5</string>
 	<string id="30226">2</string>
 	<string id="30227">3</string>
+	<string id="30228">4</string>
+	<string id="30229">5</string>
 
 
 	<!-- messages -->
