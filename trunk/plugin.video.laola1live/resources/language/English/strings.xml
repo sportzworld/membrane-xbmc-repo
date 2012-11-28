@@ -3,6 +3,17 @@
 	<!-- Category strings -->
 	<string id="30001">Next Site</string>
 
+	<string id="30002">Commercial</string>
+
+	<string id="30003">Livestream has not started</string>
+	<string id="30004">This stream starts at</string>
+	<string id="30005">at</string>
+	<string id="30006">CET</string>
+
+	<string id="30007">Dear LAOLA1-User,</string>
+	<string id="30008">This stream has already finished.</string>
+
+
 	<!-- Plugin settings strings -->
 	<string id="30204">Location</string>
 	<string id="30205">Austria</string>
@@ -33,6 +44,8 @@
 	<string id="30225">1.5</string>
 	<string id="30226">2</string>
 	<string id="30227">3</string>
+	<string id="30228">4</string>
+	<string id="30229">5</string>
 
 
 	<!-- messages -->
