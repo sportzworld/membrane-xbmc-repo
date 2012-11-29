@@ -14,3 +14,5 @@
 - Various small fixes and improvements
 - Code cleanup
 - Livestreams now with commercials
+0.24
+- Fixed flvlib error
