@@ -2,9 +2,7 @@
 
 import urllib,urllib2,re,xbmcplugin,xbmcgui,xbmcaddon,base64,socket,sys,string,random,cookielib,httplib,base64
 
-from flvlib import tags
-from flvlib import helpers
-from flvlib.astypes import MalformedFLV
+
 
 __settings__ = xbmcaddon.Addon(id='plugin.video.laola1live')
 __language__ = __settings__.getLocalizedString
