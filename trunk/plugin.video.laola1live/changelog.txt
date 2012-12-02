@@ -16,3 +16,6 @@
 - Livestreams now with commercials
 0.24
 - Fixed flvlib error
+0.25
+- Added auto-play feature to livestreams
+- Improved auto-play

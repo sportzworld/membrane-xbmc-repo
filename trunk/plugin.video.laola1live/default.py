@@ -49,22 +49,7 @@ if xbmcplugin.getSetting(pluginhandle,"debug") == '0':
 elif xbmcplugin.getSetting(pluginhandle,"debug") == '1':
 	debug = '1'
 
-if xbmcplugin.getSetting(pluginhandle,"autoplay") == '0':
-	autoPlay = 0
-elif xbmcplugin.getSetting(pluginhandle,"autoplay") == '1':
-	autoPlay = 8
-elif xbmcplugin.getSetting(pluginhandle,"autoplay") == '2':
-	autoPlay = 10
-elif xbmcplugin.getSetting(pluginhandle,"autoplay") == '3':
-	autoPlay = 15
-elif xbmcplugin.getSetting(pluginhandle,"autoplay") == '4':
-	autoPlay = 20
-elif xbmcplugin.getSetting(pluginhandle,"autoplay") == '5':
-	autoPlay = 30
-elif xbmcplugin.getSetting(pluginhandle,"autoplay") == '6':
-	autoPlay = 40
-elif xbmcplugin.getSetting(pluginhandle,"autoplay") == '7':
-	autoPlay = 50
+
 
 
 ###set strings
@@ -263,10 +248,15 @@ def PLAY_VIDEO(url,name):
 	#deb_time += str(int(float(ad_length)*float(1000)))+'\n'
 
 
+	force_play()
+
+
+	"""
 	if autoPlay>0:
 		xbmc.sleep(autoPlay*100)
 		if xbmc.Player().isPlaying()==True and int(xbmc.Player().getTime())==0:
 			xbmc.Player().pause()
+	"""
 	"""
 	xbmc.sleep(5000)
 
@@ -642,6 +632,8 @@ def PLAY_LIVE_1B(url,name):#11
 	item.setProperty('mimetype', 'video/x-flv')
 	xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 
+	force_play()
+
 	
 def LIVE(url):
         req = urllib2.Request(url)
@@ -748,11 +740,41 @@ def get_video_ad():
 
 	return match_videoPath[0]+match_videoID[0]+'/fl8_'+match_videoName[0]+'-600.flv?ewadid='+match_realAdId[0]+'&eid='+match_adId[0],match_videoLength[0]
 
-def force_play(url):
-	if autoPlay>0:
-		xbmc.sleep(autoPlay*1000)
-		if xbmc.Player().isPlaying()==True and int(xbmc.Player().getTime())==0:
-			xbmc.Player().pause()
+def force_play():
+	if not xbmcplugin.getSetting(pluginhandle,"autoplay") == '0':
+		log('autoplay enabled, waiting for player')
+		i = 0
+		while not xbmc.getCondVisibility("Player.HasVideo"):#wait till player started video
+			i = i + 1
+			if i == 500: #timeout after 5s
+				log('videoplayer timeout')
+				return
+			xbmc.sleep(10)
+
+		log('time till player started video: '+str(i*10)+'ms')
+
+		xbmc.sleep(100)
+
+		if xbmc.getCondVisibility("Player.Paused"):
+			log('starting autoplay')
+		else:
+			log('video started on its own')
+			return
+		n = 1
+		while n != 50:#timeout after 5s
+			if xbmc.Player().isPlaying()==True and int(xbmc.Player().getTime())==0 and xbmc.getCondVisibility("Player.Paused"):#attempt to play video
+				xbmc.Player().pause()
+			else:
+				log('autoplay successfull after '+str(n)+' attempts')
+				return
+			xbmc.sleep(100)
+			n = n + 1
+		log('autoplay unsuccessfull after '+str(n)+' attempts')
+
+	else:
+		log("autoplay disabled")
+		return
+			
 
 
 def log(message):
