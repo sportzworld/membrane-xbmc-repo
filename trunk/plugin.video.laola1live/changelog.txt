@@ -17,5 +17,8 @@
 0.24
 - Fixed flvlib error
 0.25
-- Added auto-play feature to livestreams
 - Improved auto-play
+- Added auto-play feature to livestreams
+0.26
+- Thumbnails now in video information
+- More debug messages added

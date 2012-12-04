@@ -136,7 +136,7 @@ def get_playkeys(url):
 
 	return playkeys
 
-def VIDEOLINKS(url,name):
+def VIDEOLINKS(url,name,thumb=''):
 
 	if xbmcplugin.getSetting(pluginhandle,"ads") == '1':
 		try:
@@ -149,13 +149,13 @@ def VIDEOLINKS(url,name):
 			log('no commercial recieved')
 
 
-	item=xbmcgui.ListItem(name, thumbnailImage='')
+	item=xbmcgui.ListItem(name, thumbnailImage=thumb)
 	item.setProperty('mimetype', 'video/x-flv')
-	xbmc.PlayList(1).add('plugin://plugin.video.laola1live/?url='+enc_url(url)+'&mode=10&name='+name, item)
+	xbmc.PlayList(1).add('plugin://plugin.video.laola1live/?url='+enc_url(url)+'&mode=10&thumb='+enc_url(thumb)+'&name='+name, item)
 
 
 
-def PLAY_VIDEO(url,name):
+def PLAY_VIDEO(url,name,thumb=''):#10
 
 	response = getUrl(url)
 	match=re.compile('videopfad=(.+?)&', re.DOTALL).findall(response)
@@ -175,11 +175,12 @@ def PLAY_VIDEO(url,name):
 	match_srcb=re.compile('<video src="(.+?)" system-bitrate=".+?"/>', re.DOTALL).findall(link)
 	if setting_streamquality == '0':
 		src = match_src[0]
-		log("low quality - currently broken")
+		log("low quality")
 
 	else:
 		src = match_src[-1]
 		log("high quality - currently broken")
+
 	vod = match_vod[0]
 	#vod = match_vod[0].replace('bitrate=0','bitrate=950000')
 	#vod = vod.replace('bitrate=0','bitrate=950000')
@@ -237,7 +238,7 @@ def PLAY_VIDEO(url,name):
 
 	#print int(float(ad_length)*float(1000))
 
-	item=xbmcgui.ListItem(name, thumbnailImage='', path=fullUrl)
+	item=xbmcgui.ListItem(name, thumbnailImage=thumb, path=fullUrl)
 	item.setProperty('mimetype', 'video/x-flv')
 	#xbmc.Player().play( fullUrl , item)		
 
@@ -439,7 +440,7 @@ def LIVESELECTION(url):
                         addDir(__language__(30001),url,4,'')
 
 
-def VIDEOLIVELINKS(url,name):#5
+def VIDEOLIVELINKS(url,name,thumb):#5
 	#print url
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
@@ -511,9 +512,9 @@ def VIDEOLIVELINKS(url,name):#5
 		#	PLAY_LIVE_1B(enc_url,name)
 
 
-		item=xbmcgui.ListItem(name, thumbnailImage='')
+		item=xbmcgui.ListItem(name, thumbnailImage=thumb)
 		item.setProperty('mimetype', 'video/x-flv')
-		xbmc.PlayList(1).add('plugin://plugin.video.laola1live/?url='+enc_url(match_live_1b[0])+'&mode=11&name='+name, item)
+		xbmc.PlayList(1).add('plugin://plugin.video.laola1live/?url='+enc_url(match_live_1b[0])+'&mode=11&thumb='+enc_url(thumb)+'&name='+name, item)
 
 
 
@@ -609,7 +610,7 @@ def VIDEOLIVELINKS(url,name):#5
          	                                               ##...yeah
 
 
-def PLAY_LIVE_1B(url,name):#11
+def PLAY_LIVE_1B(url,name,thumb=''):#11
 	link=getUrl(url)
 	match_rtmp=re.compile('<meta name="rtmpPlaybackBase" content="(.+?)" />').findall(link)
 	match_http=re.compile('<meta name="httpBase" content="(.+?)" />').findall(link)
@@ -628,7 +629,7 @@ def PLAY_LIVE_1B(url,name):#11
 	if livequality == '2':
 		video = match_quality[-1]
 
-	item=xbmcgui.ListItem(name, thumbnailImage='', path=http+video+" live=true")
+	item=xbmcgui.ListItem(name, thumbnailImage=thumb, path=http+video+" live=true")
 	item.setProperty('mimetype', 'video/x-flv')
 	xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 
@@ -728,17 +729,58 @@ def getUrlCookie( url , extraheader=True):
 
 
 def get_video_ad():
-	response = getUrlCookie('http://ad.de.doubleclick.net/ad/pushbackde.smartclip/laola1.tv.as3.smartclip/;scadn=0;sccat=adnpbk;scsid=1036492;sz=400x320;dcmt=text/xml;ord='+num_gen(11))
-	match_designTheme=re.compile('<adDataURL>(.+?)</adDataURL>').findall(response)
-	response = getUrl(match_designTheme[0])
-	match_videoPath=re.compile('<videoPath>(.+?)</videoPath>').findall(response)
-	match_videoID=re.compile('<videoID>(.+?)</videoID>').findall(response)
-	match_videoName=re.compile('<videoName>(.+?)</videoName>').findall(response)
-	match_realAdId=re.compile('<realAdId>(.+?)</realAdId>').findall(response)
-	match_adId=re.compile('<adId>(.+?)</adId>').findall(response)
-	match_videoLength=re.compile('<videoLength>(.+?)</videoLength>').findall(response)
+	a = 1
+	while not a == 0:
 
-	return match_videoPath[0]+match_videoID[0]+'/fl8_'+match_videoName[0]+'-600.flv?ewadid='+match_realAdId[0]+'&eid='+match_adId[0],match_videoLength[0]
+		log('attempting to get commercial')
+		url = 'http://ad.de.doubleclick.net/ad/pushbackde.smartclip/laola1.tv.as3.smartclip/;scadn=0;sccat=adnpbk;scsid=1036492;sz=400x320;dcmt=text/xml;ord='+num_gen(11)
+		url = 'http://ad.de.doubleclick.net/ad/pushbackde.smartclip/laola1.tv.as3.smartclip/;scadn=0;sccat=adnpbk;scsid=1036492;sz=400x320;dcmt=text/xml;ord=61481445655?'
+		log('DesignTheme url: '+url)
+		response = getUrlCookie(url)
+
+		try:
+			match_designTheme=re.compile('<adDataURL>(.+?)</adDataURL>').findall(response)
+			log('doubleclick url: '+match_designTheme[0])
+			response = getUrl(match_designTheme[0])
+
+			match_videoPath=re.compile('<videoPath>(.+?)</videoPath>').findall(response)
+			log('videoPath: '+match_videoPath[0])
+			match_videoID=re.compile('<videoID>(.+?)</videoID>').findall(response)
+			log('videoID: '+match_videoID[0])
+			match_videoName=re.compile('<videoName>(.+?)</videoName>').findall(response)
+			log('videoName: '+match_videoName[0])
+			match_realAdId=re.compile('<realAdId>(.+?)</realAdId>').findall(response)
+			log('realAdId: '+match_realAdId[0])
+			match_adId=re.compile('<adId>(.+?)</adId>').findall(response)
+			log('adId: '+match_adId[0])
+			match_videoLength=re.compile('<videoLength>(.+?)</videoLength>').findall(response)
+			log('videoLength: '+match_videoLength[0])
+			log('commercial url: '+match_videoPath[0]+match_videoID[0]+'/fl8_'+match_videoName[0]+'-600.flv?ewadid='+match_realAdId[0]+'&eid='+match_adId[0])
+			return match_videoPath[0]+match_videoID[0]+'/fl8_'+match_videoName[0]+'-600.flv?ewadid='+match_realAdId[0]+'&eid='+match_adId[0],match_videoLength[0]
+		except:
+			return
+			#print response
+			if 'cachebuster' in response:
+				match_VASTAdTagURI=re.compile('CDATA\[(.+?)\]').findall(response)
+				VASTAdTagURI = match_VASTAdTagURI[0]
+				VASTAdTagURI = VASTAdTagURI.replace('[CACHEBUSTER',num_gen(11))
+				log('VASTAdTagURI: '+match_VASTAdTagURI[0])
+				print response
+				return
+			
+			else:
+				match_VASTAdTagURI=re.compile('CDATA\[(.+?)\]').findall(response)
+				log('VASTAdTagURI: '+match_VASTAdTagURI[0])
+				response = getUrl(match_VASTAdTagURI[0])
+				print response
+				match_AdTitle=re.compile('<AdTitle>(.+?)</AdTitle>').findall(response)
+				log('AdTitle: '+match_AdTitle[0])
+				response = getUrl('http://addirector.vindicosuite.com/feeds/addirector/vast/2/?renderVer=xumo_1.1.0.2hf41&rotationId='+match_AdTitle[0]+'&rnd='+num_gen(10)+'&version=release&rt=swf&ximpid=1036492&fromXumo=true')
+				print response
+				match_MediaFile=re.compile('<MediaFile.+?CDATA\[(.+?)\]').findall(response)
+				log('MediaFile: '+match_MediaFile[0])
+				match_Duration=re.compile('<Duration>00:00:(.+?)</Duration>').findall(response)
+				return match_MediaFile[0],match_Duration[0]
 
 def force_play():
 	if not xbmcplugin.getSetting(pluginhandle,"autoplay") == '0':
@@ -765,7 +807,7 @@ def force_play():
 			if xbmc.Player().isPlaying()==True and int(xbmc.Player().getTime())==0 and xbmc.getCondVisibility("Player.Paused"):#attempt to play video
 				xbmc.Player().pause()
 			else:
-				log('autoplay successfull after '+str(n)+' attempts')
+				log('autoplay successfull after '+str(n)+' attempt(s)')
 				return
 			xbmc.sleep(100)
 			n = n + 1
@@ -792,7 +834,7 @@ def addLinkOld(name,url,iconimage):
         return ok
 
 def addLink(name,url,mode,iconimage):
-	u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)##
+	u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&thumb="+urllib.quote_plus(iconimage)+"&name="+urllib.quote_plus(name)##
 	ok=True##
 	liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)##
 	liz.setInfo( type="Video", infoLabels={ "Title": name } )##
@@ -816,6 +858,7 @@ url=None
 name=None
 mode=None
 link=None
+thumb=None
 
 try:
         url=urllib.unquote_plus(params["url"])
@@ -830,6 +873,10 @@ try:
 except:
         pass
 try:
+        thumb=urllib.unquote_plus(params["thumb"])
+except:
+        pass
+try:
         mode=int(params["mode"])
 except:
         pass
@@ -837,6 +884,7 @@ except:
 print "Mode: "+str(mode)
 print "URL: "+str(url)
 print "Name: "+str(name)
+print "Thumbnail: "+str(thumb)
 
 if mode==None or url==None or len(url)<1:
         print ""
@@ -852,7 +900,7 @@ elif mode==2:
 
 elif mode==3:
         print ""+url
-        VIDEOLINKS(url,name)
+        VIDEOLINKS(url,name,thumb)
         
 elif mode==4:
         print ""+url
@@ -860,7 +908,7 @@ elif mode==4:
         
 elif mode==5:
         print ""+url
-        VIDEOLIVELINKS(url,name)        
+        VIDEOLIVELINKS(url,name,thumb)        
 
 elif mode==6:
         print ""+url
@@ -868,11 +916,11 @@ elif mode==6:
 
 elif mode==10:
         print ""+url
-        PLAY_VIDEO(url,name) 
+        PLAY_VIDEO(url,name,thumb) 
 
 elif mode==11:
         print ""+url
-        PLAY_LIVE_1B(url,name) 
+        PLAY_LIVE_1B(url,name,thumb) 
 
   
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
