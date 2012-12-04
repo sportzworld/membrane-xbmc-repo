@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-import urllib,urllib2,re,xbmcplugin,xbmcgui
+import urllib,urllib2,re,xbmcplugin,xbmcgui,xbmcaddon,cookielib
 
 
 pluginhandle = int(sys.argv[1])
+__settings__ = xbmcaddon.Addon(id='plugin.video.putpat')
+addon = xbmcaddon.Addon(id='plugin.video.putpat')
+COOKIEFILE = xbmc.translatePath(addon.getAddonInfo('path')+"/cookies.lwp")
 
 baseurl = 'http://www.putpat.tv'
 
@@ -13,6 +16,7 @@ mainlink=mainresponse.read()
 mainresponse.close()
 
 match_channels=re.compile('<channel>(.+?)</channel>', re.DOTALL).findall(mainlink)
+channels = match_channels
 
 
 def MAIN():
@@ -60,22 +64,46 @@ def MAIN():
 		except:
 			urlchannel = 'Scraping Fehler, bitte melden ;)'
 
+		try:
+			match_channelid=re.compile('<id type="integer">(.+?)</id>').findall(channel)
+			channelid = match_channelid[0]
+		except:
+			channelid = 'Scraping Fehler, bitte melden ;)'
+
 		
-		name = title + ' - ' + message
+		name = fix_name(title + ' - ' + message)
 		thumb = 'http://files.putpat.tv/artwork/channelgraphics/'+integer+'/channellogo_invert_500.png'
-		addLinkFan(name,'<title>'+title+'</title>',1,thumb,'http://files.putpat.tv/putpat_player/231/assets/putpat_splashscreen.jpg')
+		url = 'http://www.putpat.tv/ws.xml?method=Channel.clips&client=putpatplayer&streamingMethod=http&streamingId=tvrl&channelId='+channelid+'&maxClips=5&partnerId=1'
+		addLinkFan(name,url,1,thumb,'http://files.putpat.tv/putpat_player/231/assets/putpat_splashscreen.jpg')
 
 		
 
-def PLAY(url,name):#1
-	for channel in match_channels:
-		if url in channel:
-			match_clips=re.compile('<clip>(.+?)</clip>', re.DOTALL).findall(channel)
+def PLAY(url):#1
+	#dummy entry, workaround
+
+	#pl=xbmc.PlayList(1)
+	#pl.clear()
+
+	#item = xbmcgui.ListItem('Dummy entry',thumbnailImage='')
+	#xbmc.PlayList(1).add('', item)
+	"""
+	ad = 'true'
+	print '####################################################ad: '
+	print ad
+	if ad == 'true':
+		video = get_ad()
+		print video
+		item = xbmcgui.ListItem('Werbung',thumbnailImage='')
+		item.setProperty('mimetype', 'video/mp4')
+		xbmc.PlayList(1).add(video, item)
+	"""
+
+	response = getUrl(url)
+	match_clips=re.compile('<clip>(.+?)</clip>', re.DOTALL).findall(response)
 
 	
-	pl=xbmc.PlayList(1)
-	pl.clear()
-	
+
+	#xbmc.sleep(500)
 	for entry in match_clips:
 		try:
 			match_title=re.compile('<title>(.+?)</title>').findall(entry)
@@ -91,18 +119,26 @@ def PLAY(url,name):#1
 			
 		try:
 			if xbmcplugin.getSetting(pluginhandle,"quality") == '2':
-				match_video = match_high=re.compile('<high>(.+?)</high>').findall(entry)
+				match_video = match_high=re.compile('<medium>(.+?)</medium>').findall(entry)
 	
 			elif xbmcplugin.getSetting(pluginhandle,"quality") == '1':
-				match_video = match_high=re.compile('<medium>(.+?)</medium>').findall(entry)
-				
-			elif xbmcplugin.getSetting(pluginhandle,"quality") == '0':
 				match_video = match_high=re.compile('<low>(.+?)</low>').findall(entry)
 				
-			video = match_video[0]
+			elif xbmcplugin.getSetting(pluginhandle,"quality") == '0':
+				match_video = match_high=re.compile('<preview>(.+?)</preview>').findall(entry)
+				
+			video = match_video[0].replace('&amp;','&')
 		except:
 			video = 'Scraping Fehler, bitte melden ;)'
-			
+
+		try:
+			match_thumb=re.compile('http://tv.putpat.tv/(.+?)_').findall(video)
+			thumb = 'http://files.putpat.tv/artwork/posterframes/'+match_thumb[0]+'_posterframe_putpat_small.jpg'
+		except:
+			thumb = 'Scraping Fehler, bitte melden ;)'
+
+		###rtmp stuff, use http for now
+		"""
 		try:
 			match_token=re.compile('<token>(.+?)</token>').findall(entry)
 			token = match_token[0]
@@ -123,13 +159,131 @@ def PLAY(url,name):#1
 		mp4 = 'mp4'+match_mp4[0]+'mp4'
 		
 		url = 'rtmp://tvrlfs.fplive.net/tvrl/ playpath='+mp4+token+' swfurl=http://files.putpat.tv/putpat_player/231/PutpatPlayer.swf swfvfy=true pageUrl=http://www.putpat.tv/'
-		listitem = xbmcgui.ListItem(author + ' - ' + title,thumbnailImage='')
-		xbmc.PlayList(1).add(url, listitem)
+		"""
+		print '######################add video'
+		print author
+		print title
+		print thumb
+		print video
+		if not 'v&#246; folgt!' in title:
+			name = author + ' - ' + title
+		else:
+			name = author
+		item = xbmcgui.ListItem(fix_name(name),thumbnailImage=thumb)
+		item.setProperty('mimetype', 'video/mp4')
+		xbmc.PlayList(1).add(video, item)
+
+	print 'plugin://plugin.video.putpat/?mode=2&url='+enc_url(url)
+	item = xbmcgui.ListItem('Werbung',thumbnailImage='')
+	xbmc.PlayList(1).add('plugin://plugin.video.putpat/?mode=2&url='+enc_url(url), item)
+
+	#item = xbmcgui.ListItem('More',thumbnailImage='')
+	#xbmc.PlayList(1).add('plugin://plugin.video.putpat/?url='+enc_url(url)+'&mode=1&ad=true', item)
+	
+	
 
 	
 	#xbmc.Player().play(pl)
 
+
+
+def PLAY_AD(url):#2
+
+	#pl=xbmc.PlayList(1)
+	#pl.clear()
+
+	#item = xbmcgui.ListItem('Dummy entry',thumbnailImage='')
+	#xbmc.PlayList(1).add('', item)
+	try:
+		video = get_ad()
+	except:
+		video = ''
+
+	item = xbmcgui.ListItem('Werbung',thumbnailImage='')
+	item.setProperty('mimetype', 'video/mp4')
+	xbmc.PlayList(1).add(video, item)
+
+	item = xbmcgui.ListItem('More',thumbnailImage='')
+	xbmc.PlayList(1).add('plugin://plugin.video.putpat/?url='+enc_url(url)+'&mode=1', item)
+
+
+def get_ad():
+	response = getUrl('http://www.putpat.tv/ws.xml?partnerId=1&method=Marketing.urls&client=putpatplayer&type=preroll')
+	match=re.compile('<url>(.+?)</url>').findall(response)
+
+	split = match[0].split('nuggl=')
+	split = dec_url(split[-1])
+	dummyresponse = getUrlCookie(match[0])
+	response = getUrlCookie(split)
+	match_MediaFiles=re.compile('<MediaFiles>(.+?)</MediaFiles>', re.DOTALL).findall(response)
+	print match_MediaFiles[0]
+	match_URL=re.compile('<URL>.+?CDATA\[(.+?)\]').findall(match_MediaFiles[0])
+	return match_URL[-1]
+
+
 			
+
+def enc_url(url):
+	url = url.replace(':','%3A')
+	url = url.replace('/','%2F')
+	url = url.replace('?','%3F')
+	url = url.replace('=','%3D')
+	url = url.replace('&','%26')
+	url = url.replace('<','%3C')
+	url = url.replace('>','%3E')
+	return url
+
+def dec_url(url):
+	url = url.replace('%3A',':')
+	url = url.replace('%2F','/')
+	url = url.replace('%3F','?')
+	url = url.replace('%3D','=')
+	url = url.replace('%26','&')
+	return url
+
+def fix_name(name):
+	name = name.replace('&amp;','&')
+	name = name.replace('&#252;','ü')
+	name = name.replace('&#246;','ö')
+	name = name.replace('&#196;','A')
+	return name
+
+def getUrl(url):
+	req = urllib2.Request(url)
+	req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+	response = urllib2.urlopen(req)
+	link=response.read()
+	response.close()
+	return link
+
+
+def getUrlCookie( url , extraheader=True):
+    cj = cookielib.LWPCookieJar()
+    if os.path.isfile(COOKIEFILE):
+        cj.load(COOKIEFILE, ignore_discard=True)
+
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+    opener.addheaders = [('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64; rv:20.0) Gecko/20121202 Firefox/20.0')]
+    opener.addheaders = [('Host', '71iv.nuggad.net')]
+    opener.addheaders = [('Referer', 'http://files.putpat.tv/putpat_player/265/PutpatPlayer.swf')]
+    """
+    opener.addheaders = [('Referer', 'http://www.vevo.com'),
+                         ('User-Agent', 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2;)')]
+
+    if extraheader:
+        opener.addheaders = [('X-Requested-With', 'XMLHttpRequest')]
+    if addoncompat.get_setting('location')==1:
+        opener.addheaders = [('X-Forwarded-For', '12.13.14.15')]
+    """
+    usock=opener.open(url)
+    response=usock.read()
+    usock.close()
+    #if os.path.isfile(COOKIEFILE):
+    cj.save(COOKIEFILE, ignore_discard=True)
+    return response
+
+
+
 
 def get_params():
         param=[]
@@ -225,7 +379,13 @@ if mode==None or url==None or len(url)<1:
 
 elif mode==1:
         print ""+url
-        PLAY(url,name)
+        PLAY(url)
+
+elif mode==2:
+        print ""+url
+        PLAY_AD(url)
+
+
 
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
