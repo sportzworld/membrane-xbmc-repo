@@ -16,7 +16,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.sat1" name="Sat1" version="0.6" provider-name="membrane">
+<addon id="plugin.video.sat1" name="Sat1" version="0.7" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -24,6 +24,7 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>broken</broken>
         <platform>all</platform>
         <summary lang="de">Sat1</summary>
         <summary lang="en">Sat1</summary>
@@ -32,7 +33,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.myspass" name="MySpass" version="0.4" provider-name="membrane">
+<addon id="plugin.video.myspass" name="MySpass" version="0.5" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -41,6 +42,7 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
+	<broken>Deprecated</broken>
         <summary lang="de">MySpass</summary>
         <summary lang="en">MySpass</summary>
         <description lang="de">MySpass</description>
@@ -144,6 +146,22 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.extreme" name="Extreme.com" version="0.1" provider-name="membrane">
+    <requires>
+        <import addon="xbmc.python" version="1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">extreme.com</summary>
+        <summary lang="en">extreme.com</summary>
+        <description lang="de">extreme.com</description>
+        <description lang="en">extreme.com</description>
+    </extension>
+</addon>
+
 <addon id="plugin.video.massive" name="Massive-Mag.tv" version="0.2" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
@@ -160,7 +178,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.msnfilme" name="MSN Filme" version="0.4" provider-name="membrane">
+<addon id="plugin.video.msnfilme" name="MSN Filme" version="0.5" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -168,6 +186,7 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Website down</broken>
         <platform>all</platform>
         <summary lang="de">MSN Filme</summary>
         <summary lang="en">MSN Filme</summary>
@@ -190,7 +209,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.freecaster" name="Freecaster.tv" version="0.5" provider-name="membrane">
+<addon id="plugin.video.freecaster" name="Freecaster.tv" version="0.6" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -198,6 +217,7 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Website moved</broken>
         <platform>all</platform>
         <summary lang="de">Freecaster.tv</summary>
         <summary lang="en">Freecaster.tv</summary>
@@ -255,6 +275,7 @@
 </addon>
 
 <addon id="plugin.video.laola1live" name="Laola1 LIVE" version="0.26" provider-name="membrane">
+
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -289,6 +310,7 @@ Die Streams sind GEO-Blocked, also abhängig von deinem Standort/deiner IP </des
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
+	<broken>Deprecated</broken>
         <summary lang="de">Formel1</summary>
         <summary lang="en">Formel1</summary>
         <description lang="de">Formel1</description>

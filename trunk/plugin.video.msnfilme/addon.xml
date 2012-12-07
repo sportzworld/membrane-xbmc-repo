@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.msnfilme" name="MSN Filme" version="0.4" provider-name="membrane">
+<addon id="plugin.video.msnfilme" name="MSN Filme" version="0.5" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -7,6 +7,7 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Website down</broken>
         <platform>all</platform>
         <summary lang="de">MSN Filme</summary>
         <summary lang="en">MSN Filme</summary>
