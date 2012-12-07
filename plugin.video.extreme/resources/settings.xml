@@ -1,0 +1,4 @@
+<settings>
+   <setting id="quality" type="enum" lvalues="30005|30006|30007|30008" label="30004" default="3"/>
+
+</settings>
