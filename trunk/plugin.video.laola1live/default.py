@@ -11,11 +11,22 @@ __language__ = __settings__.getLocalizedString
 
 pluginhandle = int(sys.argv[1])
 addon = xbmcaddon.Addon(id='plugin.video.laola1live')
-#akamaiProxyServer = xbmc.translatePath(addon.getAddonInfo('path')+"/akamaiSecureHD.py")
-testfile = xbmc.translatePath(addon.getAddonInfo('path')+"/test.flv")
+akamaiProxyServer = xbmc.translatePath(addon.getAddonInfo('path')+"/akamaiSecureHD.py")
+#testfile = xbmc.translatePath(addon.getAddonInfo('path')+"/test.flv")
 
 COOKIEFILE = xbmc.translatePath(addon.getAddonInfo('path')+"/cookies.lwp")
 #USERFILE = xbmc.translatePath(addon.getAddonInfo('path')+"/userfile.js")
+URL_AKAMAI_PROXY = 'http://127.0.0.1:64653/laola/%s'
+
+try:
+  getUrl("http://127.0.0.1:64653/version")
+  proxyIsRunning=True
+except:
+  proxyIsRunning=False
+  xbmc.executebuiltin('RunScript('+akamaiProxyServer+')')
+  
+
+
 
 
 
@@ -166,6 +177,7 @@ def PLAY_VIDEO(url,name,thumb=''):#10
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
+	#log(link)
 
 
 
@@ -173,17 +185,12 @@ def PLAY_VIDEO(url,name,thumb=''):#10
 	match_vod=re.compile('<meta name="vod" content="true" value="/(.+?)"', re.DOTALL).findall(link)
 	match_src=re.compile('<video src=".+?primaryToken=(.+?)" system-bitrate=".+?"/>', re.DOTALL).findall(link)
 	match_srcb=re.compile('<video src="(.+?)" system-bitrate=".+?"/>', re.DOTALL).findall(link)
-	if setting_streamquality == '0':
-		src = match_src[0]
-		log("low quality")
 
-	else:
-		src = match_src[-1]
-		log("high quality - currently broken")
+	src = match_src[0]
 
 	vod = match_vod[0]
 	#vod = match_vod[0].replace('bitrate=0','bitrate=950000')
-	#vod = vod.replace('bitrate=0','bitrate=950000')
+	#vod = vod.replace(',low,high,','0_1')
 
 
 	fullUrl = match_httpBase[0]+vod+"?primaryToken="+src
@@ -231,25 +238,29 @@ def PLAY_VIDEO(url,name,thumb=''):#10
 	"""
 
 
+	if setting_streamquality == '0':
+		log("low quality")
+
+		item=xbmcgui.ListItem(name, thumbnailImage=thumb, path=fullUrl)
+		item.setProperty('mimetype', 'video/x-flv')
+		xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+
+		force_play()
+
+	else:
+		log("high quality")
+
+		VIDb64 = base64.encodestring(fullUrl).replace('\n', '')
+		fullUrl = URL_AKAMAI_PROXY % VIDb64
+
+		item=xbmcgui.ListItem(name, thumbnailImage=thumb, path=fullUrl)
+		item.setProperty('mimetype', 'video/x-flv')
+		xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 
 
-        #listitem = xbmcgui.ListItem(path=fullUrl)
 
 
-	#print int(float(ad_length)*float(1000))
 
-	item=xbmcgui.ListItem(name, thumbnailImage=thumb, path=fullUrl)
-	item.setProperty('mimetype', 'video/x-flv')
-	#xbmc.Player().play( fullUrl , item)		
-
-	xbmcplugin.setResolvedUrl(pluginhandle, True, item)
-	#deb_time = 'debug time\n'
-
-	#deb_time += 'adlength time in ms\n'
-	#deb_time += str(int(float(ad_length)*float(1000)))+'\n'
-
-
-	force_play()
 
 
 	"""
@@ -467,9 +478,11 @@ def VIDEOLIVELINKS(url,name,thumb):#5
 	if has_ended(link) == True:
 		return
 
-	#item=xbmcgui.ListItem(name, thumbnailImage='')
-	#xbmc.PlayList(1).add('', item)
+	pl=xbmc.PlayList(1)
+	pl.clear()
 
+	item = xbmcgui.ListItem('Dummy entry',thumbnailImage='')
+	xbmc.PlayList(1).add('', item)
 
         match_playkey=re.compile('"playkey=(.+?)-(.+?)&adv.+?"').findall(link)
 
@@ -615,7 +628,6 @@ def PLAY_LIVE_1B(url,name,thumb=''):#11
 	match_rtmp=re.compile('<meta name="rtmpPlaybackBase" content="(.+?)" />').findall(link)
 	match_http=re.compile('<meta name="httpBase" content="(.+?)" />').findall(link)
 	match_quality=re.compile('<video src="(.+?)" system-bitrate=".+?"/>').findall(link)
-##http://sportsmanlive-f.akamaihd.net/khl_2_1_450@s7077?primaryToken=1327601291_6d4b5709d7c7b8c364cad2036168a57a&p=1&e=74022&i=&q=&k=&c=DE&a=&u=&t=&l=&v=2.4.5&fp=LNX%2010,3,162,29&r=UEEBM&g=UICJXUGLJHOM
 	http = match_http[0]
 	http = http.replace("&l=","&l=&v=2.4.5&fp=LNX%2010,3,162,29&r="+char_gen(5)+"&g="+char_gen(12))
 
@@ -628,6 +640,7 @@ def PLAY_LIVE_1B(url,name,thumb=''):#11
 			video = match_quality[0]
 	if livequality == '2':
 		video = match_quality[-1]
+	log("playing: "+http+video)
 
 	item=xbmcgui.ListItem(name, thumbnailImage=thumb, path=http+video+" live=true")
 	item.setProperty('mimetype', 'video/x-flv')
@@ -734,13 +747,12 @@ def get_video_ad():
 
 		log('attempting to get commercial')
 		url = 'http://ad.de.doubleclick.net/ad/pushbackde.smartclip/laola1.tv.as3.smartclip/;scadn=0;sccat=adnpbk;scsid=1036492;sz=400x320;dcmt=text/xml;ord='+num_gen(11)
-		url = 'http://ad.de.doubleclick.net/ad/pushbackde.smartclip/laola1.tv.as3.smartclip/;scadn=0;sccat=adnpbk;scsid=1036492;sz=400x320;dcmt=text/xml;ord=61481445655?'
-		log('DesignTheme url: '+url)
+		log('doubleclick url: '+url)
 		response = getUrlCookie(url)
 
 		try:
 			match_designTheme=re.compile('<adDataURL>(.+?)</adDataURL>').findall(response)
-			log('doubleclick url: '+match_designTheme[0])
+			log('designTheme url: '+match_designTheme[0])
 			response = getUrl(match_designTheme[0])
 
 			match_videoPath=re.compile('<videoPath>(.+?)</videoPath>').findall(response)
@@ -758,25 +770,37 @@ def get_video_ad():
 			log('commercial url: '+match_videoPath[0]+match_videoID[0]+'/fl8_'+match_videoName[0]+'-600.flv?ewadid='+match_realAdId[0]+'&eid='+match_adId[0])
 			return match_videoPath[0]+match_videoID[0]+'/fl8_'+match_videoName[0]+'-600.flv?ewadid='+match_realAdId[0]+'&eid='+match_adId[0],match_videoLength[0]
 		except:
-			return
+			#return
 			#print response
 			if 'cachebuster' in response:
+				log('CACHEBUSTER ad')
 				match_VASTAdTagURI=re.compile('CDATA\[(.+?)\]').findall(response)
 				VASTAdTagURI = match_VASTAdTagURI[0]
 				VASTAdTagURI = VASTAdTagURI.replace('[CACHEBUSTER',num_gen(11))
 				log('VASTAdTagURI: '+match_VASTAdTagURI[0])
-				print response
+				log('TODO')
+				#print response
 				return
 			
 			else:
-				match_VASTAdTagURI=re.compile('CDATA\[(.+?)\]').findall(response)
+				
+				if '<Ad id="EWAD">' in response:
+					log('EWAD ad')
+					return
+				elif 'VINDICO' in response:
+					log('VINDICO ad')
+					match_MediaFile=re.compile('<MediaFile.+?CDATA\[(.+?)\]').findall(response)
+					
+					return match_MediaFile[0],''
+				match_VASTAdTagURI=re.compile('<VASTAdTagURI><!CDATA\[(.+?)\]').findall(response)
 				log('VASTAdTagURI: '+match_VASTAdTagURI[0])
-				response = getUrl(match_VASTAdTagURI[0])
-				print response
-				match_AdTitle=re.compile('<AdTitle>(.+?)</AdTitle>').findall(response)
-				log('AdTitle: '+match_AdTitle[0])
+				response = getUrlCookie(match_VASTAdTagURI[0])
+				#print response
+				#match_AdTitle=re.compile('<AdTitle>(.+?)</AdTitle>').findall(response)
+				#log('AdTitle: '+match_AdTitle[0])
+				#http://cache.vindicosuite.com/xumo/swf/prod/Xumo.swf?rt=swf&statusBar=false&rotationid=SMARTCLIP_DE_Sky_Preroll_VPAID&version=release&usage=vpaid&etoplevel=true&ximpid=1036492&rnd=1050124064
 				response = getUrl('http://addirector.vindicosuite.com/feeds/addirector/vast/2/?renderVer=xumo_1.1.0.2hf41&rotationId='+match_AdTitle[0]+'&rnd='+num_gen(10)+'&version=release&rt=swf&ximpid=1036492&fromXumo=true')
-				print response
+				#print response
 				match_MediaFile=re.compile('<MediaFile.+?CDATA\[(.+?)\]').findall(response)
 				log('MediaFile: '+match_MediaFile[0])
 				match_Duration=re.compile('<Duration>00:00:(.+?)</Duration>').findall(response)
