@@ -69,7 +69,7 @@ def LIST_SENDUNGEN_S(url):#2
 def PLAY_KANAL8(url,name):#4
 
 	response = getUrl(url)
-	print response
+	#print response
 	match=re.compile("'file': '(.+?)'").findall(response)
 	#video = urllib.unquote(match[0])
 	video = match[0]
@@ -92,9 +92,9 @@ def LIST_L(url):#5
 		match_thumb=re.compile('src="(.+?)"', re.DOTALL).findall(item)
 		match_name=re.compile('<a.+?<strong>(.+?)/strong>', re.DOTALL).findall(item)
 		match_url=re.compile('href="(.+?)"', re.DOTALL).findall(item)
-		print match_thumb[0].replace('&amp;','&')
-		print match_name[0]
-		print match_url[0]
+		#print match_thumb[0].replace('&amp;','&')
+		#print match_name[0]
+		#print match_url[0]
 		if not match_name[0] == 'Drehscheibe<br /><':
 			if 'http' in match_thumb[0]:
 				thumb = match_thumb[0]
@@ -109,19 +109,21 @@ def LIST_L(url):#5
 
 
 def LIST_SENDUNGEN_REGIO(url,name,thumb):#6
-	print '#####################################thumb'
-	print thumb
+	#print '#####################################thumb'
+	#print thumb
 	response = getUrl(url)
 	match_iframe=re.compile('iframe.+?src="(.+?)"', re.DOTALL).findall(response)#wtf... iframes in 2013
-	print '#####################################iframe'
-	print match_iframe
+	#print '#####################################iframe'
+	#print match_iframe
 	for miframe in match_iframe:
 		if 'www.regio-tv-stream.de' in miframe:
 			iframe = miframe
+			#print '############################################'
+			#print iframe
 			
 	response = getUrl(iframe)
 	match_item=re.compile('<li><a href="(.+?)">(.+?)</a>', re.DOTALL).findall(response)
-	print match_item
+	#print match_item
 	for half_url,date in match_item:
 
 		#match_name=re.compile('<h2.+?<a.+?>(.+?)</a>', re.DOTALL).findall(item)
@@ -131,18 +133,33 @@ def LIST_SENDUNGEN_REGIO(url,name,thumb):#6
 		#print match_name_b[0]
 		#print match_url[0]
 
-		addLink(name+' - '+date,match_iframe[0]+'/'+half_url,7,thumb)
+		addLink(name+' - '+date,iframe+'/'+half_url,7,thumb)
 
 def PLAY_REGIO(url,name,thumb):#7
 	response = getUrl(url)
-	print response
+	#print response
+	"""
 	match=re.compile("flashvars='file=(.+?)&").findall(response)
 	video = urllib.unquote(match[0])
 	#video = match[0]
 	item=xbmcgui.ListItem(name, thumbnailImage=thumb, path=video)
-	item.setProperty('mimetype', 'video/x-flv')
+	#item.setProperty('mimetype', 'video/x-flv')
 	xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+	"""
+	match_swf=re.compile("src:'(.+?)'").findall(response)
+	match_rtmp=re.compile("streamer: '(.+?)'").findall(response)
+	match_file=re.compile("file': '(.+?)'").findall(response)
+	#'rtmp://video01.kanal8.de/sachsenfernsehenlive app=sachsenfernsehenlive swfurl=http://www.sachsen-fernsehen.de/jw/player/5.10/player.swf swfvfy=true pageUrl=http://www.sachsen-fernsehen.de playpath=Ug4wic7Hf21mEidKRMBLb621GMGBHhWC live=true'
 
+	try:
+		video= match_rtmp[0]+' swfurl='+match_swf[0]+' swfvfy=true playpath='+match_file[0]
+	except:
+		match=re.compile("flashvars='file=(.+?)&").findall(response)
+		video = urllib.unquote(match[0])
+
+	item=xbmcgui.ListItem(name, thumbnailImage=thumb, path=video)
+	#item.setProperty('mimetype', 'video/x-flv')
+	xbmcplugin.setResolvedUrl(pluginhandle, True, item)
         
 
 ################################nunuland################################
@@ -175,8 +192,8 @@ def LIST_SENDUNGEN_DD(url):#9
 	#match_item=re.compile('<div class="panel"(.+?)</div>', re.DOTALL).findall(match_all[0])
 	match_item=re.compile('<div class="newsListDiv listitem clearfix">(.+?)<span class="floater" >', re.DOTALL).findall(response)
 	for item in match_item:
-		print '##################################'
-		print item
+		#print '##################################'
+		#print item
 
 		#match_thumb=re.compile('<img.+?src="(.+?)"', re.DOTALL).findall(item)
 		match_name=re.compile('<a.+?>(.+?)</a>').findall(item)
