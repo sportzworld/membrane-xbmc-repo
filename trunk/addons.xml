@@ -114,6 +114,20 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.sachsenfs" name="Sachsen Fernsehen" version="0.2" provider-name="membrane">
+    <requires>
+        <import addon="xbmc.python" version="1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">Sachsen Fernsehen</summary>
+        <description lang="de">Sachsen Fernsehen</description>
+    </extension>
+</addon>
+
 <addon id="plugin.video.yavido" name="Yavido" version="0.1" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
@@ -274,7 +288,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="0.27" provider-name="membrane">
+<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="0.28" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
