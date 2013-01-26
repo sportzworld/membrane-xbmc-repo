@@ -5,6 +5,7 @@ import urllib,urllib2,re,xbmcplugin,xbmcgui,xbmcaddon,base64,socket,sys,string,r
 
 
 __settings__ = xbmcaddon.Addon(id='plugin.video.laola1live')
+#__settings__ = xbmcaddon.Addon()
 __language__ = __settings__.getLocalizedString
 
 #xbmc.PLAYER_CORE_MPLAYER
@@ -18,12 +19,7 @@ COOKIEFILE = xbmc.translatePath(addon.getAddonInfo('path')+"/cookies.lwp")
 #USERFILE = xbmc.translatePath(addon.getAddonInfo('path')+"/userfile.js")
 URL_AKAMAI_PROXY = 'http://127.0.0.1:64653/laola/%s'
 
-try:
-  getUrl("http://127.0.0.1:64653/version")
-  proxyIsRunning=True
-except:
-  proxyIsRunning=False
-  xbmc.executebuiltin('RunScript('+akamaiProxyServer+')')
+
   
 
 
@@ -59,6 +55,14 @@ if xbmcplugin.getSetting(pluginhandle,"debug") == '0':
 	debug = '0'
 elif xbmcplugin.getSetting(pluginhandle,"debug") == '1':
 	debug = '1'
+
+if not __settings__.getSetting('autoresume') == '0':
+	try:
+		getUrl("http://127.0.0.1:64653/version")
+		proxyIsRunning=True
+	except:
+		proxyIsRunning=False
+		xbmc.executebuiltin('RunScript('+akamaiProxyServer+')')
 
 
 
@@ -148,10 +152,13 @@ def get_playkeys(url):
 	return playkeys
 
 def VIDEOLINKS(url,name,thumb=''):
+	response = getUrl(url)
+
 
 	if xbmcplugin.getSetting(pluginhandle,"ads") == '1':
+		match_flashvars=re.compile('"flashvars", "(.+?)"').findall(response)
 		try:
-			ad_url,ad_length = get_video_ad()
+			ad_url,ad_length = get_video_ad(match_flashvars[0])
 			#stacked_url += ad_url + ' , '
 			item=xbmcgui.ListItem(scommercial, thumbnailImage='')
 			item.setProperty('mimetype', 'video/x-flv')
@@ -159,21 +166,20 @@ def VIDEOLINKS(url,name,thumb=''):
 		except:
 			log('no commercial recieved')
 
+	
+	response = getUrl(url)
+	match=re.compile('videopfad=(.+?)&', re.DOTALL).findall(response)
 
 	item=xbmcgui.ListItem(name, thumbnailImage=thumb)
 	item.setProperty('mimetype', 'video/x-flv')
-	xbmc.PlayList(1).add('plugin://plugin.video.laola1live/?url='+enc_url(url)+'&mode=10&thumb='+enc_url(thumb)+'&name='+name, item)
+	xbmc.PlayList(1).add('plugin://plugin.video.laola1live/?url='+enc_url(match[0])+'&mode=10&thumb='+enc_url(thumb)+'&name='+name, item)
 
 
 
 def PLAY_VIDEO(url,name,thumb=''):#10
-
-	response = getUrl(url)
-	match=re.compile('videopfad=(.+?)&', re.DOTALL).findall(response)
-        req = urllib2.Request(match[0])
+        req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         req.add_header('Host', 'streamaccess.unas.tv')
-        #req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
@@ -245,7 +251,7 @@ def PLAY_VIDEO(url,name,thumb=''):#10
 		item.setProperty('mimetype', 'video/x-flv')
 		xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 
-		force_play()
+		force_play(fullUrl)
 
 	else:
 		log("high quality")
@@ -505,18 +511,18 @@ def VIDEOLIVELINKS(url,name,thumb):#5
 		        match_quality=re.compile('<video src="(.+?)" system-bitrate=".+?"/>').findall(link)
 			item=xbmcgui.ListItem(name, thumbnailImage='')
 			item.setProperty('mimetype', 'video/x-flv')
-			return xbmc.PlayList(1).add(match_http[0]+match_quality[-1], item)
+			#return xbmc.PlayList(1).add(match_http[0]+match_quality[-1], item)
 
                         #item = xbmcgui.ListItem(path=match_http[0]+match_quality[-1])
 			#return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 
 		log('use streamtype 1b')
 		match_live_1b=re.compile('isLiveStream=true&videopfad=(.+?)&').findall(link)
-
+		match_flashvars=re.compile('"flashvars", "(.+?)"').findall(link)
 		ad_length = 0
 		if xbmcplugin.getSetting(pluginhandle,"ads") == '1':
 			try:
-				ad_url,ad_length = get_video_ad()
+				ad_url,ad_length = get_video_ad(match_flashvars[0])
 				item=xbmcgui.ListItem(scommercial, thumbnailImage='')
 				xbmc.PlayList(1).add(ad_url, item)
 			except:
@@ -646,7 +652,8 @@ def PLAY_LIVE_1B(url,name,thumb=''):#11
 	item.setProperty('mimetype', 'video/x-flv')
 	xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 
-	force_play()
+	force_play(http+video+" live=true")
+	auto_resume()
 
 	
 def LIVE(url):
@@ -738,10 +745,130 @@ def getUrlCookie( url , extraheader=True):
     cj.save(COOKIEFILE, ignore_discard=True)
     return response
 
+def auto_resume():
+	if __settings__.getSetting('autoresume') == '1':
+		log('Using autoresume')
+		xbmc.sleep(1000)
+		while xbmc.getCondVisibility("Player.HasVideo"):
+			xbmc.sleep(100)
+			if xbmc.getCondVisibility("Player.Paused"):
+				log('Video buffering')
+				xbmc.sleep(5000)
+				if xbmc.getCondVisibility("Player.Paused"):
+					log('Attempt to resume')
+					xbmc.Player().pause()
+
+		log('Stopping autoresume')
+		log('Restoring live menu')
+		LIVESELECTION(livestream_url)
+		log('Live menu restored')
+		return
+
+	else:
+		log('Not using autoresume')
+
+def get_video_ad(flashvars):
+	log(flashvars)
+	log('attempting to get commercial')
+
+	match_preroll1_pfad_adv=re.compile('&preroll1_pfad_adv=(.+?)&').findall(flashvars)
+	log('preroll1_pfad_adv: '+match_preroll1_pfad_adv[0])
+	match_fallback_pfad=re.compile('&fallback_pfad=(.+?)&').findall(flashvars)
+	log('fallback_pfad: '+match_fallback_pfad[0])
+	match_opener_pfad=re.compile('&opener_pfad=(.+?)&').findall(flashvars)
+	log('opener_pfad: '+match_opener_pfad[0])
+	match_preroll1_pfad_sma=re.compile('preroll1_pfad_sma=(.+?)\?').findall(flashvars)
+	log('preroll1_pfad_sma: '+match_preroll1_pfad_sma[0])
+
+
+	#check if preroll1_pfad_adv is avaiable
+	response = getUrlCookie(match_preroll1_pfad_adv[0])
+	print response
+	if 'OAS adverServe' in response:
+		log('Trying "OAS adverServe"')
+		try:
+			log('Try to get preroll')
+			match_MediaFile=re.compile('<MediaFile.+?<!\[CDATA\[(.+?)\]\]>', re.DOTALL).findall(response)
+			video = match_MediaFile[0]
+			log('Possible ad: '+video)
+			return video,''#funktioniert
+		except:#wenn der preroll scheitert, dann gehts hier mit den fallback+opener weiter
+			log('Preroll failed, try fallback')
+			#video = get_ad_oas(match_fallback_pfad[0])#3sek intro
+			#log('Fallback is choosen')
+			#log('Possible ad: '+video)
+			#return video,''#funktioniert bis hier/2te ad muss noch rein
+			try:
+				video = get_ad_oas(match_opener_pfad[0])
+				log('Opener is choosen')
+				log('Possible ad: '+video)
+				return video,''#funktioniert
+			except:
+				log('playing opener')
+			
+			
+	log('"OAS adverServe" failed')
+	log('Trying other ad')
 
 
 
-def get_video_ad():
+	a = 1
+	while not a == 0:
+		url = match_preroll1_pfad_sma[0]
+		url = url.replace('[random]',num_gen(11))
+		log('doubleclick url: '+url)
+		response = getUrlCookie(url)
+		print response
+		if '<VASTAdTagURI>' in response:
+			log('VAST ad found')
+			match_VASTAdTagURI=re.compile('<VASTAdTagURI><!\[CDATA\[(.+?)\]\]></VASTAdTagURI>').findall(response)
+			log('Opening: '+match_VASTAdTagURI[0])
+			response = getUrl(match_VASTAdTagURI[0])
+			match_MediaFile=re.compile('<MediaFile.+?>(.+?)</MediaFile>', re.DOTALL).findall(response)
+			log('Video file is: '+match_MediaFile[0])
+			#match_Duration=re.compile('<Duration>.+?:.+?:(.+?)</Duration>', re.DOTALL).findall(response)
+			return match_MediaFile[0],''#match_Duration[0]
+
+		elif '<adDataURL>' in response:
+			log('designTheme found')
+			match_designTheme=re.compile('<adDataURL>(.+?)</adDataURL>').findall(response)
+			log('designTheme url: '+match_designTheme[0])
+			response = getUrl(match_designTheme[0])
+
+			match_videoPath=re.compile('<videoPath>(.+?)</videoPath>').findall(response)
+			log('videoPath: '+match_videoPath[0])
+			match_videoID=re.compile('<videoID>(.+?)</videoID>').findall(response)
+			log('videoID: '+match_videoID[0])
+			match_videoName=re.compile('<videoName>(.+?)</videoName>').findall(response)
+			log('videoName: '+match_videoName[0])
+			match_realAdId=re.compile('<realAdId>(.+?)</realAdId>').findall(response)
+			log('realAdId: '+match_realAdId[0])
+			match_adId=re.compile('<adId>(.+?)</adId>').findall(response)
+			log('adId: '+match_adId[0])
+			match_videoLength=re.compile('<videoLength>(.+?)</videoLength>').findall(response)
+			log('videoLength: '+match_videoLength[0])
+			log('commercial url: '+match_videoPath[0]+match_videoID[0]+'/fl8_'+match_videoName[0]+'-600.flv?ewadid='+match_realAdId[0]+'&eid='+match_adId[0])
+			return match_videoPath[0]+match_videoID[0]+'/fl8_'+match_videoName[0]+'-600.flv?ewadid='+match_realAdId[0]+'&eid='+match_adId[0],match_videoLength[0]
+
+		elif '<Ad id="EWAD">' and 'MediaFile' in response:
+			log('EWAD ad found')
+			match_MediaFile=re.compile('<MediaFile .+?><!\[CDATA\[(.+?)\]\]>').findall(response)
+			log('Playing EWAD ad')
+			return match_MediaFile[0],''#works
+		else:
+			log('No ad recieved')
+			log('Playing fallback')
+			video = get_ad_oas(match_fallback_pfad[0])
+			return video,''
+
+
+def get_ad_oas(url):
+	response = getUrlCookie(url)
+	print response
+	match_MediaFile=re.compile('<MediaFile.+?<!\[CDATA\[(.+?)\]\]>', re.DOTALL).findall(response)
+	return match_MediaFile[0]
+
+	"""
 	a = 1
 	while not a == 0:
 
@@ -805,8 +932,10 @@ def get_video_ad():
 				log('MediaFile: '+match_MediaFile[0])
 				match_Duration=re.compile('<Duration>00:00:(.+?)</Duration>').findall(response)
 				return match_MediaFile[0],match_Duration[0]
+	"""
 
-def force_play():
+def force_play(video_url):
+	
 	if not xbmcplugin.getSetting(pluginhandle,"autoplay") == '0':
 		log('autoplay enabled, waiting for player')
 		i = 0
@@ -840,8 +969,135 @@ def force_play():
 	else:
 		log("autoplay disabled")
 		return
-			
+	"""
+	if not xbmcplugin.getSetting(pluginhandle,"autoplay") == '0':
+		log('Autoplay enabled')
+		log('Chosen video: '+video_url)
+		log('Check if an other video is playing')
 
+		try: 
+			current_video = xbmc.Player().getPlayingFile()
+		except:
+			log('No video active')
+			current_video = ''
+
+
+		#log('Current video: '+xbmc.Player().getPlayingFile())
+		i = 0
+		while not current_video == video_url:#wait till player finishes previous video
+			if i == 1:
+				log('Other video playing, waiting...')
+			i = i + 1
+
+			if i == 500: #timeout after 5s
+				log('videoplayer timeout #1')
+				return
+			xbmc.sleep(10)
+
+			try: 
+				current_video = xbmc.Player().getPlayingFile()
+			except:
+				current_video = ''
+
+		log('Current video old: '+current_video)
+		log('Current video: '+xbmc.Player().getPlayingFile())
+
+		if i == 0:
+			log('Current video is active')
+
+		
+			#xbmc.sleep(100)
+		else:
+			log('Previous video has stopped')
+			log('Time till player ended previous video: '+str(i*10)+'ms')
+
+			log('Waiting for player to load the current video')
+		i = 0
+		while not xbmc.getCondVisibility("Player.HasVideo"):#wait till player started video
+			i = i + 1
+			if i == 500: #timeout after 5s
+				log('videoplayer timeout#2')
+				return
+			xbmc.sleep(10)
+
+		n = 0
+		m = 0
+		while not m == 1:#wait till time is in player, xbmc bug?
+			try:
+				get_time = int(xbmc.Player().getTime())
+				log('Time is in player now')
+				break
+			except:
+				n = n + 1
+			
+			if n == 500: #timeout after 5s
+				log('videoplayer timeout#3')
+				return
+
+			xbmc.sleep(10)
+
+		log('Time till player activated video: '+str(i*10)+'ms')
+		log('Time till time took in player: '+str(n*10)+'ms')
+
+		xbmc.sleep(100)
+		print '++++++++++++++++++++++++++++++++++++++'
+		print xbmc.getCondVisibility("Player.Paused")
+		print xbmc.Player().isPlaying()
+		print int(xbmc.Player().getTime())
+		print xbmc.getCondVisibility("Player.Paused")
+		"#"#"
+		if xbmc.getCondVisibility("Player.Paused"):
+			log('starting autoplay')
+		else:
+			xbmc.sleep(50)
+			if not xbmc.getCondVisibility("Player.Paused"):
+				print '######################################################'
+				print xbmc.getCondVisibility("Player.Paused")
+				xbmc.sleep(100)
+				if not xbmc.getCondVisibility("Player.Paused"):
+					print xbmc.getCondVisibility("Player.Paused")
+					xbmc.sleep(10000)
+					log('video started on its own')
+					return
+				else:
+					log('starting autoplay')
+			else:
+				log('starting autoplay')
+		"#"#"
+
+		n = 0
+		k = 0
+		while n != 50:#timeout after 5s
+			print '##################time int, real?'
+			print int(xbmc.Player().getTime())
+			print xbmc.Player().getTime()
+			#if xbmc.Player().isPlaying()==True and int(xbmc.Player().getTime())==0 and xbmc.getCondVisibility("Player.Paused"):#attempt to play video
+			if xbmc.Player().isPlaying()==True and int(xbmc.Player().getTime()*100)==0:# and xbmc.getCondVisibility("Player.Paused"):#attempt to play video
+				xbmc.Player().pause()
+			else:
+				log('autoplay successfull after '+str(n)+' attempt(s)')
+				print xbmc.getCondVisibility("Player.Paused")
+				print xbmc.Player().isPlaying()
+				print int(xbmc.Player().getTime())
+				print xbmc.Player().getTime()
+				if not k == 20:
+					k = k + 1
+				else:
+					log('autoplay successfull after '+str(n)+' attempt(s)')
+					print xbmc.getCondVisibility("Player.Paused")
+					print xbmc.Player().isPlaying()
+					print int(xbmc.Player().getTime())
+					print xbmc.Player().getTime()
+					return
+			xbmc.sleep(100)
+			n = n + 1
+		log('autoplay unsuccessfull after '+str(n)+' attempts')
+
+	else:
+		log("autoplay disabled")
+		return
+			
+	"""
 
 def log(message):
 	if debug == '1':

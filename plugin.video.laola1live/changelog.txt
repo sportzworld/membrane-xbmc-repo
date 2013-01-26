@@ -26,3 +26,6 @@
 - Enabled HQ videos (thanks to bluecop)
 - Ads should be more random
 - Some small fixes
+0.28
+- Autoresume if livestream buffers
+- Ad shuffling improved
