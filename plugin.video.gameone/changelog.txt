@@ -1,0 +1,5 @@
+1.0
+- Doppeltes Abspielen der Folgen gefixt
+- Fix für Playtube, Blog
+- Blog umgearbeitet
+- Fanart überall

@@ -1,14 +1,69 @@
 # -*- coding: iso-8859-1 -*-
-import urllib,urllib2,re,xbmcplugin,xbmcgui
+import urllib,urllib2,re,xbmcplugin,xbmcgui,xbmcvfs,xbmcaddon,os,Image,shutil
 
 pluginhandle = int(sys.argv[1])
 #gameone
 base_url = 'http://gameone.de'
+
+
+addon = xbmcaddon.Addon(id='plugin.video.gameone')
+art_dir = xbmc.translatePath(addon.getAddonInfo('path')+"/resources/art/")
+logo = xbmc.translatePath(addon.getAddonInfo('path')+"/icon.png")
+addon_path = xbmc.translatePath(addon.getAddonInfo('path'))
+addon_fanart = xbmc.translatePath(addon.getAddonInfo('path')+'/fanart.jpg')
+
+
+def imgCrop(im):
+    box = (600, 0, 2129, 860)
+    region = im.crop(box)
+    region.save("CROPPED" + ext)
+
+def getUrl(url):
+        req = urllib2.Request(url)
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        response = urllib2.urlopen(req)
+        link=response.read()
+        response.close()
+	return link
+
+def crop_image(url,name):
+	pic_buffer = getUrl(url)
+	#f = pic_buffer
+	f = open(art_dir+name+'.jpg', 'w+')
+	result = f.write(pic_buffer)
+	f.close()
+	f = Image.open(art_dir+name+'.jpg')
+	#f = Image.open(art_dir+name+'.jpg')
+	box = (600, 0, 2129, 860)
+	region = f.crop(box)
+	region.save(art_dir+name+'.jpg')
+
+
+if not xbmcvfs.exists(art_dir):
+	xbmcvfs.mkdir(xbmc.translatePath(addon.getAddonInfo('path')+"/resources/"))
+	xbmcvfs.mkdir(xbmc.translatePath(addon.getAddonInfo('path')+"/resources/art/"))
+if not xbmcvfs.exists(art_dir+'1.jpg'):
+	crop_image('http://assets.gameone.de/assets/bg/bg-1.jpg','1')
+if not xbmcvfs.exists(art_dir+'2.jpg'):
+	crop_image('http://assets.gameone.de/assets/bg/bg-2.jpg','2')
+if not xbmcvfs.exists(art_dir+'3.jpg'):
+	crop_image('http://assets.gameone.de/assets/bg/bg-3.jpg','3')
+if not xbmcvfs.exists(art_dir+'4.jpg'):
+	crop_image('http://assets.gameone.de/assets/bg/bg-4.jpg','4')
+if not xbmcvfs.exists(addon_fanart):
+	shutil.copyfile(art_dir+'3.jpg', addon_fanart)
+
+
+
+	
+
+
+
 def CATEGORIES():
-        addDir('Alle Folgen','http://gameone.de/tv',1,'http://assets.gameone.de/images/element_bg/logo-game-one.png')
-        addDir('Blog','http://gameone.de/blog',6,'http://assets.gameone.de/images/element_bg/logo-game-one.png')
-        addDir('Playtube','http://gameone.de/playtube/',3,'http://assets.gameone.de/images/element_bg/logo-game-one.png')
-        addDir('Podcast','http://www.gameone.de/specials/der-gameone-plauschangriff',9,'http://assets.gameone.de/images/element_bg/logo-game-one.png')
+        addDir('Alle Folgen','http://gameone.de/tv',1,'http://assets.gameone.de/images/element_bg/logo-game-one.png',art_dir+'1.jpg')
+        addDir('Blog','http://gameone.de/blog',6,'http://assets.gameone.de/images/element_bg/logo-game-one.png',art_dir+'2.jpg')
+        addDir('Playtube','http://gameone.de/playtube/',3,'http://assets.gameone.de/images/element_bg/logo-game-one.png',art_dir+'3.jpg')
+        addDir('Podcast','http://www.gameone.de/specials/der-gameone-plauschangriff',9,'http://assets.gameone.de/images/element_bg/logo-game-one.png',art_dir+'4.jpg')
         
 ################################tv################################
 
@@ -23,7 +78,7 @@ def INDEX_TV(url):#1
         #<a href="/tv/162" class="image_link"><img alt="156543_87ac3a65_mp4_640x480_1600" src="http://asset.gameone.de/gameone/assets/video_metas/teaser_images/000/618/246/featured/156543_87ac3a65_mp4_640x480_1600.mp4_cropped.jpg?1300200447" /></a><h5><a href='/tv/162' title='Flirtgewitter, Yakuza 4, Next'>GameOne - Folge 162</a>
         for folge,thumbnail,title in match:
 		#if int(folge) > 101:
-                addLink('Folge '+folge+' - '+title,folge,2,thumbnail)
+                addLink('Folge '+folge+' - '+title,folge,2,thumbnail,thumbnail)
 
 
 
@@ -44,10 +99,15 @@ def VIDEOLINKS_TV(folge):#2
 		swfurl = "http://media.mtvnservices.com/player/prime/mediaplayerprime.1.9.0.swf"
 		match_video=re.compile('<src>(.+?)</src>').findall(link_video)
 
-		url=match_video[-1]+' swfurl='+swfurl+' swfvfy=true' + " pageUrl=www.gameone.de app=ondemand?ovpfv=2.1.4"
+		video=match_video[-1]+' swfurl='+swfurl+' swfvfy=true' + " pageUrl=www.gameone.de app=ondemand?ovpfv=2.1.4"
 
-		listitem = xbmcgui.ListItem(name,thumbnailImage='')
-		xbmc.PlayList(1).add(url, listitem)
+		#listitem = xbmcgui.ListItem(name,thumbnailImage='')
+		#xbmc.PlayList(1).add(url, listitem)
+
+		item=xbmcgui.ListItem(name, thumbnailImage='', path=video)
+		item.setProperty('mimetype', 'video/x-flv')
+		xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+
 	
 """
 	if int(folge) > 101:
@@ -120,15 +180,20 @@ def INDEX_PLAYTUBE(url):#3
         response.close()
         match=re.compile("<ul class='channels'>(.+?)</ul>", re.DOTALL).findall(link)
         match=re.compile("<a class='name' href='(.+?)' title='(.+?)'>", re.DOTALL).findall(match[0])
+	f = 1
 	for url,title in match:
-		addDir(title,url,4,'')
-
+		if not title == 'GameTrailers':
+			addDir(title,url,4,logo,art_dir+str(f)+'.jpg')
+			f = f + 1
+			if f == 5:
+				f = 1
 def CAT_PLAYTUBE(url):#4
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
+	#print link
         match=re.compile('<h3><a href="(.+?)">(.+?)</a></h3>\n<p><a href=".+?">.+?</a></p>\n</div>\n<a href=".+?" class="img_link"><img alt=".+?" src="(.+?)" /></a>', re.DOTALL).findall(link)
         #<li class='odd teaser_medium'>
         #<div class='overlay team_video'>
@@ -137,17 +202,17 @@ def CAT_PLAYTUBE(url):#4
         #
         #</div>
         #<a href="http://gameone.de/playtube/zurueck-in-die-zukunft-extended/616299" class="img_link"><img alt="153791_0ed79c30_mp4_640x480_1600" src="http://asset.gameone.de/gameone/assets/video_metas/teaser_images/000/616/299/medium/153791_0ed79c30_mp4_640x480_1600.mp4_cropped.jpg?1295845477" /></a>
+	f = 1
         for url,name,thumbnail in match:
                 #print 'video: '+name
-                addLink(name,url,5,thumbnail)
-        match_a=re.compile('<a href=(.+?)>').findall(link)
-        #<a href="/playtube/channel/game-one-movies/6?page=2" class="next_page" rel="next">Nächste Seite</a></div>
-        for href in match_a:
-                #print 'hrefplaytube: '+href
-                match_next=re.compile('"/playtube/channel/(.+?)" class="next_page" rel="next"').findall(href)
-                for naechste_seite in match_next:
-                        #print 'next'+naechste_seite
-                        addDir('Nächste Seite','http://gameone.de/playtube/channel/'+naechste_seite,4,'')
+                addLink(repair_name(name),url,5,thumbnail,art_dir+str(f)+'.jpg')
+		f = f + 1
+		if f == 5:
+			f = 1
+	match_next=re.compile('<a class="next_page" rel="next" href="(.+?)"').findall(link)
+	for naechste_seite in match_next:
+
+		addDir('Nächste Seite','http://gameone.de'+naechste_seite,4,logo,art_dir+str(f)+'.jpg')
 
 
 def VIDEOLINKS_PLAYTUBE(url,name):#5
@@ -176,17 +241,22 @@ def VIDEOLINKS_PLAYTUBE(url,name):#5
 
 
 def INDEX_BLOG(url):#6
-	addDir('Alle',url,7,'')
+	addDir('Alle',url,7,logo,art_dir+'1.jpg')
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
         match_teasers=re.compile('<ul class="teasers">(.+?)</ul>', re.DOTALL).findall(link)
+	f = 2
 	for teaser in match_teasers:
 		match_cat=re.compile('<a title="(.+?)" href="(.+?)">.+?src="(.+?)"', re.DOTALL).findall(teaser)
 		for title,url,thumb in match_cat:
-			addDir(title,base_url+url,7,base_url+thumb)
+			
+			addDir(title,base_url+url,7,base_url+thumb,art_dir+str(f)+'.jpg')
+			f = f + 1
+			if f == 5:
+				f = 1
 
 def CAT_BLOG(url):#7
 
@@ -198,7 +268,8 @@ def CAT_BLOG(url):#7
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
-        match=re.compile('<h3><a href="(.+?)">(.+?)</a></h3>\n<p>.+?</p>\n<small>\nPosted:\n.+?\n</small>\n</div>\n<a class=\'image_link\' href=\'.+?\'>\n<img height=\'.+?\' src=\'(.+?)\' width=\'.+?\' />', re.DOTALL).findall(link)
+	#print link
+        match=re.compile('<h3><a href="(.+?)">(.+?)</a></h3>\n<p>.+?</p>\n<small>\nPosted:\n.+?\n</small>\n</div>\n<a class=\'image_link\' href=\'.+?\'>\n<img.+?src="(.+?)"', re.DOTALL).findall(link)
         #<h3><a href="/blog/2011/3/30-minuten-mit-da-vincis-verschwinden">30 Minuten mit: Da Vincis Verschwinden</a></h3>
         #<p>"Assassin's Creed: Brotherhood" geht weiter!</p>
         #<small>
@@ -209,34 +280,48 @@ def CAT_BLOG(url):#7
         #<a class='image_link' href='/blog/2011/3/30-minuten-mit-da-vincis-verschwinden'>
         #<img height='318' src='http://asset.gameone.de/gameone/assets/images/000/003/094/blog_list/Da-Vinci-Disappearance-Today.jpg?1301055077' width='566' />
         for url,name,thumb in match:
-                addLink(name,url,8,thumb)
+                addDir(name,url,8,thumb,thumb)
         match_a=re.compile('<a href=(.+?)>').findall(link)
         #match_a=re.compile('<a href=(.+?)>').findall(link)
         #<a href="/blog?page=2" class="next_page" rel="next">Nächste Seite</a>
-        for href in match_a:
-                #print 'hrefblog: '+href
-                match_next=re.compile('"/blog(.+?)" class="next_page" rel="next"').findall(href)
-                for naechste_seite in match_next:
-                        #print 'next'+naechste_seite
-                        addDir('Nächste Seite','http://gameone.de/blog'+naechste_seite,7,'')
+	match_next=re.compile('<a rel="next" href="(.+?)"').findall(link)
+	for naechste_seite in match_next:
+		addDir('Nächste Seite','http://gameone.de'+naechste_seite,7,'',art_dir+'2.jpg')
 
-def VIDEOLINKS_BLOG(url,name):#8
+def VIDEOLINKS_BLOG(url,name,fan):#8
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urllib2.urlopen(req)
         link=response.read()
+	#print link
         response.close()
-        match=re.compile('var so = new SWFObject.+?video_meta-(.+?)"').findall(link)
-        #match18=re.compile('<img src="(.+?)dummy_agerated.jpg">').findall(link)
-	if not match:
-		print 'no video found'
-		xbmc.executebuiltin("Notification('Title','Message')")
-	else:
-		for video_id in match:
+        match_scripts=re.compile('<script language="javascript">(.+?)</script>', re.DOTALL).findall(link)
+        match18=re.compile('<img src="(.+?)dummy_agerated.jpg">').findall(link)
+	if match18:
+		xbmc.executebuiltin("Notification(Altersbeschränkung,Video erst ab 22:00 verfügbar,5000)")
+	if not match_scripts:
+		xbmc.executebuiltin("Notification(Kein Video gefunden,Unter diesem Blogeintrag existiert kein Video,5000)")
+		return
+	for video in match_scripts:
+		if '"file"' in video:
+			match_video_url=re.compile('"file", "(.+?)"').findall(video)
+			video_url = match_video_url[0]
+		else:
+			match_video_id=re.compile('video_meta-(.+?)"').findall(video)
+			video_url = get_video(match_video_id[0])
+	        match_name=re.compile('"tile", "(.+?)"').findall(video)
+	        match_thumb=re.compile('"image", "(.+?)"').findall(video)
+
+		#print '##########################'
+		#print fan
+		addLinkOld(match_name[0],video_url,match_thumb[0],fan)
+		"""
 			url = get_video(video_id)
 			listitem = xbmcgui.ListItem(name,thumbnailImage='')
 			xbmc.PlayList(1).add(url, listitem)
 		        #addLinkOld('Play',get_video(video_id),'')
+		"""
+
 """
 	match=re.compile('<src>(.+?)</src>').findall(link)
 	video=match[-1]+' swfurl='+swfurl+' swfvfy=true' + " pageUrl=www.gameone.de app=ondemand?ovpfv=2.1.4"
@@ -253,11 +338,16 @@ def INDEX_PODCAST(url):#9
         link=response.read()
         response.close()
         match=re.compile('<p><a href="(.+?)"><img alt="(.+?)" src="(.+?)" /></a></p>', re.DOTALL).findall(link)
+	f = 1
 	for url,name,thumb in match:
 		thumb = thumb.replace(' ','%20')
-		if 'horror' in thumb:
-			print "##############################"+thumb
-		addLink(name,url,10,thumb)
+		#if 'horror' in thumb:
+			#print "##############################"+thumb
+		addLink(repair_name(name),url,10,thumb,art_dir+str(f)+'.jpg')
+
+		f = f + 1
+		if f == 5:
+			f = 1
 
 def PLAY_PODCAST(url,name):#10
         req = urllib2.Request(url)
@@ -278,7 +368,7 @@ def get_video_ids(url):
         response = urllib2.urlopen(req)
         link=response.read()
         response.close()
-        video_ids=re.compile('var so = new SWFObject.+?video_meta-(.+?)"').findall(link)
+        video_ids=re.compile('video_meta-(.+?)"').findall(link)
 	return video_ids
 
 def get_video(video_id):
@@ -296,6 +386,17 @@ def get_video(video_id):
 	return video
 
 
+
+def repair_name(name):
+	#name = name.replace('','')
+
+	name = name.replace('&amp;','&')
+	name = name.replace('&uuml;','ü')
+	name = name.replace('&auml;','ä')
+	name = name.replace('&quot;','"')
+	name = name.replace('&#x27;',"'")
+	name = name.replace('_',' ')
+	return name
 
                 
 def get_params():
@@ -317,27 +418,33 @@ def get_params():
         return param
 
 
-def addLinkOld(name,url,iconimage):
+def addLinkOld(name,url,iconimage=logo,fanart=''):
         ok=True
         liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
         liz.setInfo( type="Video", infoLabels={ "Title": name } )
+	liz.setProperty('fanart_image',fanart)
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=liz)
+
         return ok
 
-def addLink(name,url,mode,iconimage):
+def addLink(name,url,mode,iconimage=logo,fanart=''):
 	u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
 	ok=True
 	liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
 	liz.setInfo( type="Video", infoLabels={ "Title": name } )
 	liz.setProperty('IsPlayable', 'true')
+	liz.setProperty('fanart_image',fanart)
 	ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz)
 	return ok
 
-def addDir(name,url,mode,iconimage):
-        u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
+
+
+def addDir(name,url,mode,iconimage=logo,fanart=''):
+        u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&thumb="+urllib.quote_plus(iconimage)+"&name="+urllib.quote_plus(name)
         ok=True
         liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
         liz.setInfo( type="Video", infoLabels={ "Title": name } )
+	liz.setProperty('fanart_image',fanart)
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
         return ok
         
@@ -346,6 +453,7 @@ params=get_params()
 url=None
 name=None
 mode=None
+thumb=None
 
 try:
         url=urllib.unquote_plus(params["url"])
@@ -356,6 +464,10 @@ try:
 except:
         pass
 try:
+        thumb=urllib.unquote_plus(params["thumb"])
+except:
+        pass
+try:
         mode=int(params["mode"])
 except:
         pass
@@ -363,6 +475,7 @@ except:
 print "Mode: "+str(mode)
 print "URL: "+str(url)
 print "Name: "+str(name)
+print "Thumbnail: "+str(thumb)
 
 if mode==None or url==None or len(url)<1:
         print ""
@@ -398,7 +511,7 @@ elif mode==7:
 
 elif mode==8:
         print ""+url
-        VIDEOLINKS_BLOG(url,name)
+        VIDEOLINKS_BLOG(url,name,thumb)
 
 elif mode==9:
         print ""+url
