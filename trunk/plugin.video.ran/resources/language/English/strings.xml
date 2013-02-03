@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+	<!-- Category strings -->
+	<string id="30001">Next Site</string>
+
+	<string id="30002">Commercial</string>
+
+	<string id="30003">Livestream has not started</string>
+	<string id="30004">This stream starts at</string>
+	<string id="30005">at</string>
+	<string id="30006">CET</string>
+
+	<string id="30007">Dear LAOLA1-User,</string>
+	<string id="30008">This stream has already finished.</string>
+
+
+	<!-- Plugin settings strings -->
+	<string id="30204">Location</string>
+	<string id="30205">Austria</string>
+	<string id="30206">Germany</string>
+	<string id="30207">International</string>
+
+	<string id="30208">Livestream Quality</string>
+	<string id="30209">Low</string>
+	<string id="30210">Med</string>
+	<string id="30211">High</string>
+
+	<string id="30212">Video Quality</string>
+	<string id="30213">Low</string>
+	<string id="30214">High</string>
+
+	<string id="30215">Debug</string>
+	<string id="30216">Off</string>
+	<string id="30217">On</string>
+
+	<string id="30218">Commercials</string>
+	<string id="30219">Off</string>
+	<string id="30220">On</string>
+
+	<string id="30221">Force Autoplay</string>
+	<string id="30222">Off</string>
+	<string id="30223">On</string>
+	<string id="30224">1</string>
+	<string id="30225">1.5</string>
+	<string id="30226">2</string>
+	<string id="30227">3</string>
+	<string id="30228">4</string>
+	<string id="30229">5</string>
+
+	<string id="30230">Autoresume after buffering</string>
+	<string id="30231">Off</string>
+	<string id="30232">On</string>
+
+	<!-- messages -->
+</strings>

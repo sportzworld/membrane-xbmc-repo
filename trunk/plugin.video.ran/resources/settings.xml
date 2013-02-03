@@ -1,0 +1,9 @@
+<settings>
+   <setting id="location" type="enum" lvalues="30205|30206|30207" label="30204" default="2"/>
+   <setting id="streamquality" type="enum" lvalues="30213|30214" label="30212" default="1"/>
+   <setting id="livequality" type="enum" lvalues="30209|30210|30211" label="30208" default="2"/>
+   <setting id="ads" type="enum" lvalues="30219|30220" label="30218" default="1"/>
+   <setting id="debug" type="enum" lvalues="30216|30217" label="30215" default="0"/>
+   <setting id="autoplay" type="enum" lvalues="30222|30223" label="30221" default="1"/>
+   <setting id="autoresume" type="enum" lvalues="30231|30232" label="30230" default="1"/>
+</settings>

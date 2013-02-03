@@ -1,0 +1,31 @@
+0.18
+- Added Changelog
+- Removed VOD because of CDN change
+0.19
+- Fixed VOD
+0.20
+- Fixed Livestreams
+0.21
+- Fixed VOD
+0.22
+- Workaround for pausing videos added (thanks to AddonScriptorDE)
+- Commercials added to support Laola1.tv
+0.23
+- Various small fixes and improvements
+- Code cleanup
+- Livestreams now with commercials
+0.24
+- Fixed flvlib error
+0.25
+- Improved auto-play
+- Added auto-play feature to livestreams
+0.26
+- Thumbnails now in video information
+- More debug messages added
+0.27
+- Enabled HQ videos (thanks to bluecop)
+- Ads should be more random
+- Some small fixes
+0.28
+- Autoresume if livestream buffers
+- Ad shuffling improved
