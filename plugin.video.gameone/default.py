@@ -1,69 +1,29 @@
 # -*- coding: iso-8859-1 -*-
-import urllib,urllib2,re,xbmcplugin,xbmcgui,xbmcvfs,xbmcaddon,os,Image,shutil
+import urllib,urllib2,re,xbmcplugin,xbmcgui,xbmcvfs,xbmcaddon,os
 
 pluginhandle = int(sys.argv[1])
 #gameone
 base_url = 'http://gameone.de'
-
-
 addon = xbmcaddon.Addon(id='plugin.video.gameone')
-art_dir = xbmc.translatePath(addon.getAddonInfo('path')+"/resources/art/")
 logo = xbmc.translatePath(addon.getAddonInfo('path')+"/icon.png")
 addon_path = xbmc.translatePath(addon.getAddonInfo('path'))
-addon_fanart = xbmc.translatePath(addon.getAddonInfo('path')+'/fanart.jpg')
 
 
-def imgCrop(im):
-    box = (600, 0, 2129, 860)
-    region = im.crop(box)
-    region.save("CROPPED" + ext)
+background = 'http://assets.gameone.de/assets/bg/bg-'
 
-def getUrl(url):
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urllib2.urlopen(req)
-        link=response.read()
-        response.close()
-	return link
-
-def crop_image(url,name):
-	pic_buffer = getUrl(url)
-	#f = pic_buffer
-	f = open(art_dir+name+'.jpg', 'w+')
-	result = f.write(pic_buffer)
-	f.close()
-	f = Image.open(art_dir+name+'.jpg')
-	#f = Image.open(art_dir+name+'.jpg')
-	box = (600, 0, 2129, 860)
-	region = f.crop(box)
-	region.save(art_dir+name+'.jpg')
-
-
-if not xbmcvfs.exists(art_dir):
-	xbmcvfs.mkdir(xbmc.translatePath(addon.getAddonInfo('path')+"/resources/"))
-	xbmcvfs.mkdir(xbmc.translatePath(addon.getAddonInfo('path')+"/resources/art/"))
-if not xbmcvfs.exists(art_dir+'1.jpg'):
-	crop_image('http://assets.gameone.de/assets/bg/bg-1.jpg','1')
-if not xbmcvfs.exists(art_dir+'2.jpg'):
-	crop_image('http://assets.gameone.de/assets/bg/bg-2.jpg','2')
-if not xbmcvfs.exists(art_dir+'3.jpg'):
-	crop_image('http://assets.gameone.de/assets/bg/bg-3.jpg','3')
-if not xbmcvfs.exists(art_dir+'4.jpg'):
-	crop_image('http://assets.gameone.de/assets/bg/bg-4.jpg','4')
-if not xbmcvfs.exists(addon_fanart):
-	shutil.copyfile(art_dir+'3.jpg', addon_fanart)
-
-
-
+bg1='http://assets.gameone.de/assets/bg/bg-1.jpg'
+bg2='http://assets.gameone.de/assets/bg/bg-2.jpg'
+bg3='http://assets.gameone.de/assets/bg/bg-3.jpg'
+bg4='http://assets.gameone.de/assets/bg/bg-4.jpg'
 	
 
 
 
 def CATEGORIES():
-        addDir('Alle Folgen','http://gameone.de/tv',1,'http://assets.gameone.de/images/element_bg/logo-game-one.png',art_dir+'1.jpg')
-        addDir('Blog','http://gameone.de/blog',6,'http://assets.gameone.de/images/element_bg/logo-game-one.png',art_dir+'2.jpg')
-        addDir('Playtube','http://gameone.de/playtube/',3,'http://assets.gameone.de/images/element_bg/logo-game-one.png',art_dir+'3.jpg')
-        addDir('Podcast','http://www.gameone.de/specials/der-gameone-plauschangriff',9,'http://assets.gameone.de/images/element_bg/logo-game-one.png',art_dir+'4.jpg')
+        addDir('Alle Folgen','http://gameone.de/tv',1,'http://assets.gameone.de/images/element_bg/logo-game-one.png',bg1)
+        addDir('Blog','http://gameone.de/blog',6,'http://assets.gameone.de/images/element_bg/logo-game-one.png',bg2)
+        addDir('Playtube','http://gameone.de/playtube/',3,'http://assets.gameone.de/images/element_bg/logo-game-one.png',bg3)
+        addDir('Podcast','http://www.gameone.de/specials/der-gameone-plauschangriff',9,'http://assets.gameone.de/images/element_bg/logo-game-one.png',bg4)
         
 ################################tv################################
 
@@ -78,7 +38,7 @@ def INDEX_TV(url):#1
         #<a href="/tv/162" class="image_link"><img alt="156543_87ac3a65_mp4_640x480_1600" src="http://asset.gameone.de/gameone/assets/video_metas/teaser_images/000/618/246/featured/156543_87ac3a65_mp4_640x480_1600.mp4_cropped.jpg?1300200447" /></a><h5><a href='/tv/162' title='Flirtgewitter, Yakuza 4, Next'>GameOne - Folge 162</a>
         for folge,thumbnail,title in match:
 		#if int(folge) > 101:
-                addLink('Folge '+folge+' - '+title,folge,2,thumbnail,thumbnail)
+                addLink('Folge '+folge+' - '+repair_name(title),folge,2,thumbnail,thumbnail)
 
 
 
@@ -183,7 +143,7 @@ def INDEX_PLAYTUBE(url):#3
 	f = 1
 	for url,title in match:
 		if not title == 'GameTrailers':
-			addDir(title,url,4,logo,art_dir+str(f)+'.jpg')
+			addDir(title,url,4,logo,background+str(f)+'.jpg')
 			f = f + 1
 			if f == 5:
 				f = 1
@@ -205,14 +165,14 @@ def CAT_PLAYTUBE(url):#4
 	f = 1
         for url,name,thumbnail in match:
                 #print 'video: '+name
-                addLink(repair_name(name),url,5,thumbnail,art_dir+str(f)+'.jpg')
+                addLink(repair_name(name),url,5,thumbnail,background+str(f)+'.jpg')
 		f = f + 1
 		if f == 5:
 			f = 1
 	match_next=re.compile('<a class="next_page" rel="next" href="(.+?)"').findall(link)
 	for naechste_seite in match_next:
 
-		addDir('Nächste Seite','http://gameone.de'+naechste_seite,4,logo,art_dir+str(f)+'.jpg')
+		addDir('Nächste Seite','http://gameone.de'+naechste_seite,4,logo,background+str(f)+'.jpg')
 
 
 def VIDEOLINKS_PLAYTUBE(url,name):#5
@@ -241,7 +201,7 @@ def VIDEOLINKS_PLAYTUBE(url,name):#5
 
 
 def INDEX_BLOG(url):#6
-	addDir('Alle',url,7,logo,art_dir+'1.jpg')
+	addDir('Alle',url,7,logo,background+'1.jpg')
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urllib2.urlopen(req)
@@ -253,7 +213,7 @@ def INDEX_BLOG(url):#6
 		match_cat=re.compile('<a title="(.+?)" href="(.+?)">.+?src="(.+?)"', re.DOTALL).findall(teaser)
 		for title,url,thumb in match_cat:
 			
-			addDir(title,base_url+url,7,base_url+thumb,art_dir+str(f)+'.jpg')
+			addDir(title,base_url+url,7,base_url+thumb,background+str(f)+'.jpg')
 			f = f + 1
 			if f == 5:
 				f = 1
@@ -286,7 +246,7 @@ def CAT_BLOG(url):#7
         #<a href="/blog?page=2" class="next_page" rel="next">Nächste Seite</a>
 	match_next=re.compile('<a rel="next" href="(.+?)"').findall(link)
 	for naechste_seite in match_next:
-		addDir('Nächste Seite','http://gameone.de'+naechste_seite,7,'',art_dir+'2.jpg')
+		addDir('Nächste Seite','http://gameone.de'+naechste_seite,7,'',background+'2.jpg')
 
 def VIDEOLINKS_BLOG(url,name,fan):#8
         req = urllib2.Request(url)
@@ -343,7 +303,7 @@ def INDEX_PODCAST(url):#9
 		thumb = thumb.replace(' ','%20')
 		#if 'horror' in thumb:
 			#print "##############################"+thumb
-		addLink(repair_name(name),url,10,thumb,art_dir+str(f)+'.jpg')
+		addLink(repair_name(name),url,10,thumb,background+str(f)+'.jpg')
 
 		f = f + 1
 		if f == 5:

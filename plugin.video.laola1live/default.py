@@ -105,6 +105,8 @@ def INDEX():
 
 def TOPICSELECTION(url):
 	response = getUrl(url)
+	list_aufmacher(url,response)
+
 
         match=re.compile("<td style=\".+?\" width=\".+?\"><h2><a href=\"(.+?)\" style=\".+?\">(.+?)</a></h2></td>").findall(response) 
 
@@ -116,6 +118,7 @@ def TOPICSELECTION(url):
                 
 
 def VIDEOSELECTION(url):
+	
 	response = getUrl(url)
         match1=re.compile('<div class="teaser_bild_video" title=".+?"><a href="(.+?)"><img src="(.+?)" border=".+?" /></a></div>.+?<div class="teaser_head_video" title=".+?">(.+?)</div>.+?<div class="teaser_text" title=".+?"><a href=".+?>(.+?)</a>', re.DOTALL).findall(response)
 
@@ -136,13 +139,33 @@ def VIDEOSELECTION(url):
         for url in match_next:
                 addDir(__language__(30001),url,2,'')
 
+def list_aufmacher(url,site):
+	log('List aufmacher')
+	match_flashvars = re.compile('<param name="flashvars" value="(.+?)"').findall(site)
+	match_url = re.compile('www.(.+?)/video').findall(url)
+	flashvars = match_flashvars[0].replace('&amp;','&')
+	url = 'http://www.'+ match_url[0] + '/video/server/aufmacher.php?' + flashvars + '&r=' + num_gen(8)
+	response2 = getUrl(url)
+	print response2
+	response2= response2.replace('\n','  ')
+	match_bild = re.compile('<bild(.+?)>').findall(response2)
+	for bild in match_bild:
+		if not 'liveicon="1"' in bild:
+			match_url = re.compile('link="(.+?)"').findall(bild)
+			match_head = re.compile('head="(.+?)"').findall(bild)
+			match_txt = re.compile('txt="(.+?)"').findall(bild)
+			match_tumb = re.compile('pfad="(.+?)"').findall(bild)
+			match_url = re.compile('link="(.+?)"').findall(bild)
+			print '#############################'
+			print 'www.laola1.tv/'+match_tumb[0]
+			addLink(match_txt[0].replace('  ',' '),match_url[0],3,'http://www.laola1.tv/'+match_tumb[0],'http://www.laola1.tv/'+match_tumb[0])
 
 
 def get_playkeys(url):
 	log("GET playkey1,playkey2")
 
 	response = getUrl(url)
-	print response
+	#print response
 	playkeys=re.compile('"playkey=(.+?)-(.+?)&adv.+?"').findall(response)
 
 	for playkey1,playkey2 in playkeys:
@@ -783,12 +806,14 @@ def get_video_ad(flashvars):
 
 	#check if preroll1_pfad_adv is avaiable
 	response = getUrlCookie(match_preroll1_pfad_adv[0])
-	print response
+	#print response
+	log('Check for "OAS adverServe"')
 	if 'OAS adverServe' in response:
 		log('Trying "OAS adverServe"')
 		try:
 			log('Try to get preroll')
-			match_MediaFile=re.compile('<MediaFile.+?<!\[CDATA\[(.+?)\]\]>', re.DOTALL).findall(response)
+			match_MediaFiles=re.compile('<MediaFiles>(.+?)</MediaFiles>', re.DOTALL).findall(response)
+			match_MediaFile=re.compile('<MediaFile.+?<!\[CDATA\[(.+?)\]\]>', re.DOTALL).findall(match_MediaFiles[0])
 			video = match_MediaFile[0]
 			log('Possible ad: '+video)
 			return video,''#funktioniert
@@ -805,9 +830,9 @@ def get_video_ad(flashvars):
 				return video,''#funktioniert
 			except:
 				log('playing opener')
-			
-			
-	log('"OAS adverServe" failed')
+	else:
+		log('No "OAS adverServe" found')
+	
 	log('Trying other ad')
 
 
@@ -818,13 +843,15 @@ def get_video_ad(flashvars):
 		url = url.replace('[random]',num_gen(11))
 		log('doubleclick url: '+url)
 		response = getUrlCookie(url)
-		print response
+		#print response
 		if '<VASTAdTagURI>' in response:
 			log('VAST ad found')
 			match_VASTAdTagURI=re.compile('<VASTAdTagURI><!\[CDATA\[(.+?)\]\]></VASTAdTagURI>').findall(response)
 			log('Opening: '+match_VASTAdTagURI[0])
 			response = getUrl(match_VASTAdTagURI[0])
-			match_MediaFile=re.compile('<MediaFile.+?>(.+?)</MediaFile>', re.DOTALL).findall(response)
+			match_MediaFiles=re.compile('<MediaFiles>(.+?)</MediaFiles>', re.DOTALL).findall(response)
+			match_MediaFile=re.compile('<MediaFile .+?><!\[CDATA\[(.+?)\]\]>').findall(match_MediaFiles[0])
+
 			log('Video file is: '+match_MediaFile[0])
 			#match_Duration=re.compile('<Duration>.+?:.+?:(.+?)</Duration>', re.DOTALL).findall(response)
 			return match_MediaFile[0],''#match_Duration[0]
@@ -852,11 +879,15 @@ def get_video_ad(flashvars):
 
 		elif '<Ad id="EWAD">' and 'MediaFile' in response:
 			log('EWAD ad found')
-			match_MediaFile=re.compile('<MediaFile .+?><!\[CDATA\[(.+?)\]\]>').findall(response)
+			match_MediaFiles=re.compile('<MediaFiles>(.+?)</MediaFiles>', re.DOTALL).findall(response)
+			#print match_MediaFiles[0]
+			match_MediaFile=re.compile('<MediaFile .+?><!\[CDATA\[(.+?)\]\]>').findall(match_MediaFiles[0])
 			log('Playing EWAD ad')
+			log('File is: '+match_MediaFile[0])
 			return match_MediaFile[0],''#works
 		else:
 			log('No ad recieved')
+			log(response)
 			log('Playing fallback')
 			video = get_ad_oas(match_fallback_pfad[0])
 			return video,''
@@ -864,7 +895,7 @@ def get_video_ad(flashvars):
 
 def get_ad_oas(url):
 	response = getUrlCookie(url)
-	print response
+	#print response
 	match_MediaFile=re.compile('<MediaFile.+?<!\[CDATA\[(.+?)\]\]>', re.DOTALL).findall(response)
 	return match_MediaFile[0]
 
@@ -1113,12 +1144,13 @@ def addLinkOld(name,url,iconimage):
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=liz)
         return ok
 
-def addLink(name,url,mode,iconimage):
+def addLink(name,url,mode,iconimage,fanart=''):
 	u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&thumb="+urllib.quote_plus(iconimage)+"&name="+urllib.quote_plus(name)##
 	ok=True##
 	liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)##
 	liz.setInfo( type="Video", infoLabels={ "Title": name } )##
 	liz.setProperty('IsPlayable', 'true')##
+	liz.setProperty('fanart_image',fanart)
 	liz.setProperty('mimetype', 'video/x-flv')
 	ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz)##
 	return ok

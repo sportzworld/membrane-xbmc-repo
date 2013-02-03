@@ -47,6 +47,9 @@
 	<string id="30228">4</string>
 	<string id="30229">5</string>
 
+	<string id="30230">Wiedergabe nach buffern</string>
+	<string id="30231">Aus</string>
+	<string id="30232">An</string>
 
 	<!-- messages -->
 </strings>

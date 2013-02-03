@@ -29,3 +29,5 @@
 0.28
 - Autoresume if livestream buffers
 - Ad shuffling improved
+0.29
+- Some optimizations and fixes
