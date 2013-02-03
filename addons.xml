@@ -66,6 +66,22 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.ran" name="Ran" version="0.1" provider-name="membrane">
+    <requires>
+        <import addon="xbmc.python" version="1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">Ran</summary>
+        <summary lang="en">Ran</summary>
+        <description lang="de">Ran</description>
+        <description lang="en">Ran</description>
+    </extension>
+</addon>
+
 <addon id="plugin.video.dbtg_tv" name="BundestagsTV" version="0.2" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
