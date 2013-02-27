@@ -31,3 +31,16 @@
 - Ad shuffling improved
 0.29
 - Some optimizations and fixes
+1.0.0
+- Ad handling improved
+- HQ thumbails enabled
+- Settings menu restucturized
+- Option to use thumbnails as backdrops added
+- Autoresume fixed
+- More debug messages added
+- Code cleanup
+- Junk entries removed
+- Switched to new version numbering scheme
+- Next site problem in upcomming livestreams fixed
+- New Thumbnail
+- Various improvements

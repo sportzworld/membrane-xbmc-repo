@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="0.29" provider-name="membrane">
+<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="1.0.0" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -8,19 +8,17 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="de">Livestreams und VOD's verschiedenster Sportarten des österreichischen Anbieters Laola1.tv, z.B.
-- Fußball (Topspiele der spanischen Liga BBVA, ...)
-- Eishockey (KHL, EHL und NEU: DEL)
-- noch vieles mehr
-
-Die Streams sind GEO-Blocked, also abhängig von deinem Standort/deiner IP </summary>
-        <summary lang="en">Laola LIVE</summary>
+        <summary lang="de">Laola1 - Sport aus Europa</summary>
         <description lang="de">Livestreams und VOD's verschiedenster Sportarten des österreichischen Anbieters Laola1.tv, z.B.
 - Fußball (Topspiele der spanischen Liga BBVA, ...)
-- Eishockey (KHL, EHL und NEU: DEL)
+- Eishockey (KHL, EHL  DEL)
 - noch vieles mehr
 
-Die Streams sind GEO-Blocked, also abhängig von deinem Standort/deiner IP </description>
-        <description lang="en">Laola LIVE</description>
+Bitte das Land in den Einstellungen des Add-ons wählen.</description>
+        <summary lang="en">Laola1 - Sport from Europe</summary>
+
+        <description lang="en">Livestreams and VOD from laola1.tv.
+		
+Please choose your country in the add-on settings.</description>
     </extension>
 </addon>
