@@ -1,6 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 
-import urllib,urllib2,re,xbmcplugin,xbmcgui,xbmcaddon,base64,socket,sys,string,random,cookielib,httplib,base64,time,json
+import urllib,urllib2,re,xbmcplugin,xbmcgui,xbmcaddon,base64,socket,sys,string,random,cookielib,httplib,base64,time,json,threading
 
 
 __settings__ = xbmcaddon.Addon(id='plugin.video.laola1live')
@@ -24,6 +24,35 @@ socket.setdefaulttimeout(30)
 backdrop = ''#https://lh6.ggpht.com/DHoXQo-7VlTviEw_Bc7CD5fk7A3T5se_h5tXrclyYF2hFQ6H4-mu1gkdMiic_SUc2h4=w1024'
   
 
+
+def log(message):
+	if xbmcplugin.getSetting(pluginhandle,"debug") == 'true':
+		print "#####Laola1 Debug: "+message
+	return
+
+#vod player
+class LivePlayer(xbmc.Player):
+	def __init__(self):
+		xbmc.Player.__init__(self)
+		log('Liveplayer init')
+		self._playbackLock = threading.Event()
+		self._playbackLock.set()
+
+	def onPlayBackStarted(self):
+		log('Liveplayer onplayback')
+		force_play()
+		auto_resume()
+
+	def onPlayBackStopped(self):
+		log('Liveplayer stop')
+		self._playbackLock.clear()
+
+	def onPlayBackPaused(self):
+		log('Paused')
+
+
+
+liveplayer = LivePlayer()
 
 ###set settings
 if xbmcplugin.getSetting(pluginhandle,"streamquality") == '0':
@@ -757,10 +786,13 @@ def PLAY_LIVE_1B(url,name,thumb='',offset='0'):#11
 		log('Replay disabled')
 		item=xbmcgui.ListItem(name, thumbnailImage=thumb, path=http+video+" live=true")
 		item.setProperty('mimetype', 'video/x-flv')
-		xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+		liveplayer.play(http+video+" live=true",item,False)
+		#while liveplayer._playbackLock.isSet():
+		#	xbmc.sleep(250)
 
-		force_play(http+video+" live=true")
-		auto_resume()
+		#xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+
+		
 
 	
 	
@@ -1117,7 +1149,7 @@ def searchbox():
 		
 
 		
-def force_play(video_url):
+def force_play():
 	
 	if xbmcplugin.getSetting(pluginhandle,"autoplay") == 'true':
 		log('autoplay enabled, waiting for player')
@@ -1284,10 +1316,7 @@ def force_play(video_url):
 
 	
 	
-def log(message):
-	if xbmcplugin.getSetting(pluginhandle,"debug") == 'true':
-		print "#####Laola1 Debug: "+message
-	return
+
 
 
 
