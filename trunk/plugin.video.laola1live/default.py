@@ -25,8 +25,6 @@ backdrop = ''#https://lh6.ggpht.com/DHoXQo-7VlTviEw_Bc7CD5fk7A3T5se_h5tXrclyYF2h
   
 
 
-
-
 ###set settings
 if xbmcplugin.getSetting(pluginhandle,"streamquality") == '0':
 	setting_streamquality = '0'
@@ -67,10 +65,9 @@ user_offset = 30
 """
 
 def INDEX():#main menue
-	#if xbmcplugin.getSetting(pluginhandle,"firstrun") == "true":#not working, can't find a working solution.
-	#	print xbmcplugin.setSetting('firstrun','false')
-	#	xbmc.executebuiltin("Notification("+__language__(30013)+","+__language__(30014)+", 7000)")
-	#	#firstrun()
+	if __settings__.getSetting( "firstrun" ) == "true":
+		firstrun()
+
 	addDir(__language__(30011).encode("utf-8"),livestream_url,4,'',backdrop)
 	addDir(__language__(30012),'Search',7,'',backdrop)
 
@@ -1330,20 +1327,20 @@ def addDir(name,url,mode,iconimage,fanart=backdrop):
 def firstrun():
 	print 'first laola run'
 	#set all settings to default, even from older systems
-	xbmcplugin.setSetting(pluginhandle,id="location",value='2')
-	xbmcplugin.setSetting(pluginhandle,id="thumbnailhack",value='True')
-	xbmcplugin.setSetting(pluginhandle,id="fanart",value='True')
-	xbmcplugin.setSetting(pluginhandle,id="debug",value='False')
+	__settings__.setSetting(id="location",value='1')
+	__settings__.setSetting(id="thumbnailhack",value='true')
+	__settings__.setSetting(id="fanart",value='true')
+	__settings__.setSetting(id="debug",value='false')
 	
-	xbmcplugin.setSetting(pluginhandle,id="streamquality",value='1')
-	xbmcplugin.setSetting(pluginhandle,id="livequality",value='2')
-	xbmcplugin.setSetting(pluginhandle,id="ads",value='True')
-	xbmcplugin.setSetting(pluginhandle,id="autoplay",value='True')
-	xbmcplugin.setSetting(pluginhandle,id="autoresume",value='True')
+	__settings__.setSetting(id="streamquality",value='1')
+	__settings__.setSetting(id="livequality",value='2')
+	__settings__.setSetting(id="ads",value='true')
+	__settings__.setSetting(id="autoplay",value='true')
+	__settings__.setSetting(id="autoresume",value='true')
+
+	__settings__.setSetting(id="firstrun",value='false')
 	
-	xbmcplugin.setSetting(pluginhandle,id="firstrun",value='False')
-	xbmcaddon.Addon(id='plugin.video.laola1live').Settings.openSettings(sys.argv[0])
-	#xbmc.executebuiltin('Addon.Default.OpenSettings')
+	__settings__.openSettings()
 
 
 params=get_params()
