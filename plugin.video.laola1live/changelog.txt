@@ -44,3 +44,6 @@
 - Next site problem in upcomming livestreams fixed
 - New Thumbnail
 - Various improvements
+1.0.1
+- Reset all setting (necessary)
+- Show settings at first start
