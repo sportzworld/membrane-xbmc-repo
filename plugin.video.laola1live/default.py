@@ -786,11 +786,11 @@ def PLAY_LIVE_1B(url,name,thumb='',offset='0'):#11
 		log('Replay disabled')
 		item=xbmcgui.ListItem(name, thumbnailImage=thumb, path=http+video+" live=true")
 		item.setProperty('mimetype', 'video/x-flv')
-		liveplayer.play(http+video+" live=true",item,False)
+		#liveplayer.play(http+video+" live=true",item,False)
 		#while liveplayer._playbackLock.isSet():
 		#	xbmc.sleep(250)
 
-		#xbmcplugin.setResolvedUrl(pluginhandle, True, item)
+		xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 
 		
 
