@@ -47,3 +47,5 @@
 1.0.1
 - Reset all setting (necessary)
 - Show settings at first start
+1.0.2
+- Various improvements

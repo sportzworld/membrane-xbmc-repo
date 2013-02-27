@@ -759,8 +759,8 @@ def PLAY_LIVE_1B(url,name,thumb='',offset='0'):#11
 		item.setProperty('mimetype', 'video/x-flv')
 		xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 
-	#force_play(http+video+" live=true")
-	#auto_resume()
+		force_play(http+video+" live=true")
+		auto_resume()
 
 	
 	
