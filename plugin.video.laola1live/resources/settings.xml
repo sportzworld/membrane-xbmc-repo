@@ -13,8 +13,13 @@
 	<setting type="sep"/>
     <setting id="ads" type="bool" label="30218" default="true"/>
 	<setting type="sep"/>
+    <setting id="videoplayer" type="enum" lvalues="30248|30249|30250" label="30247" default="2"/>
+
+	<!-- disabled feature (broken in frodo)
     <setting id="autoplay" type="bool" label="30221" default="true"/>
 	<setting id="autoresume" type="bool" label="30244" default="true"/>
+	-->
+	
 	<!-- disabled feature (not ready)
 	<setting type="sep"/>
     <setting id="replay" type="bool" label="30245" default="true"/>
