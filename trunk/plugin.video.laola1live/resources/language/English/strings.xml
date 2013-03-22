@@ -10,7 +10,7 @@
 	<string id="30005">at</string>
 	<string id="30006">CET</string>
 
-	<string id="30007">Dear LAOLA1-User,</string>
+	<string id="30007">Dear LAOLA1-User</string>
 	<string id="30008">This stream has already finished.</string>
 
 	<string id="30009">This stream is not avaiable</string>
@@ -55,7 +55,11 @@
 
 	<string id="30245">Use replay function (experimental)</string>
 	<string id="30246">Replay time in seconds</string>
-
+	
+	<string id="30247">Videoplayer</string>
+	<string id="30248">Auto</string>
+	<string id="30249">MPlayer</string>
+	<string id="30250">DVDPlayer</string>
 	
 	<!-- messages -->
 </strings>

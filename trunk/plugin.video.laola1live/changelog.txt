@@ -53,3 +53,7 @@
 - Various improvements
 1.0.4
 - Various improvements
+1.1.0
+- Livestreams and VoD fixed
+- Option to choose MPlayer or DVDPlayer added
+- Big code improvements

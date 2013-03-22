@@ -288,7 +288,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.nhlvideocenter" name="NHL Videocenter" version="0.2" provider-name="membrane">
+<addon id="plugin.video.nhlvideocenter" name="NHL Videocenter" version="1.0.0" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -297,10 +297,8 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="de">NHL Videocenter</summary>
-        <summary lang="en">NHL Videocenter</summary>
-        <description lang="de">NHL Videocenter</description>
-        <description lang="en">NHL Videocenter</description>
+        <summary lang="en">NHL Videocenter VOD</summary>
+        <description lang="en">With NHL Videocenter you get all videos from http://video.nhl.com/videocenter/ on demand</description>
     </extension>
 </addon>
 
@@ -320,7 +318,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="1.0.4" provider-name="membrane">
+<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="1.1.0" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>

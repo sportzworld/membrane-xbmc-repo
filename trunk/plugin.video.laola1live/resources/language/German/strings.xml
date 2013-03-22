@@ -10,7 +10,7 @@
 	<string id="30005">um</string>
 	<string id="30006">Uhr CET</string>
 
-	<string id="30007">Lieber LAOLA1-User,</string>
+	<string id="30007">Lieber LAOLA1-User</string>
 	<string id="30008">Dieser Stream ist bereits beendet.</string>
 
 	<string id="30009">Dieser Stream ist in Ihrem Land</string>
@@ -55,7 +55,11 @@
 	
 	<string id="30245">Replay Funktion nutzen (experimentell)</string>
 	<string id="30246">Rückspulzeit in Sekunden</string>
-
+	
+	<string id="30247">Videoplayer</string>
+	<string id="30248">Auto</string>
+	<string id="30249">MPlayer</string>
+	<string id="30250">DVDPlayer</string>
 
 	<!-- messages -->
 </strings>
