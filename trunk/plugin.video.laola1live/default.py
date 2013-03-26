@@ -11,12 +11,12 @@ __language__ = __settings__.getLocalizedString
 
 pluginhandle = int(sys.argv[1])
 addon = xbmcaddon.Addon(id='plugin.video.laola1live')
-akamaiProxyServer = xbmc.translatePath(addon.getAddonInfo('path')+"/akamaiSecureHD.py")
-akamaiProxyServerLive = xbmc.translatePath(addon.getAddonInfo('path')+"/akamaiSecureHDLive.py")
+akamaiProxyServer = xbmc.translatePath(addon.getAddonInfo('path')+"akamaiSecureHD.py")
+akamaiProxyServerLive = xbmc.translatePath(addon.getAddonInfo('path')+"akamaiSecureHDLive.py")
 #testfile = xbmc.translatePath(addon.getAddonInfo('path')+"/test.flv")
 
-COOKIEFILE = xbmc.translatePath(addon.getAddonInfo('path')+"/cookies.lwp")
-#USERFILE = xbmc.translatePath(addon.getAddonInfo('path')+"/userfile.js")
+COOKIEFILE = xbmc.translatePath(addon.getAddonInfo('path')+"cookies.lwp")
+#USERFILE = xbmc.translatePath(addon.getAddonInfo('path')+"userfile.js")
 URL_AKAMAI_PROXY = 'http://127.0.0.1:64653/laola/%s'
 PROGRESS = xbmcgui.DialogProgress()
 
@@ -58,7 +58,7 @@ class LivePlayer(xbmc.Player):
 			pass
 		xbmc.sleep(500)
 		xbmc.executebuiltin('RunScript('+akamaiProxyServerLive+')')
-		#xbmc.sleep(1000)
+		xbmc.sleep(500)
 
 		VIDb64 = base64.encodestring(fullUrl).replace('\n', '')
 		fullUrl = URL_AKAMAI_PROXY % VIDb64
