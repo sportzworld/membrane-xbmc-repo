@@ -57,3 +57,6 @@
 - Livestreams and VoD fixed
 - Option to choose MPlayer or DVDPlayer added
 - Big code improvements
+1.1.1
+- Optimised code for low performance systems
+- Possible fix for OSX

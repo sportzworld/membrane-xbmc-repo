@@ -12,15 +12,16 @@ __settings__ = xbmcaddon.Addon(id='plugin.video.nhlvideocenter')
 __language__ = __settings__.getLocalizedString
 
 
-COOKIEFILE = xbmc.translatePath(__settings__.getAddonInfo('profile')+"/cookies.lwp")
+COOKIEFILE = xbmc.translatePath(__settings__.getAddonInfo('profile')+"cookies.lwp")
 
 
 pluginhandle = int(sys.argv[1])
 
 mainurl = 'http://video.nhl.com/videocenter/'
+"""
 if __settings__.getSetting("firstrun") == 'true':
 	__settings__.setSetting(id="firstrun",value='false')
-
+"""
 
 def MAIN():
 	addDir(__language__(30002).encode("utf-8"),'Search',9,'')	

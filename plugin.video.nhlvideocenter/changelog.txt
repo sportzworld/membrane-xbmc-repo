@@ -1,0 +1,4 @@
+1.0.0
+- Re-Relase
+1.0.1
+- Fix for OSX
