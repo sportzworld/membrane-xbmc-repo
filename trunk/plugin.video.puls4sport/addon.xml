@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon id="plugin.video.puls4sport" name="Puls4 Sport" version="0.1" provider-name="membrane">
+    <requires>
+        <import addon="xbmc.python" version="1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">Sport VOD und Livestreams</summary>
+        <description lang="de">PULS 4 SPORT bietet dir die Spiele der UEFA Champions League online im Livestream und sämtliche News und Daten zur Fussball Königklasse.</description>
+    </extension>
+</addon>
