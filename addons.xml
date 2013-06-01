@@ -167,6 +167,7 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
+        <broken>Website offline</broken>
         <summary lang="de">yavido</summary>
         <summary lang="en">yavido</summary>
         <description lang="de">yavido</description>
