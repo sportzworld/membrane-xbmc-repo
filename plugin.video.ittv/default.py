@@ -18,7 +18,7 @@ addon = xbmcaddon.Addon(id='plugin.video.ittv')
 
 COOKIEFILE = xbmc.translatePath(addon.getAddonInfo('path')+"/cookies.lwp")
 
-
+debug = '1'
 
   
 
@@ -90,6 +90,7 @@ def TOPICSELECTION(url):#1
 	#	print entry
 	"""
 		
+		
         for url,name in match:
 		if not "LIVE" in name:
 			if not "Live" in name:
@@ -105,11 +106,12 @@ def FINESELECTION(url):#2
 	navi = url
 	#print lines
 	soup_response=Soup(lines[0])
+	print '##############'+lines[0]
 	for entry in soup_response.find_all('ul'):
-		#print entry
-		#print '##################################'
-		#print navi
-		if str(navi) in str(entry):
+		print entry
+		print '##################################'
+		print navi
+		if str(navi)+'"' in str(entry):
 			selection = str(entry)
 			
 	f2 = open(xbmc.translatePath(addon.getAddonInfo('path')+"/cache2.html"),"w+")
@@ -173,6 +175,7 @@ def PLAY_LIVE(url,name):#4
 
 	log('GET ip')
 	server = 'http://cp37665.live.edgefcs.net/fcs/ident'
+	#server = 'http://cp37665.live.edgefcs.net/live'
 	#response = getUrl('http://'+server+'/fcs/ident')
 	response = getUrl(server)
 
@@ -188,8 +191,10 @@ def PLAY_LIVE(url,name):#4
 	#rtmp://80.150.133.71:1935/live?_fcs_vhost=cp37665.live.edgefcs.net/ittf_kuwait_bet_1@s92820?auth=db.b4cWdwdYa9bLc3a7cja5cFcGdcc3cUbu-brhMEp-E-eS-xyKqCInCDoD-o6s9&p=24&e=111442&u=&t=livevideo&l=&a=&c=DE&i=&q=&k=&aifp=v001.
 	#rtmpbody = 'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+server+'&auth='+auth+'&aifp='+aifp+'&slist='+stream
 	rtmpbody = 'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+'cp37665.live.edgefcs.net/'+stream+'&auth='+auth+'&aifp='+aifp#+'&slist='+stream
+	#rtmpbody = 'rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+'cp37665.live.edgefcs.net/live/'+stream+'&auth='+auth+'&aifp='+aifp#+'&slist='+stream
 	swf = ' swfUrl=http://cdn.laola1.tv/ittf/iframe/ittfplayer.swf swfVfy=true'
-	app = ' app=live?_fcs_vhost=cp37665.live.edgefcs.net'
+	#app = ' app=live?_fcs_vhost=cp37665.live.edgefcs.net'
+	app = ' app=live?_fcs_vhost=cp37665.live.edgefcs.net/live'
 	page = ' pageUrl='+'http://cdn.laola1.tv'
 
 	if '.mp4' in stream:
@@ -198,7 +203,7 @@ def PLAY_LIVE(url,name):#4
 		playpath = ' playpath='+stream #fix for beachvolleyball
 
 	flashver = ' flashver=LNX\ 10,3,162,29'
-	rtmppath = rtmpbody+swf#+app+page+playpath+' live=true'
+	rtmppath = rtmpbody+swf+app+page+playpath+' live=true'
 	rtmppath = rtmppath.replace('&amp;','&')
 	rtmppath = rtmppath.replace('&p=','&p=24')
 	rtmppath = rtmppath.replace('&partnerid=24','')

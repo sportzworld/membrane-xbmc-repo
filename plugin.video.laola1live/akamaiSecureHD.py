@@ -311,7 +311,7 @@ class ThreadedHTTPServer(ThreadingMixIn, Server):
     """Handle requests in a separate thread."""
 
 HOST_NAME = '127.0.0.1'
-PORT_NUMBER = 64653
+PORT_NUMBER = 64654
 
 if __name__ == '__main__':
     socket.setdefaulttimeout(5)

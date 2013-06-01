@@ -60,3 +60,5 @@
 1.1.1
 - Optimised code for low performance systems
 - Possible fix for OSX
+1.1.2
+- Lot of improvements, optimisations and fixes
