@@ -11,17 +11,26 @@ __language__ = __settings__.getLocalizedString
 
 pluginhandle = int(sys.argv[1])
 addon = xbmcaddon.Addon(id='plugin.video.laola1live')
-akamaiProxyServer = xbmc.translatePath(addon.getAddonInfo('path')+"akamaiSecureHD.py")
-akamaiProxyServerLive = xbmc.translatePath(addon.getAddonInfo('path')+"akamaiSecureHDLive.py")
+akamaiProxyServer = xbmc.translatePath(addon.getAddonInfo('path')+"/akamaiSecureHD.py")
+akamaiProxyServer = akamaiProxyServer.replace('//akamaiSecureHD.py','/akamaiSecureHD')
+akamaiProxyServerLive = xbmc.translatePath(addon.getAddonInfo('path')+"/akamaiSecureHDLive.py")
+akamaiProxyServerLive = akamaiProxyServerLive.replace('//akamaiSecureHDLive.py','/akamaiSecureHDLive')
+
 #testfile = xbmc.translatePath(addon.getAddonInfo('path')+"/test.flv")
 
-COOKIEFILE = xbmc.translatePath(addon.getAddonInfo('path')+"cookies.lwp")
+COOKIEFILE = xbmc.translatePath(addon.getAddonInfo('path')+"/cookies.lwp")
+COOKIEFILE = COOKIEFILE.replace('//cookies.lwp','/cookies.lwp')
 #USERFILE = xbmc.translatePath(addon.getAddonInfo('path')+"userfile.js")
 URL_AKAMAI_PROXY = 'http://127.0.0.1:64653/laola/%s'
+URL_AKAMAI_PROXY_VOD = 'http://127.0.0.1:64654/laola/%s'
+URL_AKAMAI_PROXY_LIVE = 'http://127.0.0.1:64655/laola/%s'
 PROGRESS = xbmcgui.DialogProgress()
 
 #timeout:
 socket.setdefaulttimeout(30)
+
+xff = False
+xff_ip = '80.152.42.240'
 
 backdrop = ''#https://lh6.ggpht.com/DHoXQo-7VlTviEw_Bc7CD5fk7A3T5se_h5tXrclyYF2hFQ6H4-mu1gkdMiic_SUc2h4=w1024'
   
@@ -61,7 +70,7 @@ class LivePlayer(xbmc.Player):
 		xbmc.sleep(500)
 
 		VIDb64 = base64.encodestring(fullUrl).replace('\n', '')
-		fullUrl = URL_AKAMAI_PROXY % VIDb64
+		fullUrl = URL_AKAMAI_PROXY_LIVE % VIDb64
 
 		item=xbmcgui.ListItem(name, thumbnailImage=thumb, path=fullUrl)
 		item.setProperty('mimetype', 'video/x-flv')
@@ -76,7 +85,7 @@ class LivePlayer(xbmc.Player):
 
 	def onPlayBackPaused(self):
 		log('Paused')
-		
+
 class VodPlayer(xbmc.Player):
 	def __init__(self):
 		xbmc.Player.__init__(self)
@@ -96,11 +105,16 @@ class VodPlayer(xbmc.Player):
 		except:
 			pass
 		xbmc.sleep(500)
-		xbmc.executebuiltin('RunScript('+akamaiProxyServer+')')
+		print xbmc.executebuiltin('RunScript('+akamaiProxyServer+')')
 		#xbmc.sleep(1000)
+		try:
+			version = getUrl('http://127.0.0.1:64653/version')
+			log('Proxy version: '+version)
+		except:
+			pass
 
 		VIDb64 = base64.encodestring(fullUrl).replace('\n', '')
-		fullUrl = URL_AKAMAI_PROXY % VIDb64
+		fullUrl = URL_AKAMAI_PROXY_VOD % VIDb64
 
 		item=xbmcgui.ListItem(name, thumbnailImage=thumb, path=fullUrl)
 		item.setProperty('mimetype', 'video/x-flv')
@@ -121,7 +135,6 @@ class VodPlayer(xbmc.Player):
 
 
 
-liveplayer = LivePlayer()
 
 class TrackerPlayer(xbmc.Player):
 	def __init__(self):
@@ -181,7 +194,7 @@ class TrackerPlayer(xbmc.Player):
 
 
 trackerplayer = TrackerPlayer()
-liveplayer = LivePlayer()
+#liveplayer = LivePlayer()
 vodplayer = VodPlayer()
 
 ###set settings
@@ -331,12 +344,15 @@ def get_playkeys(url):
 	
 def VIDEOLINKS(url,name,thumb=''):
 	response = getUrl(url)
-
-	#if 'portal=3' in response:
-	STREAMTYPE_THREE(response,name,thumb)
+	#print response
+	if 'portal=3' in response or 'portalid=3' in response or 'portal=AUT' in response:
+		log('engaging streamtpe 3')
+		STREAMTYPE_THREE(response,name,thumb)
+	else:
+		log('no portal=3, try old method')
+		#	return
 	
-	"""
-	else:#legacy, disabled right now
+		#else:#legacy, disabled right now
 		if xbmcplugin.getSetting(pluginhandle,"ads") == 'true':
 			match_flashvars=re.compile('"flashvars", "(.+?)"').findall(response)
 			try:
@@ -350,12 +366,13 @@ def VIDEOLINKS(url,name,thumb=''):
 
 		
 		response = getUrl(url)
+		#print response
 		match=re.compile('videopfad=(.+?)&', re.DOTALL).findall(response)
-
+		log(match[0])
 		item=xbmcgui.ListItem(name, thumbnailImage=thumb)
 		item.setProperty('mimetype', 'video/x-flv')
 		xbmc.PlayList(1).add('plugin://plugin.video.laola1live/?url='+enc_url(match[0])+'&mode=10&thumb='+enc_url(thumb)+'&name='+name, item)
-	"""
+	
 
 
 
@@ -447,6 +464,7 @@ def PLAY_VIDEO(url,name,thumb=''):#10
 		VodPlayer().PlayStream(fullUrl,thumb,name)
 
 		"""
+		log('fullUrl: '+fullUrl)
 		VIDb64 = base64.encodestring(fullUrl).replace('\n', '')
 		fullUrl = URL_AKAMAI_PROXY % VIDb64
 
@@ -554,8 +572,7 @@ def PLAY_VIDEO(url,name,thumb=''):#10
 		server = server
 		servertype = servertype
 		playpath = playpath
-		title = title
-		if setting_streamquality == '1':
+		title = title		if setting_streamquality == '1':
 			break
 
 	log('streamquality: "'+streamquality+'"')
@@ -650,22 +667,37 @@ def VIDEOLIVELINKS(url,name,thumb):#5
 	response = urllib2.urlopen(req)
 	link=response.read()
 	response.close()
+	
+	#print link
 
 	#break if livestream isn't ready
-	match_ready=re.compile('Dieser Stream beginnt am.+?<big>(.+?),(.+?)-(.+?)CET</big>', re.DOTALL).findall(link)
-	for weekday,date,time in match_ready:
-		#xbmcplugin.getSetting(pluginhandle,"streamquality") == '1':
-		xbmc.executebuiltin("Notification("+__language__(30003)+","+__language__(30004)+" "+weekday.replace(' ','')+" - "+date.replace(' ','')+" "+__language__(30005)+" "+time.replace(' ','').replace('Uhr','')+" "+__language__(30006)+", 7000)")
+	#						<p>Dieser Stream beginnt am Samstag,  01.06.2013 um 17:00 Uhr CET.</p></td>
+	if 'Dieser Stream beginnt am' in link or 'This stream starts' in link:
+		log('stream not ready yet')
+		match_ready=re.compile('Dieser Stream beginnt am (.+?),(.+?)um(.+?)Uhr').findall(link)
+		for weekday,date,time in match_ready:
+			weekday=weekday.replace(' ','')
+			date=date.replace(' ','')
+			time=time.replace(' ','')
+			log('not yet started')
+			#xbmcplugin.getSetting(pluginhandle,"streamquality") == '1':
+			xbmc.executebuiltin("Notification("+__language__(30003)+","+__language__(30004)+" "+weekday.replace(' ','')+" - "+date.replace(' ','')+" "+__language__(30005)+" "+time.replace(' ','').replace('Uhr','')+" "+__language__(30006)+", 7000)")
+			item=xbmcgui.ListItem(name, thumbnailImage='')
+			return xbmcplugin.setResolvedUrl(pluginhandle, False, item)
+
+		match_ready=re.compile('This stream starts on.+?(.+?),(.+?)at(.+?)CET').findall(link)
+		for weekday,date,time in match_ready:
+			log('not yet started')
+			#xbmcplugin.getSetting(pluginhandle,"streamquality") == '1':
+			xbmc.executebuiltin("Notification("+__language__(30003)+","+__language__(30004)+" "+weekday.replace(' ','')+" - "+date.replace(' ','')+" "+__language__(30005)+" "+time.replace(' ','')+" "+__language__(30006)+", 7000)")
+			item=xbmcgui.ListItem(name, thumbnailImage='')
+			return xbmcplugin.setResolvedUrl(pluginhandle, False, item)
+		log('too early')
+		xbmc.executebuiltin("Notification("+__language__(30003)+","+__language__(30003)+", 7000)")
 		item=xbmcgui.ListItem(name, thumbnailImage='')
 		return xbmcplugin.setResolvedUrl(pluginhandle, False, item)
 
-	match_ready=re.compile('This stream starts at.+?<big>(.+?),(.+?)-(.+?)CET</big>', re.DOTALL).findall(link)
-	for weekday,date,time in match_ready:
-		#xbmcplugin.getSetting(pluginhandle,"streamquality") == '1':
-		xbmc.executebuiltin("Notification("+__language__(30003)+","+__language__(30004)+" "+weekday.replace(' ','')+" - "+date.replace(' ','')+" "+__language__(30005)+" "+time.replace(' ','')+" "+__language__(30006)+", 7000)")
-		item=xbmcgui.ListItem(name, thumbnailImage='')
-		return xbmcplugin.setResolvedUrl(pluginhandle, False, item)
-
+	log('stream active')
 	if has_ended(link) == 'true':
 		return
 	
@@ -689,7 +721,7 @@ def VIDEOLIVELINKS(url,name,thumb):#5
 
 		for playkey1,playkey2 in match_playkey:
 			print 'laola: use streamtype 1a'
-			req = urllib2.Request('http://streamaccess.laola1.tv/hdflash/1/hdlaola1_'+playkey1+'.xml?streamid='+playkey1+'&partnerid=1&quality=hdlive&t=.smil')
+			req = urllib2.Request('http://streamaccess.laola1.tv/hdflash/1/hdlaola1_'+playkey1+'.xml?streamid='+playkey1+'&partnerid=1&quality=&t=.smil')
 
 			req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
 #			if xbmcplugin.getSetting(pluginhandle,"inside") == 'false':
@@ -875,8 +907,10 @@ def SEARCH(url):
 def PLAY_LIVE_1B(url,name,thumb='',streamid='',offset='0'):#11
 	link,etag=getUrlCookie(url,get_etag=True)
 	xbmc.sleep(500)
+	log(link)
 	link=getUrlCookie(url,if_none_match=etag)
-	xbmc.sleep(5000)
+	xbmc.sleep(500)
+	log(link)
 
 	if 'This stream is not available in your region' in link:
 		log('Geolocked stream called')
@@ -955,10 +989,12 @@ def PLAY_LIVE_1B(url,name,thumb='',streamid='',offset='0'):#11
 
 def STREAMTYPE_THREE(site,name,thumb,live=False,ads_already_added=False,partner=''):#TODO
 	log('Using streamtype 3')
+	#log('site: '+site)
 	
 	match_streamid=re.compile('streamid=(.+?)&').findall(site)
 	response = getUrl('http://www.laola1.tv/server/hd_video.php?play='+match_streamid[0]+'&partner=22&portal=3')
-
+	#response = getUrl('http://www.laola1.tv/server/hd_video.php?play='+match_streamid[0]+'&partner=22&portal=1')
+	log(response)
 	log('streamid is: '+match_streamid[0])
 	if xbmcplugin.getSetting(pluginhandle,"ads") == 'true' and ads_already_added == False:
 		get_xml_ad(response,name,thumb,live)#this adds all ads to the playlist
@@ -1660,7 +1696,7 @@ def getUrl(url):
 
 
 def getUrlCookie( url , extraheader=True,referer=None,host=None,if_none_match=None,get_etag=False):
-	url = url.replace('&amp;','&')
+	#url = url.replace('&amp;','&')
 	log('Getting url with cookie: '+url)
 
 	cj = cookielib.LWPCookieJar()
@@ -1680,6 +1716,9 @@ def getUrlCookie( url , extraheader=True,referer=None,host=None,if_none_match=No
 	opener.addheaders = [('Host', 'streamaccess.unas.tv')]
 	opener.addheaders = [('Referer', 'http://www.laola1.tv/swf/hdplayer.13032013.swf')]
 	#opener.addheaders = [('If-None-Match', '7930dbc81a35eff70ab82a8ae226a082:1363609713')]
+	if 'streamaccess' in url and xff == True:
+		opener.addheaders = [('X-Forwarded-For', xff_ip)]
+
 		
 	"""
 	opener.addheaders = [('Referer', 'http://www.vevo.com'),
