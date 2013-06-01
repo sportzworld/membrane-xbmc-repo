@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="plugin.video.deluxemusic" name="Deluxemusic" version="0.3" provider-name="membrane">
+<addon id="plugin.video.deluxemusic" name="Deluxemusic" version="0.4" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -9,10 +9,10 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="de">deluxemusic</summary>
-        <summary lang="en">deluxemusic</summary>
-        <description lang="de">deluxemusic</description>
-        <description lang="en">deluxemusic</description>
+        <summary lang="de">Deluxemusic - Music Television</summary>
+        <summary lang="en">Deluxemusic - Music Television</summary>
+        <description lang="de">Deluxemusic - Music Television</description>
+        <description lang="en">Deluxemusic - Music Television</description>
     </extension>
 </addon>
 
