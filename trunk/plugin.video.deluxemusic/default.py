@@ -1,8 +1,8 @@
-import urllib,urllib2,re,random,xbmcplugin,xbmcgui
+import urllib,urllib2,re,random,xbmcplugin,xbmcgui,socket
 
 pluginhandle = int(sys.argv[1])
 
-
+socket.setdefaulttimeout(30)
 baseurl = 'http://deluxemusic.tv'
 
 mainreq = urllib2.Request(baseurl+'/programm/')
@@ -13,11 +13,12 @@ mainresponse.close()
 
 def CATEGORIES():
 	addLink('Live',baseurl,1,'')
-	addDir('Channels',baseurl,2,'')
+	#addDir('Channels',baseurl,2,'')
 	addDir('Shows',baseurl,4,'')
 
 						
 def PLAY_LIVE(url,name):#1	
+	"""
 	match=re.compile('<script type="text/javascript" src="/modules/mod_dlx_player/embeddedobjects.js\?(.+?)"></script>', re.DOTALL).findall(mainlink)
 	
 	req = urllib2.Request('http://deluxemusic.tv/modules/mod_dlx_player/embeddedobjects.js?'+match[0])
@@ -27,6 +28,7 @@ def PLAY_LIVE(url,name):#1
 	response.close()
 	
 	match=re.compile('if\(Itemid == 1\) startcontent = (.+?);', re.DOTALL).findall(link)
+	print match
 	
 	req = urllib2.Request('http://deluxemusic.tv.staging.ipercast.net/?ContentId='+match[0])
 	req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
@@ -35,20 +37,26 @@ def PLAY_LIVE(url,name):#1
 	response.close()
 	
 	match=re.compile('file: "(.+?)"', re.DOTALL).findall(link)
+	print match
+	"""
+
 	
-	req = urllib2.Request(match[0])
+	#req = urllib2.Request(match[0])
+	req = urllib2.Request('http://deluxemusic.tv.cms.ipercast.net/content/getJWVodXml/player_version/4/use_thumbnail/0/content_id/14/count/0/mediafile_id/12')
 	req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
 	response = urllib2.urlopen(req)
 	link=response.read()
 	response.close()
 	
+	#print link
+
 	match_location=re.compile('<location>(.+?)</location>', re.DOTALL).findall(link)
 	match_rtmp=re.compile('<meta rel="streamer">(.+?)</meta>', re.DOTALL).findall(link)
 	
 	location = match_location[0]
 	rtmp = match_rtmp[0]
 	
-	item = xbmcgui.ListItem(path=rtmp+location)
+	item = xbmcgui.ListItem(path=rtmp+location+' live=true')
 	return xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 	
 def CHANNELS(url):#2
@@ -108,7 +116,7 @@ def playlistplayer(url):
 	response = urllib2.urlopen(req)
 	link=response.read()
 	response.close()
-
+	print link
 	match=re.compile("changeStationTV\(0,'(.+?)'", re.DOTALL).findall(link)
 	
 	id = match[0]
