@@ -62,3 +62,5 @@
 - Possible fix for OSX
 1.1.2
 - Lot of improvements, optimisations and fixes
+1.2.0
+- Fix for international users
