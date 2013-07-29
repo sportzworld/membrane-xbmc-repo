@@ -30,7 +30,7 @@ PROGRESS = xbmcgui.DialogProgress()
 socket.setdefaulttimeout(30)
 
 xff = False
-xff_ip = '80.152.42.240'
+xff_ip = ''
 
 backdrop = ''#https://lh6.ggpht.com/DHoXQo-7VlTviEw_Bc7CD5fk7A3T5se_h5tXrclyYF2hFQ6H4-mu1gkdMiic_SUc2h4=w1024'
   
@@ -344,8 +344,8 @@ def get_playkeys(url):
 	
 def VIDEOLINKS(url,name,thumb=''):
 	response = getUrl(url)
-	#print response
-	if 'portal=3' in response or 'portalid=3' in response or 'portal=AUT' in response:
+	print response
+	if 'portal=3' in response or 'portalid=3' in response or 'portal=AUT' in response or 'portal=INT' in response:
 		log('engaging streamtpe 3')
 		STREAMTYPE_THREE(response,name,thumb)
 	else:
