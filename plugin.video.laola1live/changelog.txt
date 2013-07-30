@@ -64,3 +64,5 @@
 - Lot of improvements, optimisations and fixes
 1.2.0
 - Fix for international users
+1.2.1
+- Possible fix for low performance systems

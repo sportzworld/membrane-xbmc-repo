@@ -106,7 +106,7 @@ class VodPlayer(xbmc.Player):
 			pass
 		xbmc.sleep(500)
 		print xbmc.executebuiltin('RunScript('+akamaiProxyServer+')')
-		#xbmc.sleep(1000)
+		xbmc.sleep(1000)#TODO: optional in future
 		try:
 			version = getUrl('http://127.0.0.1:64653/version')
 			log('Proxy version: '+version)
@@ -506,6 +506,7 @@ def PLAY_VIDEO(url,name,thumb=''):#10
 		xbmc.sleep(autoPlay*100+int(float(ad_length)*float(1000)))
 		time_difference = int(xbmc.Player().getTime())*1000 - int(float(ad_length)*float(1000))
 		#deb_time += 'player time\n'
+
 		#deb_time += str(int(xbmc.Player().getTime()))+'\n'
 		#deb_time += 'time difference\n'
 		#deb_time += str(time_difference)+'\n'
