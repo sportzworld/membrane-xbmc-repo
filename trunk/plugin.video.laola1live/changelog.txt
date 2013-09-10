@@ -66,3 +66,5 @@
 - Fix for international users
 1.2.1
 - Possible fix for low performance systems
+2.0.0
+- Complete rewrite because of website change

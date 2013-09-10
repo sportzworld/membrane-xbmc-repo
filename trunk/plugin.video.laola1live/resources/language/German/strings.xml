@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+	<!-- Setting section strings -->
+	<string id="31000">Allgemein</string>
+	<string id="31001">Player</string>
+	
+	<!-- Plugin settings strings -->
+	<string id="31010">Voschaubildeinstellung</string>
+	<string id="31011">Normal</string>
+	<string id="31012">Hohe Qualität</string>
+	<string id="31013">Als Hintergrund benutzen</string>
+	
+	<string id="31020">Videoqualität</string>
+	<string id="31021">Niedrig</string>
+	<string id="31022">Mittel</string>
+	<string id="31023">Hoch</string>
+	
+	
+	<string id="31101">Debug</string>
+
+
+	
+	<!-- Add-on strings -->
+	<string id="32000">Nächste Seite</string>
+	<string id="32001">Live</string>
+	<string id="32002">Dieser Stream beginnt am</string>
+
+</strings>
