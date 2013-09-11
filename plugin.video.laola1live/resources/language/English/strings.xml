@@ -16,6 +16,7 @@
 	<string id="31023">High</string>
 	
 	
+	<string id="31100">Back button hidden</string>
 	<string id="31101">Debug</string>
 
 
@@ -24,6 +25,17 @@
 	<string id="32000">Next Page</string>
 	<string id="32001">Live</string>
 	<string id="32002">This stream starts at</string>
+	<string id="32003">LIVE</string>
+	<string id="32004">Latest videos</string>
+	
+	
+	<string id="32010">Resolving</string>	
+	<string id="32011">Resolving URL</string>
+	<string id="32012">Resolving Player</string>
+	<string id="32013">Resolving Playlist</string>
+	<string id="32014">Fetching Video</string>
+	<string id="32015">Starting Video</string>
+	<string id="32016">Match has not started</string>
 	
 	
 	<!-- Old strings, may be in use -->

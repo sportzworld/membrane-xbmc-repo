@@ -1,70 +1,12 @@
-0.18
-- Added Changelog
-- Removed VOD because of CDN change
-0.19
-- Fixed VOD
-0.20
-- Fixed Livestreams
-0.21
-- Fixed VOD
-0.22
-- Workaround for pausing videos added (thanks to AddonScriptorDE)
-- Commercials added to support Laola1.tv
-0.23
-- Various small fixes and improvements
-- Code cleanup
-- Livestreams now with commercials
-0.24
-- Fixed flvlib error
-0.25
-- Improved auto-play
-- Added auto-play feature to livestreams
-0.26
-- Thumbnails now in video information
-- More debug messages added
-0.27
-- Enabled HQ videos (thanks to bluecop)
-- Ads should be more random
-- Some small fixes
-0.28
-- Autoresume if livestream buffers
-- Ad shuffling improved
-0.29
-- Some optimizations and fixes
-1.0.0
-- Ad handling improved
-- HQ thumbails enabled
-- Settings menu restucturized
-- Option to use thumbnails as backdrops added
-- Autoresume fixed
-- More debug messages added
-- Code cleanup
-- Junk entries removed
-- Switched to new version numbering scheme
-- Next site problem in upcomming livestreams fixed
-- New Thumbnail
-- Various improvements
-1.0.1
-- Reset all setting (necessary)
-- Show settings at first start
-1.0.2
-- Various improvements
-1.0.3
-- Various improvements
-1.0.4
-- Various improvements
-1.1.0
-- Livestreams and VoD fixed
-- Option to choose MPlayer or DVDPlayer added
-- Big code improvements
-1.1.1
-- Optimised code for low performance systems
-- Possible fix for OSX
-1.1.2
-- Lot of improvements, optimisations and fixes
-1.2.0
-- Fix for international users
-1.2.1
-- Possible fix for low performance systems
+2.0.1
+- Fix for livestreams
+- Listing of livestreams improved
+- Added nicer thumbnails to the livestreams
+- Progress bar added
+- Option for correcting the selection offset added (user who have the back button hidden should activate it)
+- Latest video item added
+- Fixed missing videos
+- Some fixes and improvements
+- Added more spaghetti to the code 
 2.0.0
-- Complete rewrite because of website change
+- Rewrite of the whole add-on because of new website

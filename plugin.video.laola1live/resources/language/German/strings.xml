@@ -16,6 +16,7 @@
 	<string id="31023">Hoch</string>
 	
 	
+	<string id="31100">"Zurück" Schaltfläche versteckt</string>
 	<string id="31101">Debug</string>
 
 
@@ -24,5 +25,17 @@
 	<string id="32000">Nächste Seite</string>
 	<string id="32001">Live</string>
 	<string id="32002">Dieser Stream beginnt am</string>
+	<string id="32003">LIVE</string>
+	<string id="32004">Neuste Videos</string>
+	
+	
+	<string id="32010">Stream wird gestartet</string>	
+	<string id="32011">Lade Seite</string>
+	<string id="32012">Lade Players</string>
+	<string id="32013">Lade Playlist</string>
+	<string id="32014">Lade Video</string>
+	<string id="32015">Starte Video</string>
+	<string id="32016">Match hat noch nicht begonnen</string>
+	
 
 </strings>
