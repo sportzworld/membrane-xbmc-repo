@@ -2,7 +2,10 @@
   <category label="31000">
     <setting id="hq_thumbnail" type="enum" lvalues="31011|31012|31013" label="31010" default="0"/>
 	<setting type="sep"/>
+	<setting id="back_hidden" type="bool" label="31100" default="false"/>
+	<setting type="sep"/>
 	<setting id="debug" type="bool" label="31101" default="false"/>
+	
   </category>
   
   <category label="31001">
