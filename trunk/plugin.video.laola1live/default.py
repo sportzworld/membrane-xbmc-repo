@@ -25,8 +25,9 @@ baseurl = 'http://www.laola1.tv'
 
 
 def MAIN():
-	addDir(__language__(32001),'http://www.laola1.tv/de-de/calendar/0.html',5,'')
 	response=getUrl(baseurl)
+	match_notifications=re.compile('<span class="notifications">(.+?)<').findall(response)
+	addDir(__language__(32001)+' ('+match_notifications[0]+')','http://www.laola1.tv/de-de/calendar/0.html',5,'')
 	#item_latest_videos(response)
 	match_all_cats=re.compile('<li class="heading">Sport Channels</li>(.+?)<li class="heading">More</li>', re.DOTALL).findall(response)
 	match_cats=re.compile('<li class=" has_sub">.+?src="(.+?)".+?href="(.+?)">(.+?)<', re.DOTALL).findall(match_all_cats[0])
@@ -137,7 +138,7 @@ def list_vids(vids,data,stuff='',i=0,update_view=False,list_them=True):
 
 			
 			try:
-				name = match_name[0]
+				name = match_name[0].replace('<div class="hdkenn_list"></div>','')
 			except:
 				name = ''
 
@@ -283,9 +284,10 @@ def LIST_LIVE(url):
 	match_all_vids=re.compile('<div class="liveprogramm_full">(.+?)<div class="crane_footer has_rightbar inline_footer">', re.DOTALL).findall(response)
 	all_vids = match_all_vids[0].split('span class="tag"')
 	for some_vids in all_vids:
-		match_vids=re.compile('	<img src="(.+?)">.+?<span.+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
+		match_vids=re.compile('	<img.+?src="(.+?)">.+?<span.+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
 		match_date=re.compile('>(.+?)</span><div class="stream').findall(some_vids)
 		for thumb,url,name,time in match_vids:
+			name = name.replace('<div class="hdkennzeichnung"></div>','')
 			if time == 'jetzt live':
 				title = __language__(32003).encode('ascii')
 				title = title+' - '
@@ -358,8 +360,8 @@ def PLAY_LIVE(url,name):#11
 	dialog.update(0)
 	
 	response=getUrl(url)
-	
-	if 'Dieser Stream beginnt am' in response:
+	print response
+	if 'Dieser Stream beginnt' in response:
 		dialog.update(100, __language__(32016))
 
 		log('Video has not jet started')
