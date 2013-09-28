@@ -1,3 +1,9 @@
+2.0.2
+- Fixed livestream listing
+- Fixed vod listing
+- Fixed typo
+- Added indicator how much streams are running
+- Small fixes
 2.0.1
 - Fix for livestreams
 - Listing of livestreams improved
