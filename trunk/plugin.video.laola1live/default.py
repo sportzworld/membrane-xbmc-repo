@@ -284,7 +284,9 @@ def LIST_LIVE(url):
 	match_all_vids=re.compile('<div class="liveprogramm_full">(.+?)<div class="crane_footer has_rightbar inline_footer">', re.DOTALL).findall(response)
 	all_vids = match_all_vids[0].split('span class="tag"')
 	for some_vids in all_vids:
-		match_vids=re.compile('	<img.+?src="(.+?)">.+?<span.+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
+		print some_vids
+		#match_vids=re.compile('	<img.+?src="(.+?)".+?<span.+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
+		match_vids=re.compile('	<img.+?src="(.+?)".+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
 		match_date=re.compile('>(.+?)</span><div class="stream').findall(some_vids)
 		for thumb,url,name,time in match_vids:
 			name = name.replace('<div class="hdkennzeichnung"></div>','')
@@ -305,6 +307,8 @@ def LIST_LIVE(url):
 			elif __settings__.getSetting('hq_thumbnail') == '1':
 				thumb = thumb+'_396x223.jpg'
 			if '0.html' not in url:
+				addLink(title,url,11,thumb)
+			else:
 				addLink(title,url,11,thumb)
 	
 	
@@ -360,7 +364,7 @@ def PLAY_LIVE(url,name):#11
 	dialog.update(0)
 	
 	response=getUrl(url)
-	print response
+	
 	if 'Dieser Stream beginnt' in response:
 		dialog.update(100, __language__(32016))
 
