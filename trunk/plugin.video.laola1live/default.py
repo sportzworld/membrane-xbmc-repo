@@ -320,10 +320,14 @@ def PLAY(url,name):#10
 	dialog.update(0)
 	
 	response=getUrl(url)
-	match_player=re.compile('<iframe.+?src="(.+?)"', re.DOTALL).findall(response)
+	#match_player=re.compile('<iframe.+?src="(.+?)"', re.DOTALL).findall(response)
 	dialog.update(25, __language__(32012))
-
-	response=getUrl(match_player[0])
+	match_player=re.compile('<iframe(.+?)src="(.+?)"', re.DOTALL).findall(response)
+	for iframestuff,possible_player in match_player:
+		if 'class="main_tv_player"' in iframestuff:
+			player = possible_player
+	response=getUrl(player)
+	#response=getUrl(match_player[0])
 	match_m3u8=re.compile('url: "(.+?)"', re.DOTALL).findall(response)
 	
 	dialog.update(50, __language__(32013))
@@ -373,8 +377,12 @@ def PLAY_LIVE(url,name):#11
 		xbmc.executebuiltin("Notification("+__language__(32002)+","+match_big[0].replace(',',' -')+", 7000)")
 	else:
 		dialog.update(25, __language__(32012))
-		match_player=re.compile('<iframe.+?src="(.+?)"', re.DOTALL).findall(response)
-		response=getUrl(match_player[0])
+		match_player=re.compile('<iframe(.+?)src="(.+?)"', re.DOTALL).findall(response)
+		for iframestuff,possible_player in match_player:
+			if 'class="main_tv_player"' in iframestuff:
+				player = possible_player
+				
+		response=getUrl(player)
 		
 		match_m3u8=re.compile('url: "(.+?)"', re.DOTALL).findall(response)
 		
