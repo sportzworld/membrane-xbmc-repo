@@ -1,3 +1,6 @@
+2.0.4
+- Fixed listing
+- Fixed livestreams and vod
 2.0.3
 - Fixed livestreams (every stream should be visible now)
 2.0.2
