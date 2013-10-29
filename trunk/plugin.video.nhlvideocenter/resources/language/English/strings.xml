@@ -4,6 +4,8 @@
 	<string id="30001">Next Site</string>
 
 	<string id="30002">Search</string>
+	<string id="30003">Team channels</string>
+	<string id="30004">Watch the latest videos of you favourite team</string>
 
 	<string id="30100">This month</string>
 	<string id="30101">January</string>
@@ -23,6 +25,8 @@
 	<!-- Plugin settings strings -->
 	<string id="30200">Debug</string>
 	<string id="30201">Add Description to title</string>
+	
+	<string id="30202">Back button hidden</string>
 
 	
 	<!-- messages -->

@@ -1,5 +1,6 @@
 <settings>
 	<setting id="description" type="bool" label="30201" default="false"/>
 	<setting id="debug" type="bool" label="30200" default="false"/>
+	<setting id="back_hidden" type="bool" label="30202" default="false"/>
 	<setting id="firstrun" option="hidden" type="bool" visible="false" default="true" />
 </settings>

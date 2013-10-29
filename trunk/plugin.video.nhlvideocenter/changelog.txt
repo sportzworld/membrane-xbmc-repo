@@ -1,4 +1,8 @@
-1.0.0
-- Re-Relase
+1.0.2
+- Fix for NHL Tonight
+- Team channels added
+- Listing improved
 1.0.1
 - Fix for OSX
+1.0.0
+- Re-Relase
