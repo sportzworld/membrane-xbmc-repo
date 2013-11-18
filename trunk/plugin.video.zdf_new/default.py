@@ -30,7 +30,7 @@ pluginhandle = int(sys.argv[1])
 baseUrl = "http://www.zdf.de"
 fallbackImage = "http://www.zdf.de/ZDFmediathek/img/fallback/946x532.jpg"
 
-if __settings__.getSetting("firstrun") != 'true':
+if __settings__.getSetting("firstrun") != 'false':
 	__settings__.setSetting(id="firstrun",value='false')
 
 
