@@ -1,3 +1,7 @@
+2.1.0
+- Fixed livestreams and vod 
+- Cleaned code
+- Small improvements
 2.0.4
 - Fixed listing
 - Fixed livestreams and vod
