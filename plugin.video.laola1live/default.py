@@ -18,8 +18,13 @@ __language__ = __settings__.getLocalizedString
 
 baseurl = 'http://www.laola1.tv'
 
-
-
+vod_quality = __settings__.getSetting('vod_quality')
+if vod_quality == '0':
+	max_bw = 350000
+elif vod_quality == '1':
+	max_bw = 600000
+elif vod_quality == '2':
+	max_bw = 1200000
 
 
 
@@ -38,7 +43,8 @@ def MAIN():
 
 def MAIN_NEXT(url,name):#1
 	response=getUrl(url)
-	item_latest_videos(response)
+
+	#item_latest_videos(response)
 	match_all_cats=re.compile('<li class="heading">Sport Channels</li>.+?'+name+'(.+?)</ul>', re.DOTALL).findall(response)
 	match_cats=re.compile('src="(.+?)".+?href="(.+?)">(.+?)<', re.DOTALL).findall(match_all_cats[0])
 	for thumb,url,name in match_cats:
@@ -46,15 +52,18 @@ def MAIN_NEXT(url,name):#1
 		addDir(name,url,2,thumb)
 		
 def item_latest_videos(response):
+	log(response)
 	clearcache()
 	match_data=re.compile('<div class="stage_frame active"(.+?)>', re.DOTALL).findall(response)
 	data = match_data[0]
 	match_all_vids=re.compile('<span>Werbung</span>(.+?)<!-- STAGE ENDE -->', re.DOTALL).findall(response)
+	
 	list_vids(match_all_vids[0],data,'',0,False,False)#just stores videos
 
 	
 		
 def LIST_VIDEOS(url):#2
+
 	if __settings__.getSetting('back_hidden') == 'true':
 		i = 0
 	else:
@@ -69,9 +78,11 @@ def LIST_VIDEOS(url):#2
 	elif 'data-stageid' not in url:
 		update_view = False
 		response=getUrl(url)
+
 		match_data=re.compile('<div class="stage_frame active"(.+?)>', re.DOTALL).findall(response)
 		data = match_data[0]
-		match_all_vids=re.compile('<span>Werbung</span>(.+?)<!-- STAGE ENDE -->', re.DOTALL).findall(response)
+		#match_all_vids=re.compile('<span>Werbung</span>(.+?)<!-- Querformat box ende -->', re.DOTALL).findall(response)
+		match_all_vids=re.compile('<div class="stage_frame_content_live"></div>(.+?)<div class="stage_frame_content_live"></div>', re.DOTALL).findall(response)
 		all_vids = match_all_vids[0]
 		clearcache()
 		
@@ -123,62 +134,67 @@ def LIST_LATEST(url):#3
 	vids = recall('stored_list')
 	list_vids(vids,url,'',0,False)
 
-def list_vids(vids,data,stuff='',i=0,update_view=False,list_them=True):
+def list_vids(videos,data,stuff='',i=0,update_view=False,list_them=True):
+	#log(videos)
 
-	match_some_vids=vids.split('<div class="grid')
-	for some_vids in match_some_vids:
-		split = some_vids.split('<div class="overlay">')
-		for vids in split:
-			#match_vids=re.compile('<div class="overlay">.+?<h2>(.+?)</h2>.+?<span class="date">(.+?)</span>.+?<span class="mediatype">(.+?)</span>.+?href="(.+?)".+?src="(.+?)"', re.DOTALL).findall(vids)
-			match_name=re.compile('<h2>(.+?)</h2>', re.DOTALL).findall(vids)
-			match_date=re.compile('<span class="date">(.+?)</span>', re.DOTALL).findall(vids)
-			match_thumb=re.compile('src="(.+?)"', re.DOTALL).findall(vids)
-			match_mediatype=re.compile('<span class="mediatype">(.+?)</span>', re.DOTALL).findall(vids)
-			match_url=re.compile('href="(.+?)"', re.DOTALL).findall(vids)
+	#match_some_vids=vids.split('<div class="grid')
+	#match_some_vids=vids.split('<div class="overlay">')
+	#match_all_vids=re.compile('<div class="stage_frame_content_live">(.+?)<div class="stage_frame_content_live">', re.DOTALL).findall(videos)
+	match_some_vids=re.compile('<div class="overlay">(.+?)</div></div>', re.DOTALL).findall(videos.replace('\t','').replace('\n',''))
 
+	for vids in match_some_vids:
+
+		#log(some_vids)
+		#split = some_vids.split('<div class="overlay">')
+		#for vids in split:
+		#log(vids)
+
+		#match_vids=re.compile('<div class="overlay">.+?<h2>(.+?)</h2>.+?<span class="date">(.+?)</span>.+?<span class="mediatype">(.+?)</span>.+?href="(.+?)".+?src="(.+?)"', re.DOTALL).findall(vids)
+		match_name=re.compile('<h2>(.+?)</h2>', re.DOTALL).findall(vids)
+		match_date=re.compile('<span class="date">(.+?)</span>', re.DOTALL).findall(vids)
+		match_thumb=re.compile('src="(.+?)"', re.DOTALL).findall(vids)
+		match_mediatype=re.compile('<span class="mediatype">(.+?)</span>', re.DOTALL).findall(vids)
+		match_url=re.compile('href="(.+?)"', re.DOTALL).findall(vids)
 			
-			try:
-				name = match_name[0].replace('<div class="hdkenn_list"></div>','')
-			except:
-				name = ''
+		try:
+			name = match_name[0].replace('<div class="hdkenn_list"></div>','')
+		except:
+			name = ''
+		try:
+			date = match_date[0]
+		except:
+			date = ''
+		try:
+			thumb = match_thumb[0]
+		except:
+			thumb = ''
+		try:
+			mediatype = match_mediatype[0]
+		except:
+			mediatype = ''
 
-			try:
-				date = match_date[0]
-			except:
-				date = ''
-
-			try:
-				thumb = match_thumb[0]
-			except:
-				thumb = ''
-
-			try:
-				mediatype = match_mediatype[0]
-			except:
-				mediatype = ''
-
-			try:
-				url = match_url[0]
-			except:
-				url = ''
+		try:
+			url = match_url[0]
+		except:
+			url = ''
 				
-
-			if __settings__.getSetting('hq_thumbnail') == '2':
-				thumb = thumb.replace('188x108','798x449')
-				thumb = thumb.replace('195x111','798x449')
-				thumb = thumb.replace('396x223','798x449')
-			elif __settings__.getSetting('hq_thumbnail') == '1':
-				thumb = thumb.replace('188x108','396x223')
-				thumb = thumb.replace('195x111','396x223')
-			if name != '':
-				name = name.replace("\n","")
-				name = name.replace("&quot;",'"')
-				name = name.replace("&amp;",'&')
-				name = date+' - '+name
-				if list_them == True:
-					addLink(name,baseurl+url,10,thumb,'')
+		log('<vid>'+name+'#'+baseurl+url+'#'+thumb+'</vid>')
+		if __settings__.getSetting('hq_thumbnail') == '2':
+			thumb = thumb.replace('188x108','798x449')
+			thumb = thumb.replace('195x111','798x449')
+			thumb = thumb.replace('396x223','798x449')
+		elif __settings__.getSetting('hq_thumbnail') == '1':
+			thumb = thumb.replace('188x108','396x223')
+			thumb = thumb.replace('195x111','396x223')
+		if name != '':
+			name = name.replace("\n","")
+			name = name.replace("&quot;",'"')
+			name = name.replace("&amp;",'&')
+			name = date+' - '+name
+			if list_them == True:
+				addLink(name,baseurl+url,10,thumb,'')
 				
-				stuff = stuff + '<vid>'+name+'#'+baseurl+url+'#'+thumb+'</vid>'
+			stuff = stuff + '<vid>'+name+'#'+baseurl+url+'#'+thumb+'</vid>'
 				
 				
 				
@@ -199,95 +215,16 @@ def list_vids(vids,data,stuff='',i=0,update_view=False,list_them=True):
 	else:
 		addDir(__language__(32004).encode("utf-8"),data+'#just_list#',2,'')
 		
-"""
-def list_vids(vids,data,stuff='',i=0,update_view=False,list_them=True):
-	print 'check one'
 
-	match_some_vids=re.compile('<div class="grid(.+?)</div>\n		</div>', re.DOTALL).findall(vids)
-	print 'check 2'
-	for some_vids in match_some_vids:## Add new videos
-		print 'check 3'
-		split = some_vids.split('<div class="overlay">')
-		print 'check 4'
-		for vids in split:
-			#match_vids=re.compile('<div class="overlay">.+?<h2>(.+?)</h2>.+?<span class="date">(.+?)</span>.+?<span class="mediatype">(.+?)</span>.+?href="(.+?)".+?src="(.+?)"', re.DOTALL).findall(vids)
-			match_name=re.compile('<h2>(.+?)</h2>', re.DOTALL).findall(vids)
-			match_date=re.compile('<span class="date">(.+?)</span>', re.DOTALL).findall(vids)
-			match_thumb=re.compile('src="(.+?)"', re.DOTALL).findall(vids)
-			match_mediatype=re.compile('<span class="mediatype">(.+?)</span>', re.DOTALL).findall(vids)
-			match_url=re.compile('href="(.+?)"', re.DOTALL).findall(vids)
-
-			
-			try:
-				name = match_name[0]
-			except:
-				name = ''
-
-			try:
-				date = match_date[0]
-			except:
-				date = ''
-
-			try:
-				thumb = match_thumb[0]
-			except:
-				thumb = ''
-
-			try:
-				mediatype = match_mediatype[0]
-			except:
-				mediatype = ''
-
-			try:
-				url = match_url[0]
-			except:
-				url = ''
-				
-
-			if __settings__.getSetting('hq_thumbnail') == '2':
-				thumb = thumb.replace('188x108','798x449')
-				thumb = thumb.replace('195x111','798x449')
-				thumb = thumb.replace('396x223','798x449')
-			elif __settings__.getSetting('hq_thumbnail') == '1':
-				thumb = thumb.replace('188x108','396x223')
-				thumb = thumb.replace('195x111','396x223')
-			if name != '':
-				name = name.replace("\n","")
-				name = name.replace("&quot;",'"')
-				name = name.replace("&amp;",'&')
-				name = date+' - '+name
-				if list_them == True:
-					addLink(name,baseurl+url,10,thumb,'')
-				
-				stuff = stuff + '<vid>'+name+'#'+baseurl+url+'#'+thumb+'</vid>'
-				
-				
-				
-	store(stuff,'stored_list')	
-	if list_them == True:
-		addDir(__language__(32000).encode("utf-8"),data,2,'')
-		try:
-			wnd = xbmcgui.Window(xbmcgui.getCurrentWindowId())
-			wnd.getControl(wnd.getFocusId()).selectItem(i)
-			
-
-		except:
-			log('focusing not possible')
-		if update_view == True:
-			xbmcplugin.endOfDirectory(int(sys.argv[1]), updateListing=True)
-	else:
-		addDir(__language__(32004).encode("utf-8"),data+'#just_list#',2,'')
-
-"""		
 def LIST_LIVE(url):
 	response=getUrl(url)
-	match_all_vids=re.compile('<div class="liveprogramm_full">(.+?)<div class="crane_footer has_rightbar inline_footer">', re.DOTALL).findall(response)
+	match_all_vids=re.compile('<div class="liveprogramm_full"(.+?)<div class="crane_footer has_rightbar inline_footer">', re.DOTALL).findall(response)
 	all_vids = match_all_vids[0].split('span class="tag"')
 	for some_vids in all_vids:
-		print some_vids
+
 		#match_vids=re.compile('	<img.+?src="(.+?)".+?<span.+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
 		match_vids=re.compile('	<img.+?src="(.+?)".+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
-		match_date=re.compile('>(.+?)</span><div class="stream').findall(some_vids)
+		match_date=re.compile('<span.+?>(.+?)</span><div class="stream').findall(some_vids)
 		for thumb,url,name,time in match_vids:
 			name = name.replace('<div class="hdkennzeichnung"></div>','')
 			if time == 'jetzt live':
@@ -307,10 +244,9 @@ def LIST_LIVE(url):
 			elif __settings__.getSetting('hq_thumbnail') == '1':
 				thumb = thumb+'_396x223.jpg'
 			if '0.html' not in url:
-				addLink(title,url,11,thumb)
+				addLink(title,url,10,thumb)
 			else:
-				addLink(title,url,11,thumb)
-	
+				addLink(title,url,10,thumb)
 	
 
 
@@ -320,6 +256,16 @@ def PLAY(url,name):#10
 	dialog.update(0)
 	
 	response=getUrl(url)
+
+	if 'Dieser Stream beginnt' in response:
+		dialog.update(100, __language__(32016))
+
+		log('Video has not jet started')
+		match_big=re.compile('<big>(.+?)</big>', re.DOTALL).findall(response)
+		xbmc.executebuiltin("Notification("+__language__(32002)+","+match_big[0].replace(',',' -')+", 7000)")
+		dialog.close()
+		return
+
 	#match_player=re.compile('<iframe.+?src="(.+?)"', re.DOTALL).findall(response)
 	dialog.update(25, __language__(32012))
 	match_player=re.compile('<iframe(.+?)src="(.+?)"', re.DOTALL).findall(response)
@@ -328,17 +274,45 @@ def PLAY(url,name):#10
 			player = possible_player
 	response=getUrl(player)
 	#response=getUrl(match_player[0])
-	match_m3u8=re.compile('url: "(.+?)"', re.DOTALL).findall(response)
+	match_streamid=re.compile('streamid = "(.+?)"', re.DOTALL).findall(response)
+	streamid = match_streamid[0]
 	
-	dialog.update(50, __language__(32013))
+	match_partnerid=re.compile('partnerid = "(.+?)"', re.DOTALL).findall(response)
+	partnerid = match_partnerid[0]
 
+	match_portalid=re.compile('portalid = "(.+?)"', re.DOTALL).findall(response)
+	portalid = match_portalid[0]
+
+	match_sprache=re.compile('sprache = "(.+?)"', re.DOTALL).findall(response)
+	sprache = match_sprache[0]
+
+	match_auth=re.compile('auth = "(.+?)"', re.DOTALL).findall(response)
+	auth = match_auth[0]
+
+	match_timestamp=re.compile('timestamp = "(.+?)"', re.DOTALL).findall(response)
+	timestamp = match_timestamp[0]
+
+	response=getUrl('http://www.laola1.tv/server/hd_video.php?play='+streamid+'&partner='+partnerid+'&portal='+portalid+'&v5ident=&lang='+sprache)
+	match_url=re.compile('<url>(.+?)<', re.DOTALL).findall(response)
+
+	#http://streamaccess.unas.tv/hdflash2/vod/22/151260.xml?streamid=151260&partnerid=22&label=laola1tv&area=ice_hockey_khl_all_star_game
+	#&ident=123456789012345678901&klub=0&unikey=0&timestamp=20140101000000&auth=1234567890abcdef1234567890abcdef
+	#response=getUrl(match_url[0].replace('&amp;','&')+'&ident=123456789012345678901&klub=0&unikey=0&timestamp='+timestamp+'&auth='+auth)
+	response=getUrl(match_url[0].replace('&amp;','&').replace('l-_a-','l-L1TV_a-l1tv')+'&timestamp='+timestamp+'&auth='+auth)
+
+	dialog.update(50, __language__(32013))
+	"""
 	response=getUrl(match_m3u8[0])
 	match_url=re.compile('url="(.+?)"', re.DOTALL).findall(response)
 	match_auth=re.compile('auth="(.+?)"', re.DOTALL).findall(response)
 	res_url=match_url[0].replace('l-_a-','l-L1TV_a-l1tv')
 	
 	m3u8_url = res_url+'?hdnea='+match_auth[0]+'&g='+char_gen(12)+'&hdcore=3.1.0'
+	"""
+	match_new_auth=re.compile('auth="(.+?)"', re.DOTALL).findall(response)
+	match_new_url=re.compile('url="(.+?)"', re.DOTALL).findall(response)
 
+	m3u8_url = match_new_url[0].replace('/z/','/i/').replace('manifest.f4m','master.m3u8')+'?hdnea='+match_new_auth[0]+'&g='+char_gen(12)+'&hdcore=3.2.0'
 	try:
 		dialog.update(75, __language__(32014))
 		response=getUrl(m3u8_url)
@@ -346,20 +320,29 @@ def PLAY(url,name):#10
 		match_sec_m3u8=re.compile('http(.+?)null=', re.DOTALL).findall(response)
 		quality = int(__settings__.getSetting('vod_quality'))+1
 		
+		choose_url = False
+		stored_bw = 0
+		lines = response.split('\n')
+		for line in lines:
+			if '#EXT-X-STREAM-INF' in line:
+				match_bw=re.compile('BANDWIDTH=(.+?),', re.DOTALL).findall(line)
+				bw = int(match_bw[0])
+				if bw > stored_bw and bw <= max_bw:
+					choose_url = True
+					stored_bw = bw
+
+			elif choose_url == True:
+				sec_m3u8 = line
+				choose_url = False
+
+		listitem = xbmcgui.ListItem(path=sec_m3u8)
+		dialog.close()
+		return xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 		
-		
-		while quality != 0:
-			try:
-				quality = quality - 1
-				sec_m3u8 = 'http'+match_sec_m3u8[quality]+'null='
-				listitem = xbmcgui.ListItem(path=sec_m3u8)
-				dialog.close()
-				return xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
-			except:
-				log('Quality setting not available, trying lower one:'+str(quality))
-		log('Error: no video found')
+
 	except:
-		log('Error: no video found')
+		log('Error: Video not found')
+
 	dialog.close()
 		
 def PLAY_LIVE(url,name):#11
@@ -383,12 +366,13 @@ def PLAY_LIVE(url,name):#11
 				player = possible_player
 				
 		response=getUrl(player)
-		
+		log(response)
 		match_m3u8=re.compile('url: "(.+?)"', re.DOTALL).findall(response)
 		
 		dialog.update(50, __language__(32013))
 		
 		response=getUrl(match_m3u8[0].replace('/vod/','/live/'))
+		log(response)
 		match_url=re.compile('url="(.+?)"', re.DOTALL).findall(response)
 		match_auth=re.compile('auth="(.+?)"', re.DOTALL).findall(response)
 		res_url=match_url[0].replace('l-_a-','l-L1TV_a-l1tv')
