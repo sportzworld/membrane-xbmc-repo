@@ -12,11 +12,24 @@ cache.table_name = "testtable"
 
 pluginhandle = int(sys.argv[1])
 
+update_view = False
 
 __settings__ = xbmcaddon.Addon(id='plugin.video.laola1live')
 __language__ = __settings__.getLocalizedString
 
-baseurl = 'http://www.laola1.tv'
+language = __language__(30214 + int(__settings__.getSetting('language')))
+location = __language__(30208 + int(__settings__.getSetting('location')))
+
+#language = 'de'
+#location = 'de'
+
+baseurl = 'http://www.laola1.tv/'+language+'-'+location
+
+#baseurl = 'http://www.laola1.tv'
+#baseurl = 'http://www.laola1.tv/de-de'
+
+
+
 
 vod_quality = __settings__.getSetting('vod_quality')
 if vod_quality == '0':
@@ -30,9 +43,10 @@ elif vod_quality == '2':
 
 
 def MAIN():
-	response=getUrl(baseurl)
-	match_notifications=re.compile('<span class="notifications">(.+?)<').findall(response)
-	addDir(__language__(32001)+' ('+match_notifications[0]+')','http://www.laola1.tv/de-de/calendar/0.html',5,'')
+	response=getUrl(baseurl+'/home/0.html')
+	#match_notifications=re.compile('<span class="notifications">(.+?)<').findall(response)
+	#addDir(__language__(32001)+' ('+match_notifications[0]+')',baseurl+'/calendar/0.html',5,'')
+	addDir(__language__(32001)+' ('+str(response.count('<li class="live">'))+')',baseurl+'/calendar/0.html',5,'')
 	#item_latest_videos(response)
 	match_all_cats=re.compile('<li class="heading">Sport Channels</li>(.+?)<li class="heading">More</li>', re.DOTALL).findall(response)
 	match_cats=re.compile('<li class=" has_sub">.+?src="(.+?)".+?href="(.+?)">(.+?)<', re.DOTALL).findall(match_all_cats[0])
@@ -63,7 +77,7 @@ def item_latest_videos(response):
 	
 		
 def LIST_VIDEOS(url):#2
-
+	global update_view
 	if __settings__.getSetting('back_hidden') == 'true':
 		i = 0
 	else:
@@ -178,7 +192,7 @@ def list_vids(videos,data,stuff='',i=0,update_view=False,list_them=True):
 		except:
 			url = ''
 				
-		log('<vid>'+name+'#'+baseurl+url+'#'+thumb+'</vid>')
+		#log('<vid>'+name+'#'+baseurl+url+'#'+thumb+'</vid>')
 		if __settings__.getSetting('hq_thumbnail') == '2':
 			thumb = thumb.replace('188x108','798x449')
 			thumb = thumb.replace('195x111','798x449')
@@ -188,13 +202,27 @@ def list_vids(videos,data,stuff='',i=0,update_view=False,list_them=True):
 			thumb = thumb.replace('195x111','396x223')
 		if name != '':
 			name = name.replace("\n","")
+			name = name.replace("	","")
 			name = name.replace("&quot;",'"')
 			name = name.replace("&amp;",'&')
 			name = date+' - '+name
 			if list_them == True:
 				addLink(name,baseurl+url,10,thumb,'')
-				
-			stuff = stuff + '<vid>'+name+'#'+baseurl+url+'#'+thumb+'</vid>'
+
+			#print name.encode("ascii")
+			#print name.decode("ascii")
+			#print name.encode("utf-8")
+			##test = name.decode("utf-8")
+			#test = test.encode("ascii")
+			#print test
+			#print baseurl+url
+			#stuff = stuff + '<vid>'+name+'#'+baseurl+url+'#'+thumb+'</vid>'
+
+
+			stuff = stuff + u'<vid>'.encode("utf-8")+name
+			stuff = stuff + u'#'.encode("utf-8")+baseurl.encode("utf-8")+url
+			stuff = stuff + u'#'.encode("utf-8")+thumb
+			stuff = stuff + u'</vid>'.encode("utf-8")#temp disabled
 				
 				
 				
@@ -206,12 +234,12 @@ def list_vids(videos,data,stuff='',i=0,update_view=False,list_them=True):
 			try:
 				wnd = xbmcgui.Window(xbmcgui.getCurrentWindowId())
 				wnd.getControl(wnd.getFocusId()).selectItem(i)
+
 				
 
 			except:
 				log('focusing not possible')
 		
-			xbmcplugin.endOfDirectory(int(sys.argv[1]), updateListing=True)
 	else:
 		addDir(__language__(32004).encode("utf-8"),data+'#just_list#',2,'')
 		
@@ -220,19 +248,27 @@ def LIST_LIVE(url):
 	response=getUrl(url)
 	match_all_vids=re.compile('<div class="liveprogramm_full"(.+?)<div class="crane_footer has_rightbar inline_footer">', re.DOTALL).findall(response)
 	all_vids = match_all_vids[0].split('span class="tag"')
+	match_options=re.compile('<option value="(.+?)" data-filterid="1">(.+?)</option>', re.DOTALL).findall(response)
 	for some_vids in all_vids:
 
 		#match_vids=re.compile('	<img.+?src="(.+?)".+?<span.+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
-		match_vids=re.compile('	<img.+?src="(.+?)".+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
-		match_date=re.compile('<span.+?>(.+?)</span><div class="stream').findall(some_vids)
-		for thumb,url,name,time in match_vids:
+		#match_vids=re.compile('	<img.+?src="(.+?)".+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
+		match_vids=re.compile('<div class=".+?f1_(.+?) .+?<img.+?src="(.+?)".+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
+		#match_date=re.compile('<span.+?>(.+?)</span><div class="stream').findall(some_vids)
+		for date,thumb,url,name,time in match_vids:
 			name = name.replace('<div class="hdkennzeichnung"></div>','')
 			if time == 'jetzt live':
 				title = __language__(32003).encode('ascii')
 				title = title+' - '
 				title = title+name
 			else:
-				title = match_date[0]+', '+time+' - '+name
+				#title = match_date[0]+', '+time+' - '+name
+				if '"' in date:
+					date = date.split('"')[0]
+				for ddmmyy, realdate in match_options:
+					if date == ddmmyy:
+						date = realdate
+				title = date+', '+time+' - '+name
 				
 			if __settings__.getSetting('hq_thumbnail') != '0':
 				split = url.split('/')
@@ -414,7 +450,8 @@ def PLAY_LIVE(url,name):#11
 		
 		
 def store(stuff,name):
-	stuff = stuff.decode('utf-8')
+	stuff = urllib.quote_plus(stuff).decode('utf-8')
+	stuff = stuff.encode('ascii')
 	"""
 	stuff = stuff.replace('ä','&auml;')
 	stuff = stuff.replace('Ä','&Auml;')
@@ -426,6 +463,7 @@ def store(stuff,name):
 	stuff = stuff.replace('\n','&newline')
 	"""
 	cache.table_name = "testtable"
+	log('storing')
 	log('store: '+stuff)
 	#cache.set('test', urllib.quote_plus(stuff))
 	cache.set('cache', stuff)
@@ -434,7 +472,10 @@ def store(stuff,name):
 def recall(name):
 	cache.table_name = "testtable"
 	stuff = cache.get('cache')
+	stuff = stuff.decode("ascii")
 	stuff = stuff.encode("utf-8")
+	stuff = urllib.unquote_plus(stuff)
+
 	"""
 	stuff = stuff.replace('&auml;','ä')
 	stuff = stuff.replace('&Auml;','Ä')
@@ -485,6 +526,9 @@ def get_params():
 
 
 def getUrl(url):
+	url = url.replace('/de-de/','/'+language+'-'+location+'/')
+	url = url.replace('/de-at/','/'+language+'-'+location+'/')
+
 	log('Opening URL: '+url)
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
@@ -495,6 +539,8 @@ def getUrl(url):
 	
 	
 def postUrl(url,data):
+	url = url.replace('/de-de/','/'+language+'-'+location+'/')
+	url = url.replace('/de-at/','/'+language+'-'+location+'/')
         req = urllib2.Request(url,data)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urllib2.urlopen(req)
@@ -576,5 +622,7 @@ elif mode==11:
         print ""+url
         PLAY_LIVE(url,name)
 
-
-xbmcplugin.endOfDirectory(int(sys.argv[1]))
+if update_view:
+	xbmcplugin.endOfDirectory(int(sys.argv[1]), updateListing=True)
+else:
+	xbmcplugin.endOfDirectory(int(sys.argv[1]))
