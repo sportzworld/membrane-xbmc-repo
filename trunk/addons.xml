@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="plugin.video.deluxemusic" name="Deluxemusic" version="0.4" provider-name="membrane">
+<addon id="plugin.video.deluxemusic" name="Deluxemusic" version="0.4.1" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -8,6 +8,7 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Broken</broken>
         <platform>all</platform>
         <summary lang="de">Deluxemusic - Music Television</summary>
         <summary lang="en">Deluxemusic - Music Television</summary>
@@ -66,7 +67,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.ran" name="Ran" version="0.1" provider-name="membrane">
+<addon id="plugin.video.ran" name="Ran" version="0.1.1" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -74,6 +75,7 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Broken</broken>
         <platform>all</platform>
         <summary lang="de">Ran</summary>
         <summary lang="en">Ran</summary>
@@ -82,9 +84,9 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.dbtg_tv" name="BundestagsTV" version="0.2" provider-name="membrane">
+<addon id="plugin.video.dbtg_tv" name="BundestagsTV" version="0.2.1" provider-name="membrane">
     <requires>
-        <import addon="xbmc.python" version="1.0"/>
+        <import addon="xbmc.python" version="2.1.0"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
@@ -114,7 +116,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.tv.hockej.cz" name="tv.hokej.cz" version="0.3" provider-name="membrane">
+<addon id="plugin.video.tv.hockej.cz" name="tv.hokej.cz" version="0.3.1" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -122,6 +124,7 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Broken</broken>
         <platform>all</platform>
         <summary lang="de">tv.hokej.cz</summary>
         <summary lang="en">tv.hokej.cz</summary>
@@ -144,7 +147,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.puls4sport" name="Puls4 Sport" version="0.1" provider-name="membrane">
+<addon id="plugin.video.puls4sport" name="Puls4 Sport" version="0.1.1" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -152,13 +155,14 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Broken</broken>
         <platform>all</platform>
         <summary lang="de">Sport VOD und Livestreams</summary>
         <description lang="de">PULS 4 SPORT bietet dir die Spiele der UEFA Champions League online im Livestream und sämtliche News und Daten zur Fussball Königklasse.</description>
     </extension>
 </addon>
 
-<addon id="plugin.video.yavido" name="Yavido" version="0.1" provider-name="membrane">
+<addon id="plugin.video.yavido" name="Yavido" version="0.1.1" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -175,7 +179,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.kika3" name="Kika 3+" version="0.1" provider-name="membrane">
+<addon id="plugin.video.kika3" name="Kika 3+" version="0.1.1" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -183,6 +187,7 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Broken</broken>
         <platform>all</platform>
         <summary lang="de">Kika 3+</summary>
         <summary lang="en">Kika 3+</summary>
@@ -191,7 +196,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.zdf_new" name="ZDF new" version="0.0.3" provider-name="membrane">
+<addon id="plugin.video.zdf_new" name="ZDF new" version="0.0.4" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -199,15 +204,16 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Experimental</broken>
         <platform>all</platform>
         <summary lang="en">ZDF new</summary>
         <description lang="en">ZDF new</description>
     </extension>
 </addon>
 
-<addon id="plugin.video.extreme" name="Extreme.com" version="0.1" provider-name="membrane">
+<addon id="plugin.video.extreme" name="Extreme.com" version="0.1.1" provider-name="membrane">
     <requires>
-        <import addon="xbmc.python" version="1.0"/>
+        <import addon="xbmc.python" version="2.1.0"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
@@ -221,7 +227,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.massive" name="Massive-Mag.tv" version="0.2" provider-name="membrane">
+<addon id="plugin.video.massive" name="Massive-Mag.tv" version="0.2.1" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -229,6 +235,7 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Broken</broken>
         <platform>all</platform>
         <summary lang="de">Massive-Mag.tv</summary>
         <summary lang="en">Massive-Mag.tv</summary>
@@ -254,7 +261,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.msn.uk" name="MSN Video UK" version="1.0.3" provider-name="ADQ and membrane">
+<addon id="plugin.video.msn.uk" name="MSN Video UK" version="1.0.4" provider-name="ADQ and membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -262,6 +269,7 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Broken</broken>
         <platform>all</platform>
         <summary>Plugin for video.msn.uk</summary>
         <description>Play all episodes from video.msn.uk</description>
@@ -285,9 +293,9 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.ittv" name="ITTV" version="1.0.0" provider-name="membrane">
+<addon id="plugin.video.ittv" name="ITTV" version="1.0.1" provider-name="membrane">
     <requires>
-        <import addon="xbmc.python" version="1.0"/>
+        <import addon="xbmc.python" version="2.1.0"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
@@ -301,7 +309,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.putpat" name="Putpat" version="0.2" provider-name="membrane">
+<addon id="plugin.video.putpat" name="Putpat" version="0.2.1" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -309,6 +317,7 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Broken</broken>
         <platform>all</platform>
         <summary lang="de">putpat</summary>
         <summary lang="en">putpat</summary>
@@ -331,7 +340,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.gameone" name="Gameone" version="1.1" provider-name="membrane">
+<addon id="plugin.video.gameone" name="Gameone" version="1.1.1" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -339,6 +348,7 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Deprecated</broken>
         <platform>all</platform>
         <summary lang="de">gameone</summary>
         <summary lang="en">gameone</summary>
@@ -347,9 +357,9 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="2.2.0" provider-name="membrane">
+<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="2.2.1" provider-name="membrane">
     <requires>
-        <import addon="xbmc.python" version="2.0"/>
+        <import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.common.plugin.cache" version="0.9.1"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
@@ -385,7 +395,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.nuna" name="Nuna.tv" version="0.2" provider-name="membrane">
+<addon id="plugin.video.nuna" name="Nuna.tv" version="0.2.1" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -393,6 +403,7 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Broken</broken>
         <platform>all</platform>
         <summary lang="de">Nuna.tv</summary>
         <summary lang="en">Nuna.tv</summary>

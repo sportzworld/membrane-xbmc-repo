@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.putpat" name="Putpat" version="0.2" provider-name="membrane">
+<addon id="plugin.video.putpat" name="Putpat" version="0.2.1" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
     </requires>
@@ -7,6 +7,7 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
+	<broken>Broken</broken>
         <platform>all</platform>
         <summary lang="de">putpat</summary>
         <summary lang="en">putpat</summary>

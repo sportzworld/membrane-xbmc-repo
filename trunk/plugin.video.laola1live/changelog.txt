@@ -1,3 +1,5 @@
+2.2.1
+- Fix for Gotham
 2.2.0
 - Language option added
 - Location option added
