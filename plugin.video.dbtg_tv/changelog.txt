@@ -1,6 +1,10 @@
-0.1
-- Erste Version des Addons
+0.2.1
+- Fix für Videos
+- Fix für Gotham
 0.2
 - Livestreams hinzugefügt
 - Sonderbehandlung für die Kategorie "Plenarsitzungen"
 - Icon hinzugefügt
+0.1
+- Erste Version des Addons
+

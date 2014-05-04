@@ -116,7 +116,8 @@ def THEMEN_PLENAR(url):#4
 
 def PLAY_THEMEN(url,name):#5
 	response=getUrl(url)
-	match_video=re.compile('data-downloadurl="(.+?)"', re.DOTALL).findall(response)
+	#match_video=re.compile('data-downloadurl="(.+?)"', re.DOTALL).findall(response)
+	match_video=re.compile('name="data-downloadUrl" value="(.+?)"', re.DOTALL).findall(response)
         listitem = xbmcgui.ListItem(path=match_video[0])
         return xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
