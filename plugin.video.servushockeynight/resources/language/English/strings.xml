@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+	<!-- Setting section strings -->
+	<string id="30000">General</string>
+	<string id="30100">Player</string>
+	
+	<!-- Plugin settings strings -->
+	<string id="30001">Thumbnail Quality</string>
+	<string id="30002">No Thumbnails</string>
+	<string id="30003">Normal</string>
+	<string id="30004">High</string>
+	
+	<string id="30005">Use as background</string>
+	
+	<string id="30006">Debug</string>
+
+	
+	<string id="30101">Video quality</string>
+	<string id="30102">Low</string>
+	<string id="30103">Mid</string>
+	<string id="30104">High</string>
+	<string id="30105">HD</string>
+	
+	
+
+	
+	
+	<!-- Strings -->
+	<string id="30500">DEL - Deutsche Eishockey Liga</string>
+	<string id="30501">EBEL - Erste Bank Eishockey Liga</string>
+	
+	<string id="30502">Zusammenfassungen</string>
+	<string id="30503">Ganze Spiele</string>
+	<string id="30504">Teams</string>
+	<string id="30505">ServusTV Special</string>
+	<string id="30506">Specials</string>
+	<string id="30507">CHL</string>
+	<string id="30508">Cable Guys</string>
+	<string id="30509">Saisonvorschau</string>
+	<string id="30510">Top Tore</string>
+	<string id="30511">Trailer</string>
+	<string id="30512">Overtime</string>
+	<string id="30513">Top Tore</string>
+	<string id="30514">Starting Six</string>
+	<string id="30515">Glaskugel</string>
+	<string id="30516">Hangouts</string>
+	
+	<!-- messages -->
+	<string id="30610">Resolving</string>	
+	<string id="30611">Resolving URL</string>
+	<string id="30612">Resolving Player</string>
+	<string id="30613">Resolving Playlist</string>
+	<string id="30614">Fetching Video</string>
+	<string id="30615">Starting Video</string>
+	<string id="30616">Match has not started</string>
+
+	
+</strings>

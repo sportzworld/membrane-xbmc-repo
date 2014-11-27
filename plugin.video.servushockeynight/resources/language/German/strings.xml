@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+	<!-- Setting section strings -->
+	<string id="30000">Allgemein</string>
+	<string id="30100">Player</string>
+	
+	<!-- Plugin settings strings -->
+	<string id="30001">Qualität der Voschaubilder</string>
+	<string id="30002">Keine</string>
+	<string id="30003">Normal</string>
+	<string id="30004">Hoch</string>
+	
+	<string id="30005">Als Hintergrund benutzen</string>
+	
+	<string id="30006">Debug</string>
+
+	
+	<string id="30101">Videoqualität</string>
+	<string id="30102">Niedrig</string>
+	<string id="30103">Mittel</string>
+	<string id="30104">Hoch</string>
+	<string id="30105">HD</string>
+	
+	
+
+	
+	
+	<!-- Strings -->
+	<string id="30500">DEL - Deutsche Eishockey Liga</string>
+	<string id="30501">EBEL - Erste Bank Eishockey Liga</string>
+	
+	<string id="30502">Zusammenfassungen</string>
+	<string id="30503">Ganze Spiele</string>
+	<string id="30504">Teams</string>
+	<string id="30505">ServusTV Special</string>
+	<string id="30506">Specials</string>
+	<string id="30507">CHL</string>
+	<string id="30508">Cable Guys</string>
+	<string id="30509">Saisonvorschau</string>
+	<string id="30510">Top Tore</string>
+	<string id="30511">Trailer</string>
+	<string id="30512">Overtime</string>
+	<string id="30513">Top Tore</string>
+	<string id="30514">Starting Six</string>
+	<string id="30515">Glaskugel</string>
+	<string id="30516">Hangouts</string>
+	
+	<!-- messages -->
+	<string id="30610">Stream wird gestartet</string>	
+	<string id="30611">Lade Seite</string>
+	<string id="30612">Lade Player</string>
+	<string id="30613">Lade Playlist</string>
+	<string id="30614">Lade Video</string>
+	<string id="30615">Starte Video</string>
+	<string id="30616">Match hat noch nicht begonnen</string>
+
+	
+</strings>
