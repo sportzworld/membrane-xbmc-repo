@@ -23,6 +23,8 @@
 	<!-- Plugin settings strings -->
 	<string id="30200">Debug</string>
 	<string id="30201">Beschreibung zu Titel hinzufügen</string>
+	<string id="30202">TODO</string>
+	<string id="30203">Zeige Ergebnis</string>
 
 	
 	<!-- messages -->

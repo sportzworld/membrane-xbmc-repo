@@ -1,3 +1,11 @@
+2.3.0
+- Fixed playback
+- Misc improvements
+2.2.2
+- Improved language and region selection (based on global settings)
+- Additional info in the "Live" folder
+- Automatic fanart download
+- Dropped Frodo compatibility
 2.2.1
 - Fix for Gotham
 2.2.0
