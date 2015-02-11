@@ -382,8 +382,8 @@ def MENUTYPE_1(url,firstpage=False):#11
 
 		match_name_b=re.compile('title="(.+?)"').findall(entry)
 		name_b = match_name_b[0]
-		print name_b
-		print name_b.encode('ascii','ignore')
+		#print name_b
+		#print name_b.encode('ascii','ignore')
 		log('name_b: '+name_b)
 		
 		match_onclick=re.compile('onclick="(.+?)"').findall(entry)
@@ -522,7 +522,7 @@ def searchbox():
 		
 
 def getUrl( url , extraheader=True):
-	print url
+	log(url)
 	cj = cookielib.LWPCookieJar()
 	if os.path.isfile(COOKIEFILE):
 		cj.load(COOKIEFILE, ignore_discard=True)
