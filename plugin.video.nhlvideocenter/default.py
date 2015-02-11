@@ -10,11 +10,11 @@ if __settings__.getSetting("firstrun") == 'true':
 
 import resources.lib.utils as utils
 import resources.lib.webcache as webcache
-try:
-	import StorageServer
-except:
-	import storageserverdummy as StorageServer
-cache = StorageServer.StorageServer("nhlvideocenter", 24)
+#try:
+#	import StorageServer
+#except:
+#	import storageserverdummy as StorageServer
+#cache = StorageServer.StorageServer("nhlvideocenter", 24)
 
 html_parser = HTMLParser.HTMLParser()
 
@@ -457,10 +457,10 @@ def PLAY_1(url,name,thumb):#12
 	xbmcplugin.setResolvedUrl(pluginhandle, True, item)
 	
 
-	
+"""	
 def cache_store(stuff,name=''):
 	stuff = stuff.decode('utf-8')
-	"""
+	#"#""
 	stuff = stuff.replace('ä','&auml;')
 	stuff = stuff.replace('Ä','&Auml;')
 	stuff = stuff.replace('ö','&ouml;')
@@ -469,7 +469,7 @@ def cache_store(stuff,name=''):
 	stuff = stuff.replace('Ü','&Uuml;')
 	stuff = stuff.replace('ß','&szlig;')
 	stuff = stuff.replace('\n','&newline')
-	"""
+	#"#""
 	cache.table_name = "nhltable"
 	log('store: '+stuff)
 	#cache.set('test', urllib.quote_plus(stuff))
@@ -480,7 +480,7 @@ def cache_recall(name=''):
 	cache.table_name = "nhltable"
 	stuff = cache.get('cache')
 	stuff = stuff.encode("utf-8")
-	"""
+	#"#""
 	stuff = stuff.replace('&auml;','ä')
 	stuff = stuff.replace('&Auml;','Ä')
 	stuff = stuff.replace('&ouml;','ö')
@@ -489,7 +489,7 @@ def cache_recall(name=''):
 	stuff = stuff.replace('&Uuml;','Ü')
 	stuff = stuff.replace('&szlig;','ß')
 	stuff = stuff.replace('&newline','\n')
-	"""
+	#"#""
 	log('recall: '+stuff)
 	return stuff
 	
@@ -507,7 +507,7 @@ def cache_list_stored():
 def cache_clear():
 	cache.table_name = "nhltable"
 	cache.delete("cache")
-	
+"""	
 def searchbox():
 	searchStr = ''
 	keyboard = xbmc.Keyboard(searchStr,'Search')
