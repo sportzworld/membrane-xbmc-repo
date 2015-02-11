@@ -1,7 +1,15 @@
 ﻿# -*- coding: utf-8 -*-
-import urllib,urllib2,re,random,xbmcplugin,xbmcgui,xbmcaddon,cookielib,HTMLParser
+import urllib,urllib2,re,random,xbmcplugin,xbmcgui,xbmcaddon,cookielib,HTMLParser,datetime
 from time import gmtime, strftime
 
+__settings__ = xbmcaddon.Addon(id='plugin.video.nhlvideocenter')
+__language__ = __settings__.getLocalizedString
+
+if __settings__.getSetting("firstrun") == 'true':
+	__settings__.setSetting(id="firstrun",value='false')
+
+import resources.lib.utils as utils
+import resources.lib.webcache as webcache
 try:
 	import StorageServer
 except:
@@ -13,8 +21,7 @@ html_parser = HTMLParser.HTMLParser()
 month = strftime("%m", gmtime())
 year = strftime("%Y", gmtime())
 
-__settings__ = xbmcaddon.Addon(id='plugin.video.nhlvideocenter')
-__language__ = __settings__.getLocalizedString
+
 
 
 COOKIEFILE = xbmc.translatePath(__settings__.getAddonInfo('profile')+"cookies.lwp")
@@ -24,18 +31,16 @@ pluginhandle = int(sys.argv[1])
 
 mainurl = 'http://video.nhl.com/videocenter/'
 
-if __settings__.getSetting("firstrun") != 'true':
-	__settings__.setSetting(id="firstrun",value='false')
 
 
 def MAIN():
 	addDir(__language__(30002).encode("utf-8"),'Search',9,'')
-	addDir(__language__(30003),mainurl,4,'',__language__(30004))
 	LIST_VIDEOCENTER(mainurl)
+	addDir(__language__(30003),mainurl,4,'',__language__(30004))
 
 	
 def LIST_VIDEOCENTER(url):#5
-	response = getUrl(url)
+	response = webcache.request(url,ttl=86400)
 	match=re.compile('<table id="tblMenu".+?>(.+?)</div>', re.DOTALL).findall(response)
 	#print match[0]
 	match_topics=re.compile('<tr>(.+?)</table>', re.DOTALL).findall(match[0])
@@ -68,24 +73,29 @@ def LIST_VIDEOCENTER(url):#5
 		name = name_a+' - '+name_b
 		
 		if menutype == '1':
-			url = mainurl+'servlets/guide?channeldays=7&cid='+menuid+'&ispaging=false&large=true&menuChannelId='+menuid+'&menuChannelIndex='+menuindex+'&pn=1&ps=7&ptrs=3'
-			addDir(fix_name(name_a),url,10,'',name_b)
+			newurl = mainurl+'servlets/guide?channeldays=7&cid='+menuid+'&ispaging=false&large=true&menuChannelId='+menuid+'&menuChannelIndex='+menuindex+'&pn=1&ps=7&ptrs=3'
+			addDir(fix_name(name_a),newurl,10,'',name_b)
 			
 		elif menutype == '0':
-			url = mainurl+'servlets/browse?cid='+menuid+'&component=_browse&ispaging=false&large=true&menuChannelId='+menuid+'&menuChannelIndex='+menuindex+'&pm=0&pn=1&ps=12&ptrs=3'
-			addDir(fix_name(name_a),url,10,'',name_b)
+			newurl = mainurl+'servlets/browse?cid='+menuid+'&component=_browse&ispaging=false&large=true&menuChannelId='+menuid+'&menuChannelIndex='+menuindex+'&pm=0&pn=1&ps=12&ptrs=3'
+			addDir(fix_name(name_a),newurl,10,'',name_b)
 		
 		elif menutype == '4':
-			log('Menutype not used: '+menutype)
-			log('Livestreams not working')
+			newurl = mainurl+'servlets/guide?channeldays=7&cid='+menuid+'&ispaging=false&large=true&menuChannelId='+menuid+'&menuChannelIndex='+menuindex+'&pn=1&ps=7&ptrs=3'
+			addDir(fix_name(name_a),newurl,10,'',name_b)
+			#log('Menutype not used: '+menutype)
+			#log('Livestreams not working')
 			
 		elif menutype == '5':
 			log('Menutype not used: '+menutype)
 			log('Podcasts not working')
 			
 		elif menutype == '100':
-			url = 'url'
-			addDir(fix_name(name_a),url,1,'',fix_name(name_b))
+			if url[-1] == '/':
+				newurl = url 
+			else:
+				newurl = url + '/'
+			addDir(fix_name(name_a),newurl,1,'',fix_name(name_b))
 			
 
 		else:
@@ -96,20 +106,34 @@ def LIST_VIDEOCENTER(url):#5
 def fix_name(name):#make 'STRING' to 'String'
 	fixed_name = ''
 	firstchar = True
-	for i in range(0, len(name)):
-		if not firstchar == True:
-			n = name[i].lower()
-		else:
-			n = name[i]
+	words = name.split(' ')
+	for name in words:
+		m = ''
+		#if len(name) > 1:
+		if len(name) > 3:
 			
-		fixed_name = fixed_name + n
-		
-		if n == ' ':
-			firstchar = True
+			for i in range(0, len(name)):
+				if not firstchar == True:
+					n = name[i].lower()
+				else:
+					n = name[i]
+					
+				m = m + n
+				
+				if n == ' ':
+					firstchar = True
+				else:
+					firstchar = False
 		else:
-			firstchar = False
-	
+			m = name
+		if fixed_name == '':
+			fixed_name = m
+		else:
+			fixed_name = fixed_name + ' ' + m
 	fixed_name = fixed_name.replace('Nhl','NHL')
+	fixed_name = fixed_name.replace('nhl','NHL')
+	fixed_name = fixed_name.replace('Sd ','SD ')
+	fixed_name = fixed_name.replace('Pp','PP')
 	fixed_name = fixed_name.replace('&#039;',"'")
 	return fixed_name
 			
@@ -118,11 +142,12 @@ def fix_name(name):#make 'STRING' to 'String'
 		
 def INDEX_HIGHLIGHTS(url):#1
 	
-	addDir(__language__(30100).encode("utf-8"),'&year='+year+'&month='+month,3,'')
+	#addDir(__language__(30100).encode("utf-8"),mainurl+'highlights?xml=0&year='+year+'&month='+month,3,'')
+	addDir(__language__(30100).encode("utf-8"),url+'highlights?xml=0',4,'')
 	end_year = 2010
 	count_year = int(year)
 	while count_year >= end_year:
-		addDir(str(count_year),'&year='+str(count_year),2,'')
+		addDir(str(count_year),url+'highlights?xml=0&year='+str(count_year),2,'')
 		count_year -= 1
 	
 def MONTH(url):#2
@@ -132,11 +157,13 @@ def MONTH(url):#2
 		count_month = 9
 
 	if year in url:
+		active_year = True
 		if month == '10':
 			end_month = 10#TODO: make pretty
 		else:
 			end_month = int(month.replace('0',''))
 	else:
+		active_year = False
 		end_month = 12
 
 
@@ -154,13 +181,19 @@ def MONTH(url):#2
 		name = name.replace('7',__language__(30107))#July
 		name = name.replace('8',__language__(30108))#August
 		name = name.replace('9',__language__(30109))#September
-
-		addDir(name.encode("utf-8"),url+'&month='+str(count_month),3,'')
+		if not active_year or count_month < end_month-1:
+			addDir(name.encode("utf-8"),url+'&month='+str(count_month),3,'')
+		else:
+			addDir(name.encode("utf-8"),url+'&month='+str(count_month),4,'')
 		count_month += 1
 
 
-def RESULTS(url):#3
-	link = getUrl(mainurl+'highlights?xml=0'+url)
+def RESULTS(url,cache=True):#3
+	#link = getUrl(mainurl+'highlights'+url)
+	if cache:
+		link = webcache.request(url,ttl=2592000)#cache it for a month if it is not an active month
+	else:
+		link = webcache.request(url,ttl=1800)#cache it for 30min else
 	match=re.compile('<game>(.+?)</game>', re.DOTALL).findall(link)
 	
 	for game in match:
@@ -182,17 +215,20 @@ def RESULTS(url):#3
 		match_guest_name=re.compile('<name>(.+?)</name>', re.DOTALL).findall(match_guest[0])
 		match_guest_city=re.compile('<city>(.+?)</city>', re.DOTALL).findall(match_guest[0])
 		match_guest_goals=re.compile('<goals>(.+?)</goals>', re.DOTALL).findall(match_guest[0])
+		match_guest_logo=re.compile('<logo-40px>(.+?)</logo-40px>', re.DOTALL).findall(match_guest[0])
 
 		match_home=re.compile('<home-team>(.+?)</home-team>', re.DOTALL).findall(game)
 		match_home_name=re.compile('<name>(.+?)</name>', re.DOTALL).findall(match_home[0])
 		match_home_city=re.compile('<city>(.+?)</city>', re.DOTALL).findall(match_home[0])
 		match_home_goals=re.compile('<goals>(.+?)</goals>', re.DOTALL).findall(match_home[0])
-
+		match_home_logo=re.compile('<logo-40px>(.+?)</logo-40px>', re.DOTALL).findall(match_home[0])
+		
 		match_url=re.compile('<alt-video-clip>(.+?)</alt-video-clip>', re.DOTALL).findall(game)
-
+		match_duration=re.compile('<video-duration>(.+?)</video-duration>', re.DOTALL).findall(game)
 		match_possiblethumb=re.compile('<video-clip-thumbnail>(.+?)</video-clip-thumbnail>', re.DOTALL).findall(game)
 
 		date = match_date[0]
+		MM,DD,YYYY=date.split('/')
 		guestname = match_guest_name[0]
 
 		try:
@@ -211,6 +247,11 @@ def RESULTS(url):#3
 		homegoals = match_home_goals[0]
 
 		try:
+			duration = match_duration[0]
+		except:
+	   		duration = False
+			
+		try:
 			url = match_url[0]
 		except:
 	   		match_rtmp=re.compile('<video-clip>(.+?)</video-clip>', re.DOTALL).findall(game)
@@ -225,15 +266,20 @@ def RESULTS(url):#3
 			thumb = possiblethumb
 		if int(date_thumb[2]) == 2010 and int(date_thumb[0].replace('0','')) > 8:
 			thumb = possiblethumb
-		name = date+' '+homecity+homename+' vs. '+guestcity+guestname+' - '+homegoals+':'+guestgoals
+		name = date+' '+homecity+homename+' vs. '+guestcity+guestname
+		if xbmcplugin.getSetting(pluginhandle,"show_score") == 'true':
+			name += ' - '+homegoals+':'+guestgoals
 		name = name.replace('&#233;','é')
 		url = url.replace('<![CDATA[','')
 		url = url.replace(']]>','')
 		thumb = thumb.replace('<![CDATA[','')
 		thumb = thumb.replace(']]>','')
 		thumb = thumb.replace('_es','_eb')
-		addLinkOld(name,url,thumb)
+		#addLinkOld(name,url,thumb,duration)
+		addLinkOld(name,url,thumb,duration,True,match_home_city[0],match_guest_city[0],match_home_name[0],match_guest_name[0],largethumb(match_home_logo[0]),largethumb(match_guest_logo[0]),match_home_goals[0],match_guest_goals[0],DD,MM,YYYY)
 
+def RESULTS_UNCACHED(url):
+	RESULTS(url,cache=False)
 def TEAMS(url):#4 not in use at the moment
 	req = urllib2.Request(url)
 	req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
@@ -318,14 +364,17 @@ def SEARCH(url):
 
 	
 def MENUTYPE_1_START(url):#10 
-	cache_clear()
+	#cache_clear()
 	MENUTYPE_1(url,firstpage=True)
 	
 def MENUTYPE_1(url,firstpage=False):#11 
-	i = cache_list_stored()
-	stuff = ''
-	response = getUrl(url)
-	match=re.compile('<td valign="top">(.+?)</table>', re.DOTALL).findall(response)
+	#i = cache_list_stored()
+	#stuff = ''
+	response = webcache.request(url,ttl=1800)#cache it for 30min
+	response = response.decode('utf-8')
+	response = response.encode('ascii','ignore')
+	#print excepttion
+	match=re.compile(u'<td valign="top">(.+?)</table>', re.DOTALL).findall(response)
 	for entry in match:
 		match_name_a=re.compile('<div divType="prog_name".+?>(.+?)</div>').findall(entry)
 		name_a = match_name_a[0]
@@ -333,6 +382,8 @@ def MENUTYPE_1(url,firstpage=False):#11
 
 		match_name_b=re.compile('title="(.+?)"').findall(entry)
 		name_b = match_name_b[0]
+		print name_b
+		print name_b.encode('ascii','ignore')
 		log('name_b: '+name_b)
 		
 		match_onclick=re.compile('onclick="(.+?)"').findall(entry)
@@ -344,6 +395,8 @@ def MENUTYPE_1(url,firstpage=False):#11
 		
 		sd = match_video[4]
 		log('sd: '+sd)
+		
+		
 		
 
 		match_thumb=re.compile('src="(.+?)"').findall(entry)
@@ -358,12 +411,12 @@ def MENUTYPE_1(url,firstpage=False):#11
 		#name_a = name_a.replace('&#039;',"'")
 		
 		if sd == '1':
-			video = video.replace('.mp4','_sd.mp4')
-		stuff = stuff + '<vid>'+name_a+'|'+video+'|'+'11'+'|'+thumb+'|'+name_b+'</vid>'
+			video = video.replace('.mp4',u'_sd.mp4')
+		#stuff = stuff + '<vid>'+name_a+'|'+video+'|'+'11'+'|'+thumb+'|'+name_b+'</vid>'
 
 		addLink(html_parser.unescape(fix_name(name_a)),video,12,thumb,html_parser.unescape(fix_name(name_b)))
 	
-	cache_store(stuff)
+	#cache_store(stuff)
 	
 	if 'NÄCHSTE</a>' in response or 'NEXT</a>' in response:
 		match_onclick=re.compile('onclick="(.+?)"').findall(response)
@@ -469,6 +522,7 @@ def searchbox():
 		
 
 def getUrl( url , extraheader=True):
+	print url
 	cj = cookielib.LWPCookieJar()
 	if os.path.isfile(COOKIEFILE):
 		cj.load(COOKIEFILE, ignore_discard=True)
@@ -513,20 +567,25 @@ def get_params():
 def largethumb(thumb):
 	thumb = thumb.replace('_es.jpg','_eb.jpg')
 	thumb = thumb.replace('110x62','640x360')
+	thumb = thumb.replace('small','extralarge')
 	return thumb
 
 
-def addLinkOld(name,url,iconimage):
+def addLinkOld(name,url,iconimage,duration,extrainfo=False,home_city='',guest_city='',home_name='',guest_name='',home_logo='',guest_logo='',home_score='',guest_score='',game_dd='',game_mm='',game_yyyy=''):
 	iconimage = largethumb(iconimage)
 	ok=True
 	liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-	liz.setInfo( type="Video", infoLabels={ "Title": name } )
+	if extrainfo:
+		liz.setInfo( type="Video", infoLabels={ "Title": name , "home_city": home_city , "guest_city": guest_city , "home_name": home_name , "guest_name": guest_name , "home_logo": home_logo , "guest_logo": guest_logo , "home_score": home_score , "guest_score": guest_score , "game_dd": game_dd , "game_mm": game_mm , "game_yyyy": game_yyyy } )
+	else:
+		liz.setInfo( type="Video", infoLabels={ "Title": name } )
+	liz.addStreamInfo('video', { 'codec': 'h264', 'width':960 ,'height' : 540 ,'duration' : int(duration) })
 	liz.setProperty('fanart_image',iconimage)
 
 	ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=liz)
 	return ok
 
-def addLink(name,url,mode,iconimage,plot=''):
+def addLink(name,url,mode,iconimage,plot='',duration=False):
 	name = html_parser.unescape(fix_name(name))
 	plot = html_parser.unescape(fix_name(plot))
 	iconimage = largethumb(iconimage)
@@ -535,7 +594,8 @@ def addLink(name,url,mode,iconimage,plot=''):
 	u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
 	ok=True
 	liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-	liz.setInfo( type="Video", infoLabels={ "Title": name , "Plot": plot , "Plotoutline": plot } )
+	#liz.setInfo( type="Video", infoLabels={ "Title": name , "Plot": plot , "Plotoutline": plot , "Duration": duration } )
+	liz.setInfo( type="Video", infoLabels={ "Title": name , "Plot": plot , "Plotoutline": plot} )
 	liz.setProperty('IsPlayable', 'true')
 	liz.setProperty('fanart_image',iconimage)
 	ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz)
@@ -605,7 +665,11 @@ elif mode==2:
 		
 elif mode==3:
 		print ""+url
-		RESULTS(url)
+		RESULTS(url)	
+		
+elif mode==4:
+		print ""+url
+		RESULTS_UNCACHED(url)
 
 elif mode==9:
 		print ""+url

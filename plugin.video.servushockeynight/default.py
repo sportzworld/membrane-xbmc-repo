@@ -18,6 +18,74 @@ background = 'http://www.servustv.com/var/stvd/storage/images/www_root/themen/sp
 base_laola = 'http://www.laola1.tv/partner/v4player/index.php'
 base_servus = 'http://www.servustv.com'
 
+lastrun = '0_0_0' ###TODO!!!
+teamnames = { 'Adler':'Adler Mannheim',
+              'Bad Nauheim':'Bad Nauheim',#TODO
+              'DEG':'Düsseldorfer EG',
+              'ESV':'ESV',#TODO
+              'Eisbären':'Eisbären Berlin',
+              'Eislöwen':'Dresdner Eislöwen',
+              'Eispiraten':'Eispiraten Crimmitschau',
+              'Freezers':'Hamburg Freezers',
+              'Grizzlies':'Grizzly Adams Wolfsburg',
+              'Haie':'Kölner Haie',
+              'Ice Tigers':'Thomas Sabo Ice Tigers',
+              'Ingolstadt':'ERC Ingolstadt',
+              'Krefeld':'Krefeld Pinguine',
+              'Panther':'Augsburger Panther',
+              'Red Bulls':'EHC Red Bull München',
+              'Roosters':'Iserlohn Roosters',
+              'Tigers':'Straubing Tigers',
+              'Wild Wings':'Schwenninger Wild Wings',
+			  
+              'Black Wings':'EHC Liwest Black Wings Linz',#ok
+              'Capitals':'UPC Vienna Capitals',#ok
+              'Die Haie':'HC TWK Innsbruck "Die Haie"',#ok
+              'Dornbirn':'Dornbirner Eishockey Club',#ok
+              'EV Vienna Capitals':'UPC Vienna Capitals',#ok
+              'Farjestad':'Farjestad',#TODO
+              'Graz 99ers':'Moser Medical Graz 99ers',#ok
+              'HCB':'HCB Südtirol',#ok
+              'Jesenice':'Jesenice',#TODO
+              'KAC':'EC KAC',#ok
+              'Olimpija':'HDD Olimpija Ljubljana',#TODO
+              'RBS':'EC Red Bull Salzburg',#ok
+              'Sapa Fehervar':'Sapa Fehervar AV19',#ok
+              'VSV':'EC VSV',#ok
+              'Zagreb':'KHL Medveščak Zagreb',
+              'Znojmo':'Orli Znojmo'}#ok
+#HC Innsbruck#HC Bozen
+			  
+logos = { 'Adler Mannheim':'http://images.laola1.at/wappen/b3853_100x100.png',
+          'Augsburger Panther':'http://images.laola1.at/wappen/b3851_100x100.png',
+          'Düsseldorfer EG':'http://images.laola1.at/wappen/b3862_100x100.png',
+          'EHC Red Bull München':'http://images.laola1.at/wappen/b5426_100x100.png',
+          'Eisbären Berlin':'http://images.laola1.at/wappen/b3856_100x100.png',
+          'ERC Ingolstadt':'http://images.laola1.at/wappen/b3863_100x100.png',
+          'Grizzly Adams Wolfsburg':'http://images.laola1.at/wappen/b5430_100x100.png',
+          'Hamburg Freezers':'http://images.laola1.at/wappen/b3848_100x100.png',
+          'Iserlohn Roosters':'http://images.laola1.at/wappen/b3860_100x100.png',
+          'Kölner Haie':'http://images.laola1.at/wappen/b3847_100x100.png',
+          'Krefeld Pinguine':'http://images.laola1.at/wappen/b3852_100x100.png',
+          'Schwenninger Wild Wings':'http://images.laola1.at/wappen/b5431_100x100.png',
+          'Straubing Tigers':'http://images.laola1.at/wappen/b5434_100x100.png',
+          'Thomas Sabo Ice Tigers':'http://images.laola1.at/wappen/b3858_100x100.png',
+
+          'Dornbirner Eishockey Club':'http://www.erstebankliga.at/images/pages/teams/logos/dec.png',#ok
+          'UPC Vienna Capitals':'http://www.erstebankliga.at/images/pages/teams/logos/vic.png',#ok
+          'EC Red Bull Salzburg':'http://www.erstebankliga.at/images/pages/teams/logos/rbs.png',#ok
+          'EC KAC':'http://www.erstebankliga.at/images/pages/teams/logos/kac.png',#ok
+          'EC VSV':'http://www.erstebankliga.at/images/pages/teams/logos/vsv.png',#ok
+          'EHC Liwest Black Wings Linz':'http://www.erstebankliga.at/images/pages/teams/logos/ehl.png',#ok
+          'Moser Medical Graz 99ers':'http://www.erstebankliga.at/images/pages/teams/logos/g99.png',#ok
+          'HC TWK Innsbruck "Die Haie"':'http://www.erstebankliga.at/images/pages/teams/logos/hci.png',#ok
+          'HCB Südtirol':'http://www.erstebankliga.at/images/pages/teams/logos/hcb.png',#ok
+          'Orli Znojmo':'http://www.erstebankliga.at/images/pages/teams/logos/zno.png',
+          'Sapa Fehervar AV19':'http://www.erstebankliga.at/images/pages/teams/logos/avs.png',#ok
+          'HDD Olimpija Ljubljana':'http://www.erstebankliga.at/images/pages/teams/logos/oll.png',
+          '13':'',
+          '13':''}
+		  
 def checklastrun():
 	if __settings__.getSetting('lastrun') != '0_0_1':
 		__settings__.setSetting('lastrun','0_0_1')
@@ -62,21 +130,21 @@ def LIGA(name,url):#1
 	addDir(__language__(30503),base_laola+'?identifier=servustv_'+url+'&menu1=86&menu2=&menu3=',3,default_logo)
 	addDir(__language__(30504),url,2,default_logo)
 	if url == 'del':
-		addDir(__language__(30513),base_laola+'?identifier=servustv_del&menu1=92&menu2=&menu3=',3,default_logo)#top tore
-		addDir(__language__(30514),base_laola+'?identifier=servustv_del&menu1=98&menu2=&menu3=',3,default_logo)#starting six
-		addDir(__language__(30515),base_laola+'?identifier=servustv_del&menu1=101&menu2=&menu3=',3,default_logo)#Glaskugel
-		addDir(__language__(30516),base_laola+'?identifier=servustv_del&menu1=104&menu2=&menu3=',3,default_logo)#hangouts
-		addDir(__language__(30505),base_laola+'?identifier=servustv_del&menu1=164&menu2=&menu3=',3,default_logo)
-		addDir(__language__(30506),base_laola+'?identifier=delorg&menu1=33&menu2=&menu3=',3,default_logo)
-		addDir(__language__(30507),base_laola+'?identifier=delorg&menu1=&menu2=1868&menu3=',3,default_logo)
+		addDir(__language__(30513),base_laola+'?identifier=servustv_del&menu1=92&menu2=&menu3=',4,default_logo)#top tore
+		addDir(__language__(30514),base_laola+'?identifier=servustv_del&menu1=98&menu2=&menu3=',4,default_logo)#starting six
+		addDir(__language__(30515),base_laola+'?identifier=servustv_del&menu1=101&menu2=&menu3=',4,default_logo)#Glaskugel
+		addDir(__language__(30516),base_laola+'?identifier=servustv_del&menu1=104&menu2=&menu3=',4,default_logo)#hangouts
+		addDir(__language__(30505),base_laola+'?identifier=servustv_del&menu1=164&menu2=&menu3=',4,default_logo)
+		addDir(__language__(30506),base_laola+'?identifier=delorg&menu1=33&menu2=&menu3=',4,default_logo)
+		addDir(__language__(30507),base_laola+'?identifier=delorg&menu1=&menu2=1868&menu3=',4,default_logo)
 	elif url == 'ebel':
-		addDir(__language__(30508),base_laola+'?identifier=servustv_ebel&menu1=89&menu2=&menu3=',3,default_logo)
-		addDir(__language__(30509),base_laola+'?identifier=servustv_ebel&menu1=77&menu2=&menu3=',3,default_logo)
-		addDir(__language__(30510),base_laola+'?identifier=servustv_ebel&menu1=92&menu2=&menu3=',3,default_logo)
-		addDir(__language__(30511),base_laola+'?identifier=servustv_ebel&menu1=74&menu2=&menu3=',3,default_logo)
-		addDir(__language__(30512),base_laola+'?identifier=erstebankehl&menu1=128&menu2=&menu3=',3,default_logo)
-		addDir(__language__(30506),base_laola+'?identifier=erstebankehl&menu1=33&menu2=&menu3=',3,default_logo)
-		addDir(__language__(30507),base_laola+'?identifier=erstebankehl&menu1=&menu2=1868&menu3=',3,default_logo)
+		addDir(__language__(30508),base_laola+'?identifier=servustv_ebel&menu1=89&menu2=&menu3=',4,default_logo)
+		addDir(__language__(30509),base_laola+'?identifier=servustv_ebel&menu1=77&menu2=&menu3=',4,default_logo)
+		addDir(__language__(30510),base_laola+'?identifier=servustv_ebel&menu1=92&menu2=&menu3=',4,default_logo)
+		addDir(__language__(30511),base_laola+'?identifier=servustv_ebel&menu1=74&menu2=&menu3=',4,default_logo)
+		addDir(__language__(30512),base_laola+'?identifier=erstebankehl&menu1=128&menu2=&menu3=',4,default_logo)
+		addDir(__language__(30506),base_laola+'?identifier=erstebankehl&menu1=33&menu2=&menu3=',4,default_logo)
+		addDir(__language__(30507),base_laola+'?identifier=erstebankehl&menu1=&menu2=1868&menu3=',4,default_logo)
 
 	
 	if enable_servus:
@@ -99,9 +167,18 @@ def TEAMS(url):#2
 	match=re.compile('<a href="(.+?)" title="(.+?)">', re.DOTALL).findall(match_teams[0])
 	for url,team in match:
 		if team != 'Alle' and not ',' in url:
-			addDir(team,base_laola+url,3,default_logo)
+			if team in teamnames:
+				team=teamnames[team]
+			if team in logos:
+				logo=logos[team]
+			else:
+				logo=default_logo
+			addDir(team,base_laola+url,4,logo)
 	
-def LIST_LAOLA(url):#3
+def LIST_LAOLA_EXTRA(url):#3
+	LIST_LAOLA(url,True)
+	
+def LIST_LAOLA(url,extrainfo=False):#4
 	response=getUrl(url)
 	match_table=re.compile('<table cellpadding="0" cellspacing="0">(.+?)</table>', re.DOTALL).findall(response)
 	match=re.compile('<a href="(.+?)">(.+?)</a>.+?<span class="date">(.+?)</span>', re.DOTALL).findall(match_table[0])
@@ -119,7 +196,27 @@ def LIST_LAOLA(url):#3
 			i = i + 1
 		else:
 			thumb = default_logo
-		addLink(date+' - '+name,base_laola+url,10,thumb)
+		if extrainfo:
+			name_list=name.split('/')#TODO: conferences
+			for name in name_list:
+				if ' - ' in name:
+					home_name,guest_name=name.split(' - ')
+					home_name.replace('Relive: ','')
+					guest_name.replace('Relive: ','')
+					
+					if home_name in logos:
+						home_logo = logos[home_name]
+					else:
+						home_logo = default_logo
+						
+					if guest_name in logos:
+						guest_logo = logos[guest_name]
+					else:
+						guest_logo = default_logo
+					addLink(date+' - '+name.replace('Relive: ',''),base_laola+url,10,thumb,'',True,True,'','',home_name,guest_name,home_logo,guest_logo)
+		else:
+			addLink(date+' - '+name.replace('Relive: ',''),base_laola+url,10,thumb)
+		
 			
 
 
@@ -146,26 +243,29 @@ def PLAY(url,name):#10
 		if 'class="main_tv_player"' in iframestuff:
 			player = possible_player
 	response=getUrl(player)
-
-	match_streamid=re.compile('streamid = "(.+?)"', re.DOTALL).findall(response)
+	
+	match_streamid=re.compile('streamid: "(.+?)"', re.DOTALL).findall(response)
 	streamid = match_streamid[0]
 	
-	match_partnerid=re.compile('partnerid = "(.+?)"', re.DOTALL).findall(response)
+	match_partnerid=re.compile('partnerid: "(.+?)"', re.DOTALL).findall(response)
 	partnerid = match_partnerid[0]
 
-	match_portalid=re.compile('portalid = "(.+?)"', re.DOTALL).findall(response)
+	match_portalid=re.compile('portalid: "(.+?)"', re.DOTALL).findall(response)
 	portalid = match_portalid[0]
 
-	match_sprache=re.compile('sprache = "(.+?)"', re.DOTALL).findall(response)
+	match_sprache=re.compile('sprache: "(.+?)"', re.DOTALL).findall(response)
 	sprache = match_sprache[0]
 
 	match_auth=re.compile('auth = "(.+?)"', re.DOTALL).findall(response)
 	auth = match_auth[0]
+	
+	match_v5ident=re.compile('v5ident = "(.+?)"', re.DOTALL).findall(response)
+	v5ident = match_v5ident[0]
 
 	match_timestamp=re.compile('timestamp = "(.+?)"', re.DOTALL).findall(response)
 	timestamp = match_timestamp[0]
 
-	response=getUrl('http://www.laola1.tv/server/hd_video.php?play='+streamid+'&partner='+partnerid+'&portal='+portalid+'&v5ident=&lang='+sprache)
+	response=getUrl('http://www.laola1.tv/server/hd_video.php?play='+streamid+'&partner='+partnerid+'&portal='+portalid+'&v5ident='+v5ident+'&lang='+sprache)
 	match_url=re.compile('<url>(.+?)<', re.DOTALL).findall(response)
 
 	response=getUrl(match_url[0].replace('&amp;','&').replace('l-_a-','l-L1TV_a-l1tv')+'&timestamp='+timestamp+'&auth='+auth)
@@ -276,11 +376,19 @@ def postUrl(url,data):
 	return link
 
 
-def addLink(name,url,mode,iconimage,plot='',hd=False):
+def addLink(name,url,mode,iconimage,plot='',hd=False,extrainfo=False,home_city='',guest_city='',home_name='',guest_name='',home_logo='',guest_logo='',home_score='',guest_score='',game_dd='',game_mm='',game_yyyy=''):
 	u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
 	ok=True
 	liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-	liz.setInfo( type="Video", infoLabels={ "Title": name, "Plot": plot, "plotoutline": plot  } )
+	if extrainfo:
+		liz.setInfo( type="Video", infoLabels={ "Title": name , "Plot": plot, "plotoutline": plot , "home_city": home_city , "guest_city": guest_city , "home_name": home_name , "guest_name": guest_name , "home_logo": home_logo , "guest_logo": guest_logo , "home_score": home_score , "guest_score": guest_score , "game_dd": game_dd , "game_mm": game_mm , "game_yyyy": game_yyyy } )
+		print home_name
+		print guest_name
+		print home_logo
+		print guest_logo
+	else:
+		liz.setInfo( type="Video", infoLabels={ "Title": name, "Plot": plot, "plotoutline": plot  } )
+	
 	liz.setProperty('IsPlayable', 'true')
 	if __settings__.getSetting('useasfanart') == 'true':
 		liz.setProperty('fanart_image',iconimage)
@@ -349,6 +457,10 @@ elif mode==2:
         TEAMS(url)
 		
 elif mode==3:
+        print ""+url
+        LIST_LAOLA_EXTRA(url)
+
+elif mode==4:
         print ""+url
         LIST_LAOLA(url)
 

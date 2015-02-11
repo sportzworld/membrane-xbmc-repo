@@ -1,5 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
-import urllib,urllib2,re,xbmcplugin,xbmcgui,xbmcaddon,string,random,cookielib
+import urllib,urllib2,re,xbmcplugin,xbmcgui,xbmcaddon,string,random,cookielib,xbmcvfs
 
 try:
 	import StorageServer
@@ -10,6 +10,7 @@ cache = StorageServer.StorageServer("laola", 24)
 cache.table_name = "testtable"
 
 
+
 pluginhandle = int(sys.argv[1])
 
 update_view = False
@@ -17,9 +18,54 @@ update_view = False
 __settings__ = xbmcaddon.Addon(id='plugin.video.laola1live')
 __language__ = __settings__.getLocalizedString
 
-language = __language__(30214 + int(__settings__.getSetting('language')))
-location = __language__(30208 + int(__settings__.getSetting('location')))
+#location = __language__(30208 + int(__settings__.getSetting('location')))
+#language = __language__(30214 + int(__settings__.getSetting('language')))
+language_forced = True
+location_forced = True
 
+default_fanart = xbmc.validatePath(xbmc.translatePath('special://home')+'/addons/plugin.video.laola1live/fanart.jpg')
+play_m3u8 = xbmc.validatePath(xbmc.translatePath('special://home')+'/userdata/addon_data/plugin.video.laola1live/play.m3u8')
+
+background = 'http://www.laola1.tv/img/playercountdown/player_hg_new.jpg'
+
+#print xbmc.validatePath(xbmc.translatePath('special://home')+'/plugin.video.laola1live/fanart.jpg')
+
+lastrun = '2_2_2' ###TODO!!!
+def checklastrun():
+	if lastrun != '2_2_2':
+		buffer = getUrl(background)
+		file = default_fanart
+		f = xbmcvfs.File(file, 'w')
+		result = f.write(buffer)
+		f.close()
+
+if language_forced == False:
+	try:
+		LANG = xbmc.getLanguage(xbmc.ISO_639_2)
+		if LANG == 'GER':
+			language = 'de'
+		else:
+			language = 'int'
+	except:
+		language = 'de'
+else:
+	language = __language__(30214 + int(__settings__.getSetting('language')))
+
+if location_forced == False:
+	try:
+		LOC = xbmc.getLanguage(region=xbmc.ISO_639_2)
+		if LOC == 'GER':
+			location = 'de'
+		elif LOC == 'AUT':
+			location = 'at'
+		else:
+			location = 'int'
+	except:
+		location = 'de'
+else:
+	location = __language__(30208 + int(__settings__.getSetting('location')))
+	
+	
 #language = 'de'
 #location = 'de'
 
@@ -34,15 +80,23 @@ baseurl = 'http://www.laola1.tv/'+language+'-'+location
 vod_quality = __settings__.getSetting('vod_quality')
 if vod_quality == '0':
 	max_bw = 350000
+	auto_bw = False
 elif vod_quality == '1':
 	max_bw = 600000
+	auto_bw = False
 elif vod_quality == '2':
-	max_bw = 1200000
+	max_bw = 1500000
+	auto_bw = False
+elif vod_quality == '3':
+	max_bw = 1500000
+	auto_bw = True
+auto_bw = False
 
 
 
 
 def MAIN():
+	checklastrun()
 	response=getUrl(baseurl+'/home/0.html')
 	#match_notifications=re.compile('<span class="notifications">(.+?)<').findall(response)
 	#addDir(__language__(32001)+' ('+match_notifications[0]+')',baseurl+'/calendar/0.html',5,'')
@@ -194,12 +248,13 @@ def list_vids(videos,data,stuff='',i=0,update_view=False,list_them=True):
 				
 		#log('<vid>'+name+'#'+baseurl+url+'#'+thumb+'</vid>')
 		if __settings__.getSetting('hq_thumbnail') == '2':
-			thumb = thumb.replace('188x108','798x449')
-			thumb = thumb.replace('195x111','798x449')
-			thumb = thumb.replace('396x223','798x449')
+			thumb = thumb.replace('188x108','800x450')
+			thumb = thumb.replace('195x111','800x450')
+			thumb = thumb.replace('396x223','800x450')
 		elif __settings__.getSetting('hq_thumbnail') == '1':
 			thumb = thumb.replace('188x108','396x223')
 			thumb = thumb.replace('195x111','396x223')
+			thumb = thumb.replace('396x223','396x223')
 		if name != '':
 			name = name.replace("\n","")
 			name = name.replace("	","")
@@ -253,11 +308,17 @@ def LIST_LIVE(url):
 
 		#match_vids=re.compile('	<img.+?src="(.+?)".+?<span.+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
 		#match_vids=re.compile('	<img.+?src="(.+?)".+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
-		match_vids=re.compile('<div class=".+?f1_(.+?) .+?<img.+?src="(.+?)".+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
+		#match_vids=re.compile('<div class=".+?f1_(.+?) .+?<img.+?src="(.+?)".+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>', re.DOTALL).findall(some_vids)
+		match_vids=re.compile('<div class=".+?f1_(.+?) .+?<img.+?src="(.+?)".+?href="(.+?)".+?<h2>(.+?)</h2>.+?<span class="time live_countdown".+?>(.+?)</span>.+?<div class="streamdesc.+?>(.+?)</div>', re.DOTALL).findall(some_vids)
 		#match_date=re.compile('<span.+?>(.+?)</span><div class="stream').findall(some_vids)
-		for date,thumb,url,name,time in match_vids:
-			name = name.replace('<div class="hdkennzeichnung"></div>','')
-			if time == 'jetzt live':
+		for date,thumb,url,name,time,info in match_vids:
+			#print date+thumb+url+name+time+info
+			if '<div class="hdkennzeichnung"></div>' in name:
+				hd = True
+				name = name.replace('<div class="hdkennzeichnung"></div>','')
+			else:
+				hd = False
+			if time == 'JETZT LIVE':
 				title = __language__(32003).encode('ascii')
 				title = title+' - '
 				title = title+name
@@ -276,13 +337,33 @@ def LIST_LIVE(url):
 				id = id.replace('.htm','')
 				thumb = 'http://images.laola1.tv/'+id
 			if __settings__.getSetting('hq_thumbnail') == '2':
-				thumb = thumb+'_798x449.jpg'
+				thumb = thumb+'_800x450.jpg'
 			elif __settings__.getSetting('hq_thumbnail') == '1':
 				thumb = thumb+'_396x223.jpg'
+			match_color=re.compile('<span style="color:(.+?);">(.+?)</span>').findall(info)
+			for color,text in match_color:
+				replace_this = '<span style="color:'+color+';">'+text+'</span>'
+				#with_this = '[COLOR '+color+';]'+text+'[/COLOR]'
+				if color == '#0A0':
+					with_this = '[COLOR green]'+text+'[/COLOR]'
+				else:
+					with_this = '[COLOR red]'+text+'[/COLOR]'
+				info = info.replace(replace_this.encode('ascii'),with_this.encode('ascii'))
+
+			info = info.replace('<span class="ititle">','')
+			info = info.replace('<span class="idesc half">',' ')
+			info = info.replace('<span class="ititle full">','')
+			info = info.replace('<span class="idesc full">',' ')
+			info = info.replace('</span>','')
+			info = info.replace('<p>','')
+			info = info.replace('</p>','')
+			info = make_pretty(info)
+			#if info.startswith('\n'):
+			#	info = info[1:]
 			if '0.html' not in url:
-				addLink(title,url,10,thumb)
+				addLink(title,url,10,thumb,info,hd)
 			else:
-				addLink(title,url,10,thumb)
+				addLink(title,url,10,thumb,info,hd)
 	
 
 
@@ -309,17 +390,18 @@ def PLAY(url,name):#10
 		if 'class="main_tv_player"' in iframestuff:
 			player = possible_player
 	response=getUrl(player)
+	#print response
 	#response=getUrl(match_player[0])
-	match_streamid=re.compile('streamid = "(.+?)"', re.DOTALL).findall(response)
+	match_streamid=re.compile('streamid: "(.+?)"', re.DOTALL).findall(response)
 	streamid = match_streamid[0]
 	
-	match_partnerid=re.compile('partnerid = "(.+?)"', re.DOTALL).findall(response)
+	match_partnerid=re.compile('partnerid: "(.+?)"', re.DOTALL).findall(response)
 	partnerid = match_partnerid[0]
 
-	match_portalid=re.compile('portalid = "(.+?)"', re.DOTALL).findall(response)
+	match_portalid=re.compile('portalid: "(.+?)"', re.DOTALL).findall(response)
 	portalid = match_portalid[0]
 
-	match_sprache=re.compile('sprache = "(.+?)"', re.DOTALL).findall(response)
+	match_sprache=re.compile('sprache: "(.+?)"', re.DOTALL).findall(response)
 	sprache = match_sprache[0]
 
 	match_auth=re.compile('auth = "(.+?)"', re.DOTALL).findall(response)
@@ -352,26 +434,41 @@ def PLAY(url,name):#10
 	try:
 		dialog.update(75, __language__(32014))
 		response=getUrl(m3u8_url)
+		print response
 		dialog.update(100, __language__(32015))
-		match_sec_m3u8=re.compile('http(.+?)null=', re.DOTALL).findall(response)
+		#match_sec_m3u8=re.compile('http(.+?)null=', re.DOTALL).findall(response)
 		quality = int(__settings__.getSetting('vod_quality'))+1
 		
 		choose_url = False
 		stored_bw = 0
+		sec_m3u8 = ''
+		buffer = '#EXTM3U\n'
+		#print buffer
+		#print response
 		lines = response.split('\n')
+		print lines
 		for line in lines:
+			print line
 			if '#EXT-X-STREAM-INF' in line:
 				match_bw=re.compile('BANDWIDTH=(.+?),', re.DOTALL).findall(line)
 				bw = int(match_bw[0])
 				if bw > stored_bw and bw <= max_bw:
 					choose_url = True
 					stored_bw = bw
+					buffer += line + '\n'
 
 			elif choose_url == True:
 				sec_m3u8 = line
+				buffer += line + '\n'
 				choose_url = False
-
-		listitem = xbmcgui.ListItem(path=sec_m3u8)
+		print sec_m3u8
+		print buffer
+		write_file(play_m3u8,buffer)
+		
+		if auto_bw:
+			listitem = xbmcgui.ListItem(path=play_m3u8)
+		else:
+			listitem = xbmcgui.ListItem(path=sec_m3u8)
 		dialog.close()
 		return xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 		
@@ -380,6 +477,7 @@ def PLAY(url,name):#10
 		log('Error: Video not found')
 
 	dialog.close()
+	return xbmcplugin.setResolvedUrl(pluginhandle, False, '')
 		
 def PLAY_LIVE(url,name):#11
 	dialog = xbmcgui.DialogProgress()
@@ -448,7 +546,11 @@ def PLAY_LIVE(url,name):#11
 		log('Error: no video found')
 	dialog.close()
 		
-		
+def write_file(file,data):
+	f = xbmcvfs.File(file, 'w')
+	result = f.write(data)
+	f.close()
+	
 def store(stuff,name):
 	stuff = urllib.quote_plus(stuff).decode('utf-8')
 	stuff = stuff.encode('ascii')
@@ -492,6 +594,16 @@ def recall(name):
 def clearcache():
 	cache.table_name = "testtable"
 	cache.delete("cache")
+	
+def make_pretty(name):
+	name = name.replace('&auml;','ä')
+	name = name.replace('&Auml;','Ä')
+	name = name.replace('&ouml;','ö')
+	name = name.replace('&Ouml;','Ö')
+	name = name.replace('&uuml;','ü')
+	name = name.replace('&Uuml;','Ü')
+	name = name.replace('&szlig;','ß')
+	return name
 	
 def log(message):
 	if __settings__.getSetting('debug') == 'true':
@@ -549,14 +661,19 @@ def postUrl(url,data):
 	return link
 
 
-def addLink(name,url,mode,iconimage,plot=''):
+def addLink(name,url,mode,iconimage,plot='',hd=False):###TODO!!
 	u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
 	ok=True
 	liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
 	liz.setInfo( type="Video", infoLabels={ "Title": name, "Plot": plot, "plotoutline": plot  } )
 	liz.setProperty('IsPlayable', 'true')
+	#liz.addContextMenuItems([('TEST', 'XBMC.RunPlugin(plugin://plugin.video.laola1live/?url='+urllib.quote_plus('http://www.laola1.tv/de-de/spanische-la-liga/5.html')+'&mode=2)',)])
 	if __settings__.getSetting('hq_thumbnail') == '2':
 		liz.setProperty('fanart_image',iconimage)
+	else:
+		liz.setProperty('fanart_image',default_fanart)
+	if hd:
+		liz.addStreamInfo('video', { 'Codec': 'h264', 'Width' : 1280 })
 	ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz)
 	return ok
 	
@@ -566,6 +683,7 @@ def addDir(name,url,mode,iconimage):
         ok=True
         liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
         liz.setInfo( type="Video", infoLabels={ "Title": name } )
+        liz.setProperty('fanart_image',default_fanart)
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
         return ok
         

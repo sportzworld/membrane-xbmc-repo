@@ -38,11 +38,12 @@
 	<string id="30215">de</string>
 
 	
-	<!-- Add-on strings -->
+	<!-- Add-on strings 	<string id="32003">[COLOR red]LIVE[/COLOR]</string>
+-->
 	<string id="32000">Next Page</string>
 	<string id="32001">Live</string>
 	<string id="32002">This stream starts at</string>
-	<string id="32003">[COLOR red]LIVE[/COLOR]</string>
+	<string id="32003">[COLOR #0A0]LIVE[/COLOR]</string>
 	<string id="32004">Latest videos</string>
 	
 	
