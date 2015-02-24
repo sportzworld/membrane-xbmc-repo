@@ -1,0 +1,16 @@
+3.0.0
+- Initial release for new website layout
+3.0.1
+- Fixed stream/quality selection for some videos
+3.0.2
+- Fixed search
+- Fixed "Das Erste" live stream
+3.0.3
+- Fixed show listing
+3.0.4
+- Fixed category listing
+3.0.5
+- MDR can deliver 720p streams now (disabled by default)
+- Added a quality selection
+- Now prefers http streams instead of rtmp
+- Rewrote the playback selection - it should be stable now
