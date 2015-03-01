@@ -51,3 +51,8 @@
 2.2.2
 - Experimental support for HQ videos (can be enabled in the options)
 - Switched from rtmp to http streams (if available)
+2.2.3
+- Re-enabled HD videos
+- Added option to disable rtmp streams
+- Fixed subtitle support
+- Subtitles support color now

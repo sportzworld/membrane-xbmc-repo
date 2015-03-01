@@ -11,6 +11,7 @@ import sys
 import re
 import os
 import json
+import resources.lib.subtitle as subtitle
 
 #addon = xbmcaddon.Addon()
 #addonID = addon.getAddonInfo('id')
@@ -98,7 +99,7 @@ def listVideos(url):
         if match:
             thumb = baseUrl+"/image/"+match[0]+"/16x9/448"
         addLink(title, videoID, 'playVideo', thumb, duration, desc)
-    match = re.compile('class="entry" data-ctrl-.*Loader-source="{&#039;pixValue&#039;.+?href="(.+?)">(.+?)<', re.DOTALL).findall(content)
+    match = re.compile('class="entry" data-ctrl-.*Loader-source="{&#039;pixValue&#039;.+?href="(.+?)".+?>(.+?)<', re.DOTALL).findall(content)
     for url, type in match:
         if "&gt;" in type:
             addDir(translation(30009), baseUrl+url.replace("&amp;","&"), "listVideos", "")
@@ -292,7 +293,10 @@ def playVideo(videoID):
         listitem = xbmcgui.ListItem(path=url)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
         if showSubtitles and subtitleUrl:
-            setSubtitle(baseUrl+subtitleUrl)
+            if subtitleUrl.startswith('/subtitle'):
+                subtitle.setNewSubtitle(baseUrl+subtitleUrl)
+            else:
+                setSubtitle(baseUrl+subtitleUrl)
 """
 def playVideo(videoID):
     content = getUrl(baseUrl+"/tv/?documentId="+videoID)
