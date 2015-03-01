@@ -25,6 +25,7 @@ channelFavsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/"
 subFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/sub.srt")
 baseUrl = "http://www.zdf.de"
 
+
 if not os.path.isdir(addon_work_folder):
     os.mkdir(addon_work_folder)
 
@@ -37,7 +38,13 @@ minLength = addon.getSetting("minLengthNew")
 mins = [0, 5, 10, 20, 30]
 minLength = mins[int(minLength)]
 videoQuality = int(addon.getSetting("videoQuality"))
-
+zdfMetaEnabled = addon.getSetting("zdfMetaEnabled") == "true"
+expertEnabled = addon.getSetting("expertEnabled") == "true"
+forceHttp = addon.getSetting("forceHttp") == "true" and expertEnabled and zdfMetaEnabled#konvertiert rtmp streams zu http streams. siehe http://wiki.ubuntuusers.de/Baustelle/Streams_speichern/Beispiele#Die-Mediatheken-von-ZDF-und-3sat
+rtspEnabled = addon.getSetting("rtspEnabled") == "true" and expertEnabled
+threegpEnabled = addon.getSetting("threegpEnabled") == "true" and expertEnabled
+wmv3Enabled = addon.getSetting("wmv3Enabled") == "true" and expertEnabled
+httpEnabled = addon.getSetting("httpEnabled") == "true" and expertEnabled or not expertEnabled
 
 def index():
     addDir(translation(30010), "", 'listShowsFavs', "")
@@ -245,8 +252,10 @@ def play100sec():
 
 
 def playVideo(id):
+    baseVideoUrl = "http://nrodl.zdf.de/de"
     content = getUrl(baseUrl+"/ZDFmediathek/xmlservice/web/beitragsDetails?id="+id)
     match = re.compile('<formitaet basetype="(.+?)" isDownload=".+?">(.+?)</formitaet>', re.DOTALL).findall(content)
+    matchUT = re.compile('<caption>.+?<url>(.+?)</url>', re.DOTALL).findall(content)
     if '<default-stream-url>' in content:
 	    url = re.compile('<default-stream-url>(.+?)</default-stream-url>', re.DOTALL).findall(content)[0]
     elif '<type>livevideo</type>' in content:
@@ -254,40 +263,74 @@ def playVideo(id):
     else:
         lastBr = 0
         for basetype,entry in match:
-            videoUrl = re.compile('<url>(.+?)</url>', re.DOTALL).findall(entry)[0]
-            videoBitrate = int(re.compile('<videoBitrate>(.+?)</videoBitrate>', re.DOTALL).findall(entry)[0])
+            possibleUrl = False
             facet = re.compile('<facet>(.+?)</facet>', re.DOTALL).findall(entry)
-            if basetype == 'h264_aac_mp4_http_na_na' and videoBitrate > lastBr:
-                if videoQuality == 0:#low
-                    if videoBitrate <= 1300000:
+            if not facet or facet[0] != 'podcast':
+                videoUrl = re.compile('<url>(.+?)</url>', re.DOTALL).findall(entry)[0]
+                quality = re.compile('<quality>(.+?)</quality>', re.DOTALL).findall(entry)[0]
+                videoBitrate = int(re.compile('<videoBitrate>(.+?)</videoBitrate>', re.DOTALL).findall(entry)[0])
+                if   basetype == 'h264_aac_mp4_rtsp_mov_http'     and rtspEnabled:
+                    possibleUrl, possibleBr = _chooseVideo(videoUrl,videoBitrate,lastBr,facet)
+                elif basetype == 'h264_aac_3gp_http_na_na'        and threegpEnabled:
+                    possibleUrl, possibleBr = _chooseVideo(videoUrl,videoBitrate,lastBr,facet)
+                elif basetype == 'wmv3_wma9_asf_mms_asx_http'     and wmv3Enabled:
+                    possibleUrl, possibleBr = _chooseVideo(videoUrl,videoBitrate,lastBr,facet)
+                elif basetype == 'h264_aac_mp4_rtmp_zdfmeta_http' and zdfMetaEnabled:
+                    possibleUrl, possibleBr = _chooseVideo(videoUrl,videoBitrate,lastBr,facet)
+                elif basetype == 'h264_aac_mp4_http_na_na'        and httpEnabled:
+                    possibleUrl, possibleBr = _chooseVideo(videoUrl,videoBitrate,lastBr,facet) 
+                    if forceHttp:
                         if not facet or facet[0] != 'hbbtv':
-                            url = videoUrl
-                            lastBr = videoBitrate
-                elif videoQuality == 1:#medium
-                    if int(videoBitrate) <= 1500000:
-                        if not facet or facet[0] != 'hbbtv':
-                            url = videoUrl
-                            lastBr = videoBitrate
-                elif videoQuality == 2:#high 25p
-                    if not facet or facet[0] != 'hbbtv':
-                        if '1456k_p13v11.mp4' in videoUrl:
-                            url = videoUrl.replace('1456k_p13v11.mp4','2256k_p14v11.mp4')
-                            lastBr = 2200000
-                        else:
-                            url = videoUrl
-                            lastBr = videoBitrate
-                elif videoQuality == 3:#high 50i
-                    if not facet or facet[0] != 'hbbtv':
-                        if '1456k_p13v11.mp4' in videoUrl:
-                            url = videoUrl.replace('1456k_p13v11.mp4','2328k_p35v11.mp4')
-                            lastBr = 2200000
-                        else:
-                            url = videoUrl
-                            lastBr = videoBitrate
+                            baseVideoUrl = videoUrl.split('/zdf/')[0]#die basis ist nicht immer gleich
+
+                if possibleUrl:
+                    if possibleBr > lastBr or basetype == 'h264_aac_mp4_http_na_na' and possibleBr == lastBr:
+                        url = possibleUrl
+                        lastBr = possibleBr
+
+    if url.endswith('.meta'):
+        meta = getUrl(url)
+        url = re.compile('<default-stream-url>(.+?)</default-stream-url>', re.DOTALL).findall(meta)[0]
+        if forceHttp and 'mp4:' in url:
+            url = baseVideoUrl+'/'+url.split('mp4:')[-1]
+
     listitem = xbmcgui.ListItem(path=url)
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
     if showSubtitles and matchUT:
         setSubtitle(matchUT[0])
+
+def _chooseVideo(videoUrl,videoBitrate,lastBr,facet):
+	url = False
+	if lastBr == 0:
+		url = videoUrl
+		lastBr = videoBitrate
+	elif videoQuality == 0:#low
+		if videoBitrate <= 1300000:
+			if not facet or facet[0] != 'hbbtv':
+				url = videoUrl
+				lastBr = videoBitrate
+	elif videoQuality == 1:#medium
+		if int(videoBitrate) <= 1500000:
+			if not facet or facet[0] != 'hbbtv':
+				url = videoUrl
+				lastBr = videoBitrate
+	elif videoQuality == 2:#high 25p
+		if not facet or facet[0] != 'hbbtv':
+			if '1456k_p13v11.mp4' in videoUrl:
+				url = videoUrl.replace('1456k_p13v11.mp4','2256k_p14v11.mp4')
+				lastBr = 2200000
+			else:
+				url = videoUrl
+				lastBr = videoBitrate
+	elif videoQuality == 3:#high 50i
+		if not facet or facet[0] != 'hbbtv':
+			if '1456k_p13v11.mp4' in videoUrl:
+				url = videoUrl.replace('1456k_p13v11.mp4','2328k_p35v11.mp4')
+				lastBr = 2200000
+			else:
+				url = videoUrl
+				lastBr = videoBitrate
+	return url,lastBr
 """
 def playVideo(id):
     content = getUrl(baseUrl+"/ZDFmediathek/xmlservice/web/beitragsDetails?id="+id)
@@ -332,10 +375,11 @@ def setSubtitle(url):
     except:
         content = ""
     if content:
-        matchLine = re.compile('<p begin="(.+?)" end="(.+?)".+?>(.+?)</p>', re.DOTALL).findall(content)
+        matchLine = re.compile('<p begin="(.+?)" end="(.+?)"(.+?)>(.+?)</p>', re.DOTALL).findall(content)
         fh = open(subFile, 'a')
         count = 1
-        for begin, end, line in matchLine:
+        for begin, end, info, line in matchLine:
+            color = False
             begin = float(begin)
             beginS = str(round(begin%60, 1)).replace(".",",")
             if len(beginS.split(",")[0])==1:
@@ -361,6 +405,9 @@ def setSubtitle(url):
             match = re.compile('<span(.+?)>', re.DOTALL).findall(line)
             for span in match:
                 line = line.replace("<span"+span+">","")
+            if 'tts:color' in info:
+                color = re.compile('tts:color="(.+?)"').findall(info)[0]
+                line = '<font color="'+color+'">'+line+'</font>'
             line = line.replace("<br />","\n").replace("</span>","").strip()
             fh.write(str(count)+"\n"+begin+" --> "+end+"\n"+cleanTitle(line)+"\n\n")
             count+=1
@@ -445,6 +492,19 @@ def getUrl(url):
     response.close()
     return link
 
+def cleanDuration(duration):
+    try:
+        if ':' in duration:
+            s = duration.split(':')[0]
+            if int(s[1]) >= 30:
+                duration = str(int(s[0])+1)
+            else:
+                duration = s[0]
+        else:
+            duration = duration.replace(' min','')
+    except:
+        pass
+    return duration
 
 def parameters_string_to_dict(parameters):
     paramDict = {}
@@ -461,6 +521,7 @@ def addLink(name, url, mode, iconimage, duration=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
+    duration = cleanDuration(duration)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Duration": duration})
     liz.setProperty('IsPlayable', 'true')
     if useThumbAsFanart and iconimage:
@@ -476,6 +537,7 @@ def addShowLink(name, url, mode, iconimage, duration=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
+    duration = cleanDuration(duration)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Duration": duration})
     liz.setProperty('IsPlayable', 'true')
     if useThumbAsFanart and iconimage:
@@ -492,6 +554,7 @@ def addShowFavLink(name, url, mode, iconimage, duration=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
+    duration = cleanDuration(duration)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Duration": duration})
     liz.setProperty('IsPlayable', 'true')
     if useThumbAsFanart and iconimage:

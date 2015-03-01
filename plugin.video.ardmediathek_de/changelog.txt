@@ -14,3 +14,6 @@
 - Added a quality selection
 - Now prefers http streams instead of rtmp
 - Rewrote the playback selection - it should be stable now
+3.0.6
+- Fixed "next page"
+- Added support for a new kind of subtitles
