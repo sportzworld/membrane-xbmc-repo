@@ -23,15 +23,20 @@
   <string id="30028">Zu Addon Favs hinzufügen</string>
   <string id="30029">Aus Addon Favs entfernen</string>
   <string id="30030">Alternative Stream-Url abspielen</string>
+  
+  <string id="30100">Allgemein</string>
   <string id="30101">View erzwingen</string>
   <string id="30103">Thumb als Fanart nutzen</string>
   <string id="30104">Untertitel aktivieren (falls verfügbar)</string>
   <string id="30105">Datum im Titel anzeigen</string>
   <string id="30106">ViewID (Sendungen)</string>
-  <string id="30107">Videoqualität</string>
-  <string id="30108">Niedrig</string>
-  <string id="30109">Mittel</string>
-  <string id="30110">Hoch</string>
-  <string id="30111">HD</string>
-  <string id="30112">MDR HD aktivieren (experimentell)</string>
+  <string id="30107">Farbige Untertitel</string>
+  
+  <string id="30150">Video</string>
+  <string id="30151">Videoqualität</string>
+  <string id="30152">Niedrig</string>
+  <string id="30153">Mittel</string>
+  <string id="30154">Hoch</string>
+  <string id="30155">HD</string>
+  <string id="30156">MDR HD aktivieren (experimentell)</string>
 </strings>

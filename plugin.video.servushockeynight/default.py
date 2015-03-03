@@ -176,12 +176,14 @@ def TEAMS(url):#2
 			addDir(team,base_laola+url,4,logo)
 	
 def LIST_LAOLA_EXTRA(url):#3
-	LIST_LAOLA(url,True)
+	LIST_LAOLA(url,False)
+	#LIST_LAOLA(url,True)
 	
 def LIST_LAOLA(url,extrainfo=False):#4
 	response=getUrl(url)
 	match_table=re.compile('<table cellpadding="0" cellspacing="0">(.+?)</table>', re.DOTALL).findall(response)
-	match=re.compile('<a href="(.+?)">(.+?)</a>.+?<span class="date">(.+?)</span>', re.DOTALL).findall(match_table[0])
+	print match_table[0]
+	match=re.compile('<a href="(.+?)">(.+?)</a>.+?<span class="date">, (.+?)</span>', re.DOTALL).findall(match_table[0])
 	i = 0
 	for url,name,date in match:
 		if i < 100:
@@ -268,7 +270,7 @@ def PLAY(url,name):#10
 	response=getUrl('http://www.laola1.tv/server/hd_video.php?play='+streamid+'&partner='+partnerid+'&portal='+portalid+'&v5ident='+v5ident+'&lang='+sprache)
 	match_url=re.compile('<url>(.+?)<', re.DOTALL).findall(response)
 
-	response=getUrl(match_url[0].replace('&amp;','&').replace('l-_a-','l-L1TV_a-l1tv')+'&timestamp='+timestamp+'&auth='+auth)
+	response=getUrl('http:'+match_url[0].replace('&amp;','&').replace('l-_a-','l-L1TV_a-l1tv')+'&timestamp='+timestamp+'&auth='+auth)
 
 	dialog.update(50, __language__(30613))
 	"""

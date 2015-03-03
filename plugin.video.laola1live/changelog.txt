@@ -1,3 +1,5 @@
+2.3.1
+- Fixed playback
 2.3.0
 - Fixed playback
 - Misc improvements

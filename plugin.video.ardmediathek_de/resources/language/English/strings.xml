@@ -23,16 +23,21 @@
   <string id="30028">Add to addon favs</string>
   <string id="30029">Remove from addon favs</string>
   <string id="30030">Play alternative Stream-URL</string>
+  
+  <string id="30100">General</string>
   <string id="30101">Force View</string>
   <string id="30102">ViewID (Videos)</string>
   <string id="30103">Use thumb as fanart</string>
   <string id="30104">Activate subtitles (if available)</string>
   <string id="30105">Show date in title</string>
   <string id="30106">ViewID (Shows)</string>
-  <string id="30107">Video quality</string>
-  <string id="30108">Low</string>
-  <string id="30109">Medium</string>
-  <string id="30110">High</string>
-  <string id="30111">HD</string>
-  <string id="30112">MDR HD (beta)</string>
+  <string id="30107">Colored subtitles</string>
+  
+  <string id="30150">Video</string>
+  <string id="30151">Video quality</string>
+  <string id="30152">Low</string>
+  <string id="30153">Medium</string>
+  <string id="30154">High</string>
+  <string id="30155">HD</string>
+  <string id="30156">MDR HD (beta)</string>
 </strings>

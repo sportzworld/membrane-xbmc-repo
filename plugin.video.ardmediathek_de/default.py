@@ -32,7 +32,6 @@ defaultBackground = "http://www.ard.de/pool/img/ard/background/base_xl.jpg"
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 addon_work_folder = xbmc.translatePath("special://profile/addon_data/"+addonID)
 channelFavsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/favs.new")
-subFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/sub.srt")
 mdrHd = addon.getSetting("mdrHd") == "true"
 videoQuality = int(addon.getSetting("videoQuality"))
 
@@ -293,48 +292,8 @@ def playVideo(videoID):
         listitem = xbmcgui.ListItem(path=url)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
         if showSubtitles and subtitleUrl:
-            if subtitleUrl.startswith('/subtitle'):
-                subtitle.setNewSubtitle(baseUrl+subtitleUrl)
-            else:
-                setSubtitle(baseUrl+subtitleUrl)
-"""
-def playVideo(videoID):
-    content = getUrl(baseUrl+"/tv/?documentId="+videoID)
-    match = re.compile('<div class="box fsk.*?class="teasertext">(.+?)</p>', re.DOTALL).findall(content)
-    if match:
-        xbmc.executebuiltin('XBMC.Notification(Info:,'+match[0].strip()+',15000)')
-    else:
-        content = getUrl(baseUrl+"/play/media/"+videoID+"?devicetype=pc&features=flash")
-        print content
-        match1 = re.compile('"_stream":\\[(.+?)\\]', re.DOTALL).findall(content)
-        match2 = re.compile('"_quality":(.*?),"_server":"(.*?)","_cdn":".*?","_stream":"(.+?)"', re.DOTALL).findall(content)
-        matchUT = re.compile('"_subtitleUrl":"(.+?)"', re.DOTALL).findall(content)
-        matchLive = re.compile('"_isLive":(.+?),', re.DOTALL).findall(content)
-        url = ""
-        #if match1:
-        #    url = match1[0].split(",")[0].replace('"','')
-        if match2:
-            for quality, server, stream in match2:
-                print quality+' - '+server+' - '+stream
-                if server.startswith("rtmp"):
-                    if matchLive[0]=="true":
-                        url = server+" playpath="+stream+" live=true"
-                    elif server:
-                        url = server+stream
-                        if mdrHd and 'http://ondemand.mdr.de' in content:
-                            hd = stream.split('/')[-1]
-                elif matchLive[0]=="true" or not server:
-                    url = stream
-                    if mdrHd and 'http://ondemand.mdr.de' in content:
-                        try:
-                            url = url.replace(url.split('/')[-1],hd)
-                        except:
-                            pass
-        listitem = xbmcgui.ListItem(path=url)
-        xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
-        if showSubtitles and matchUT:
-            setSubtitle(baseUrl+matchUT[0])
-"""
+            subtitle.setSubtitle(subtitleUrl)
+
 
 def queueVideo(url, name):
     playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
@@ -358,30 +317,6 @@ def playLiveARD():
         listitem = xbmcgui.ListItem(path=url)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
-
-def setSubtitle(url):
-    if os.path.exists(subFile):
-        os.remove(subFile)
-    try:
-        content = getUrl(url)
-    except:
-        content = ""
-    if content:
-        matchLine = re.compile('<p id=".+?" begin="1(.+?)" end="1(.+?)".+?>(.+?)</p>', re.DOTALL).findall(content)
-        fh = open(subFile, 'a')
-        count = 1
-        for begin, end, line in matchLine:
-            begin = "0"+begin.replace(".",",")[:-1]
-            end = "0"+end.replace(".",",")[:-1]
-            match = re.compile('<span(.+?)>', re.DOTALL).findall(line)
-            for span in match:
-                line = line.replace("<span"+span+">","")
-            line = line.replace("<br />","\n").replace("</span>","").strip()
-            fh.write(str(count)+"\n"+begin+" --> "+end+"\n"+cleanTitle(line)+"\n\n")
-            count+=1
-        fh.close()
-        xbmc.sleep(1000)
-        xbmc.Player().setSubtitles(subFile)
 
 
 def search():

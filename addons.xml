@@ -34,7 +34,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="3.0.6" provider-name="AddonScriptorDE">
+<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="3.0.7" provider-name="AddonScriptorDE, membrane">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -242,7 +242,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.servushockeynight" name="Servus Hockey Night" version="0.0.2" provider-name="membrane">
+<addon id="plugin.video.servushockeynight" name="Servus Hockey Night" version="0.0.3" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.common.plugin.cache" version="0.9.1"/>
@@ -404,7 +404,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="2.3.0" provider-name="membrane">
+<addon id="plugin.video.laola1live" name="Laola1 LIVE" version="2.3.1" provider-name="membrane">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.common.plugin.cache" version="0.9.1"/>
