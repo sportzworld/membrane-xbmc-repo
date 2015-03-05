@@ -270,7 +270,7 @@ def PLAY(url,name):#10
 	response=getUrl('http://www.laola1.tv/server/hd_video.php?play='+streamid+'&partner='+partnerid+'&portal='+portalid+'&v5ident='+v5ident+'&lang='+sprache)
 	match_url=re.compile('<url>(.+?)<', re.DOTALL).findall(response)
 
-	response=getUrl('http:'+match_url[0].replace('&amp;','&').replace('l-_a-','l-L1TV_a-l1tv')+'&timestamp='+timestamp+'&auth='+auth)
+	response=getUrl(match_url[0].replace('&amp;','&').replace('l-_a-','l-L1TV_a-l1tv')+'&timestamp='+timestamp+'&auth='+auth)
 
 	dialog.update(50, __language__(30613))
 	"""
