@@ -415,7 +415,7 @@ def PLAY(url,name):#10
 	#http://streamaccess.unas.tv/hdflash2/vod/22/151260.xml?streamid=151260&partnerid=22&label=laola1tv&area=ice_hockey_khl_all_star_game
 	#&ident=123456789012345678901&klub=0&unikey=0&timestamp=20140101000000&auth=1234567890abcdef1234567890abcdef
 	#response=getUrl(match_url[0].replace('&amp;','&')+'&ident=123456789012345678901&klub=0&unikey=0&timestamp='+timestamp+'&auth='+auth)
-	response=getUrl('http:'+match_url[0].replace('&amp;','&').replace('l-_a-','l-L1TV_a-l1tv')+'&timestamp='+timestamp+'&auth='+auth)
+	response=getUrl(match_url[0].replace('&amp;','&').replace('l-_a-','l-L1TV_a-l1tv')+'&timestamp='+timestamp+'&auth='+auth)
 
 	dialog.update(50, __language__(32013))
 	"""
@@ -698,6 +698,7 @@ try:
         url=urllib.unquote_plus(params["url"])
 except:
         pass
+
 try:
         name=urllib.unquote_plus(params["name"])
 except:
