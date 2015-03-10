@@ -19,7 +19,7 @@
   <string id="30017">Netz & Tech</string>
   <string id="30018">Info</string>
   <string id="30019">Spaß & Fiktion</string>
-  <string id="30020">Sender</string>
+  <string id="30020">Sendung verpasst?</string>
   <string id="30028">Zu Addon Favs hinzufügen</string>
   <string id="30029">Aus Addon Favs entfernen</string>
   <string id="30030">Alternative Stream-Url abspielen</string>
@@ -31,6 +31,7 @@
   <string id="30105">Datum im Titel anzeigen</string>
   <string id="30106">ViewID (Sendungen)</string>
   <string id="30107">Farbige Untertitel</string>
+  <string id="30108">Livestreams anzeigen (ohne Support)</string>
   
   <string id="30150">Video</string>
   <string id="30151">Videoqualität</string>
