@@ -7,6 +7,7 @@
     <setting id="forceViewMode" type="bool" label="30101" default="true"/>
     <setting id="viewIDShows" type="number" label="30106" default="500"/>
     <setting id="viewIDVideos" type="number" label="30102" default="51"/>
+    <setting id="listLive" type="bool" label="30108" default="false"/>
   </category>
   <category label="30150">
     <setting id="videoQuality" type="enum" lvalues="30152|30153|30154|30155" label="30151" default="3"/>
