@@ -23,6 +23,8 @@ import time
 #addonID = addon.getAddonInfo('id')
 addonID = 'plugin.video.ardmediathek_de'
 addon = xbmcaddon.Addon(id=addonID)
+if addon.getSetting("firstrun") != 'false':
+	addon.setSetting("firstrun", 'false')
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
 translation = addon.getLocalizedString
@@ -30,45 +32,36 @@ baseUrl = "http://www.ardmediathek.de"
 showSubtitles = addon.getSetting("showSubtitles") == "true"
 forceViewMode = addon.getSetting("forceViewMode") == "true"
 useThumbAsFanart=addon.getSetting("useThumbAsFanart") == "true"
-showDateInTitle=addon.getSetting("showDateInTitle") == "true"
+#showDateInTitle=addon.getSetting("showDateInTitle") == "true"
+showDateInTitle = False
 viewMode = str(addon.getSetting("viewIDVideos"))
 viewModeShows = str(addon.getSetting("viewIDShows"))
 defaultThumb = baseUrl+"/ard/static/pics/default/16_9/default_webM_16_9.jpg"
 defaultBackground = "http://www.ard.de/pool/img/ard/background/base_xl.jpg"
-icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
-addon_work_folder = xbmc.translatePath("special://profile/addon_data/"+addonID)
-channelFavsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/favs.new")
-mdrHd = addon.getSetting("mdrHd") == "true"
+icon = xbmc.translatePath(xbmcaddon.Addon().getAddonInfo('path')+'/icon.png').decode('utf-8')
+#icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
+#channelFavsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/favs.new")
+#mdrHd = addon.getSetting("mdrHd") == "true"
+mdrHd = int(addon.getSetting("videoQuality")) == 3
 videoQuality = int(addon.getSetting("videoQuality"))
 listLive = addon.getSetting("listLive") == "true"
-if not os.path.isdir(addon_work_folder):
-	os.mkdir(addon_work_folder)
 
 
 def index():
 	#addDir(translation(30011), "", 'listShowsFavs', "")
 	addDir(translation(30001), baseUrl+"/tv/Neueste-Videos/mehr?documentId=21282466"+'&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
 	addDir(translation(30002), baseUrl+"/tv/Meistabgerufene-Videos/mehr?documentId=21282514"+'&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
-	addDir(translation(30004), baseUrl+"/tv/Film-Highlights/mehr?documentId=21301808"+'&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
-	addDir(translation(30003), baseUrl+"/tv/Reportage-Doku/mehr?documentId=21301806"+'&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
 	addDir(translation(30005), "", 'listShowsAZMain', "")
+	addDir(translation(30020), "", 'listChannels', "")
 	addDir(translation(30006), "mehr", 'listCats', "")
 	addDir(translation(30007), baseUrl+"/tv/Dossiers/mehr?documentId=21301810&rss=true", 'listDirRss', "")
-	addDir(translation(30014), "", 'listEinsLike', "")
-	addDir(translation(30020), "", 'listChannels', "")
+	#addDir(translation(30014), "", 'listEinsLike', "")
 	addDir(translation(30008), "", 'search', "")
 	if listLive:
 		addDir(translation(30013), "", 'listLiveChannels', "")
 	xbmcplugin.endOfDirectory(pluginhandle)
 
 def listVideos(url,page=1):
-	#l = listcache()
-	#if page == 1:
-	##	l.clear()
-	#else:
-	#	for name,url,mode,thumb in l.recall():
-	#		addLink(name,url,mode,thumb)
-	
 	content = getUrl(url)
 	spl = content.split('<div class="teaser" data-ctrl')
 	for i in range(1, len(spl), 1):
@@ -110,13 +103,7 @@ def listVideos(url,page=1):
 		thumb = ""
 		if match:
 			thumb = baseUrl+"/image/"+match[0]+"/16x9/448"
-		#l.add(title, videoID, 'playVideo', thumb)
 		addLink(title, videoID, 'playVideo', thumb, duration, desc)
-	#l.save()
-	#match = re.compile('class="entry" data-ctrl-.*Loader-source="{&#039;pixValue&#039;.+?href="(.+?)".+?>(.+?)<', re.DOTALL).findall(content)
-	#for url, type in match:
-	#	if "&gt;" in type:
-	#		addDir(translation(30009), baseUrl+url.replace("&amp;","&"), "listVideos", "")
 	xbmcplugin.endOfDirectory(pluginhandle)
 	if forceViewMode:
 		xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
@@ -134,12 +121,12 @@ def listVideosXml(videoId):
 			else:
 				thumb = ''
 			id = re.compile(' id="(.+?)"', re.DOTALL).findall(clip)[0]
-			addLink(name, id, 'playVideo', thumb, length, '')
+			addLink(name, id, 'playVideo', thumb, runtimeToInt(length), '')
 	xbmcplugin.endOfDirectory(pluginhandle)
 			
 def listDirRss(url):
 	content = getUrl(url)
-	for title,pubDate,thumb,plot,link,documentId in rssParser(content):
+	for title,pubDate,thumb,plot,link,documentId,category,runtime in rssParser(content):
 		if not checkLive(pubDate):
 			addDir(title, documentId, 'listVideosXml', thumb)#TODO plot
 	xbmcplugin.endOfDirectory(pluginhandle)
@@ -147,12 +134,13 @@ def listDirRss(url):
 def listVideosRss(url,showName,hideShowName,nextPage,einsLike):
 	content = getUrl(url)
 	c = rssParser(content)
-	for title,pubDate,thumb,plot,link,documentId in c:
+	for title,pubDate,thumb,plot,link,documentId,category,runtime in c:
 		if hideShowName:
 			title = title.replace(showName+' - ','')
-		if not checkLive(pubDate) and not '/Audio-Podcast?' in link:
-			addLink(cleanTitle(title[0].upper()+title[1:]),link,'playVideoUrl',thumb,desc=plot)
-	#nextPage = True
+		if not checkLive(pubDate) and not '/Audio-Podcast?' in link and not '/Video-Podcast?' in link:
+			thumb = thumb.replace('/384','/448')
+			addLink(cleanTitle(title[0].upper()+title[1:]),link,'playVideoUrl',thumb,runtime,desc=plot,genre=category,)
+			
 	if len(c) > 45 and nextPage:#ARD Webseite ist buggy, darum nicht 50 oder 54
 		if einsLike:#einslike next page "hack"
 			nextPageUrlBit = '&mcontent=page.'
@@ -180,18 +168,33 @@ def rssParser(data):
 		title = re.compile('<title>(.+?)</title>', re.DOTALL).findall(item)[0]
 		pubDate = re.compile('<pubDate>(.+?)</pubDate>', re.DOTALL).findall(item)[0]
 		description = re.compile('<description>(.+?)</description>', re.DOTALL).findall(item)[0]
+		if '<category>' in item:
+			category = cleanTitle(re.compile('<category>(.+?)</category>', re.DOTALL).findall(item)[-1])
+		else:
+			category = ''
 		thumb = re.compile('img src="(.+?)"', re.DOTALL).findall(description)[0]
 		infos = re.compile('&lt;p&gt;(.*?)&lt;/p&gt;', re.DOTALL).findall(description)
-		if infos[1] == '':
-			plot = infos[2]
+		
+		if infos[1] == '' or infos[1].endswith('...') and len(infos[1]) < len(title):
+			plot = title +'\n\n'+ infos[2]
 		else:
 			plot = infos[1].replace('\n','')+'\n\n'+infos[2]
 		link = re.compile('<link>(.+?)</link>', re.DOTALL).findall(item)[0]
 		documentId = link.split('documentId=')[1]
 		if '&' in documentId:
 			documentId = documentId.split('&')[0]
-		list.append([title,pubDate,thumb,plot,link,documentId])
+		split = infos[2].split('|')
+		runtime = 0
+		for part in split:
+			if 'Min' in part or 'min' in part:
+				runtime = runtimeToInt(part)
+		list.append([title,pubDate,thumb,plot,link,documentId,category,runtime])
 	return list
+
+def runtimeToInt(runtime):
+	t = runtime.replace('Min','').replace('min','').replace('.','').replace(' ','')
+	HHMM = t.split(':')
+	return int(HHMM[0])*60 + int(HHMM[1])
 
 def checkLive(date):
 	date = date.replace(' '+date.split(' ')[-1],'')#python 2.7 doesnt support %z
@@ -254,9 +257,8 @@ def listShowsAZ(letter):
 		match = re.compile('class="headline">(.+?)<', re.DOTALL).findall(entry)
 		title = match[0]
 		match = re.compile('/image/(.+?)/16x9/', re.DOTALL).findall(entry)
-		thumb = baseUrl+"/image/"+match[0]+"/16x9/448"
+		thumb = baseUrl+"/image/"+match[0]+"/16x9/0"
 		addShowDir(cleanTitle(title), baseUrl+url+'&m23644322=quelle.tv&rss=true', 'listVideosRss', thumb, cleanTitle(title))
-		#addShowDir(cleanTitle(title), baseUrl+url, 'listVideos', thumb)
 	xbmcplugin.endOfDirectory(pluginhandle)
 	if forceViewMode:
 		xbmc.executebuiltin('Container.SetViewMode('+viewModeShows+')')
@@ -324,19 +326,21 @@ def listChannel(channel):
 
 
 def listCats(type):
-	content = getUrl(baseUrl+"/tv")
-	spl = content.split('<div class="teaser" data-ctrl')
-	for i in range(1, len(spl), 1):
-		entry = spl[i]
-		match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
-		url = match[0]
-		if "/"+type+"?" in url:
-			match = re.compile('class="headline">(.+?)<', re.DOTALL).findall(entry)
-			if match:
-				title = match[0]
-				match = re.compile('/image/(.+?)/16x9/', re.DOTALL).findall(entry)
-				thumb = baseUrl+"/image/"+match[0]+"/16x9/448"
-				addDir(cleanTitle(title), baseUrl+url+'&m23644322=quelle.tv&rss=true', 'listVideosRss', thumb)
+	addDir(translation(30004), baseUrl+"/tv/Film-Highlights/mehr?documentId=21301808"         + '&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
+	addDir(translation(30018), baseUrl+"/einslike/Info/mehr?documentId=21301900"              + '&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
+	addDir(translation(30031), baseUrl+"/tv/Kinder-Familie/mehr?documentId=21282542"          + '&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
+	addDir(translation(30032), baseUrl+"/tv/Kultur/mehr?documentId=21282546"                  + '&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
+	addDir(translation(30016), baseUrl+"/einslike/Leben/mehr?documentId=21301896"             + '&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
+	addDir(translation(30015), baseUrl+"/einslike/Musik/mehr?documentId=21301894"             + '&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
+	addDir(translation(30017), baseUrl+"/einslike/Netz-Tech/mehr?documentId=21301898"         + '&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
+	addDir(translation(30003), baseUrl+"/tv/Reportage-Doku/mehr?documentId=21301806"          + '&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
+	addDir(translation(30033), baseUrl+"/tv/Satire-Unterhaltung/mehr?documentId=21282544"     + '&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
+	addDir(translation(30035), baseUrl+"/tv/Serien-Soaps/mehr?documentId=21282548"            + '&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
+	addDir(translation(30019), baseUrl+"/einslike/Spa%C3%9F-Fiktion/mehr?documentId=21301902" + '&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
+	addDir(translation(30034), baseUrl+"/tv/Wissen/mehr?documentId=21282530"                  + '&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
+	
+	#addDir(translation(30001), baseUrl+"/einslike/Neueste-Videos/mehr?documentId=21282466"+'&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
+	#addDir(translation(30002), baseUrl+"/einslike/Meistabgerufene-Videos/mehr?documentId=21282464"+'&m23644322=quelle.tv&rss=true', 'listVideosRss', "", nextPage=True, einsLike=True)
 	xbmcplugin.endOfDirectory(pluginhandle)
 	if forceViewMode:
 		xbmc.executebuiltin('Container.SetViewMode('+viewModeShows+')')
@@ -344,6 +348,7 @@ def listCats(type):
 
 def playVideo(videoID):
 	playVideoUrl(baseUrl+"/tv/?documentId="+videoID,videoID)
+
 def playVideoUrl(url,videoID=False):
 	if not videoID:
 		videoID = url.split('documentId=')[1]
@@ -517,12 +522,14 @@ def parameters_string_to_dict(parameters):
 	return paramDict
 
 
-def addLink(name, url, mode, iconimage, duration="", desc=""):
+def addLink(name, url, mode, iconimage, duration="", desc="", genre=''):
 	u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
 	ok = True
 	liz = xbmcgui.ListItem(name, iconImage=defaultThumb, thumbnailImage=iconimage)
-	liz.setInfo(type="Video", infoLabels={"Title": name, "Duration": duration, "Plot": desc})
+	#liz.setInfo(type="Video", infoLabels={"Title": name, "Duration": duration, "Plot": desc, "Genre": genre})
+	liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc, "Genre": genre})
 	liz.setProperty('IsPlayable', 'true')
+	liz.addStreamInfo('video', { 'duration' : duration })
 	if useThumbAsFanart:
 		if not iconimage or iconimage==icon or iconimage==defaultThumb:
 			iconimage = defaultBackground
@@ -530,6 +537,7 @@ def addLink(name, url, mode, iconimage, duration="", desc=""):
 	else:
 		liz.setProperty("fanart_image", defaultBackground)
 	#liz.addContextMenuItems([(translation(30012), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',)])
+	xbmcplugin.setContent(int(sys.argv[1]), 'tvshows')
 	ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
 	return ok
 
@@ -596,6 +604,7 @@ showName = urllib.unquote_plus(params.get('showName', ''))
 hideShowName = urllib.unquote_plus(params.get('hideshowname', '')) == 'True'
 nextPage = urllib.unquote_plus(params.get('nextpage', '')) == 'True'
 einsLike = urllib.unquote_plus(params.get('einslike', '')) == 'True'
+
 if mode == 'listVideos':
 	listVideos(url)
 if mode == 'listVideosXml':

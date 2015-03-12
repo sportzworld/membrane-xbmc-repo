@@ -6,23 +6,28 @@ import re
 import resources.lib.utils as utils
 import xbmcaddon
 import HTMLParser
+import xbmcvfs
 addonID = 'plugin.video.ardmediathek_de'
 addon = xbmcaddon.Addon(id=addonID)
-subFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/sub.srt")
+subFile = xbmc.translatePath(xbmcaddon.Addon().getAddonInfo('profile')+'/sub.srt').decode('utf-8')
+
 baseUrl = "http://www.ardmediathek.de"
 coloredSubtitles = addon.getSetting("coloredSubtitles") == "true"
 	
 def setSubtitle(uri,offset=0):
-	#if offset != 0:
-	#	print offset
+	if offset != 0:
+		print offset
+	print baseUrl+uri
 	if uri.startswith('/subtitle'):
 		_newSubtitle(baseUrl+uri)
 	else:
 		_oldSubtitle(baseUrl+uri)
 
 def _newSubtitle(url):
-	if os.path.exists(subFile):
-		os.remove(subFile)
+	#if os.path.exists(subFile):
+	#	os.remove(subFile)
+	if xbmcvfs.exists(subFile):
+		xbmcvfs.delete(subFile)
 	try:
 		content = utils.getUrl(url)
 	except:
@@ -30,37 +35,44 @@ def _newSubtitle(url):
 	if content:
 		dict = _stylesSetup(re.compile('<tt:styling>(.+?)</tt:styling>', re.DOTALL).findall(content)[0])
 		div = re.compile('<tt:div.+?>(.+?)</tt:div>', re.DOTALL).findall(content)[0]
-		fh = open(subFile, 'a')
-		parts = div.split('</tt:p>')
-		count = 1
-		for part in parts:
+		p = re.compile('<tt:p(.+?)</tt:p>', re.DOTALL).findall(div)
+		i = 1
+		buffer = ''
+		for part in p:
 			if '<tt:span' in part:
-				text = ''
-				buffer = ''
-				if count > 1:
-					buffer += '\n'
-				buffer += str(count)+'\n'
-				part = part.replace('\nend=','end=')
-				for line in part.split('\n'):
-					if line.strip().startswith('<tt:p'):
-						line = line.replace('begin="1','begin="0').replace('end="1','end="0')
-						begin = re.compile('begin="(.+?)"').findall(line)[-1]
-						begin = begin.replace(".",",")[:-1]
-						end = re.compile('end="(.+?)"').findall(line)[-1]
-						end = end.replace(".",",")[:-1]
-					elif line.strip().startswith('<tt:span'):
-						span = re.compile('<tt:span(.+?)>').findall(line)[0]
-						t = _cleanTitle(re.compile('>(.+?)<').findall(line)[0], False)
-						if 'style=' in span:
-							style = re.compile('style="(.+?)"').findall(span)[0]
-							if dict[style]:
-								t = '<font color="'+dict[style]+'">'+t+'</font>'
-						text += t + '\n'
-				buffer += begin+" --> "+end+"\n" + text
-				fh.write(buffer)
-				count+=1
+				part = part.replace('begin="1','begin="0').replace('end="1','end="0').replace('\n','').replace('<tt:br/>','\n')
+				begin = re.compile('begin="(.+?)"').findall(part)[0]
+				begin = begin.replace(".",",")[:-1]
+				end = re.compile('end="(.+?)"').findall(part)[0]
+				end = end.replace(".",",")[:-1]
+				s = part.split('>')[0]
+				part = part.replace(s+'>','')
+				if 'style=' in s:
+					style = re.compile('style="(.+?)"').findall(s)[0]
+					if dict[style]:
+						part = '<font color="'+dict[style]+'">'+part+'</font>'
+				match = re.compile('<(.+?)>').findall(part)
+				for entry in match:
+					if entry.startswith('tt:span'):
+						if 'style' in entry:
+							style = re.compile('style="(.+?)"').findall(entry)[0]
+							part = part.replace('<'+entry+'>','<font color="'+dict[style]+'">')
+						else:
+							part = part.replace('<'+entry+'>','')
+					elif entry.startswith('tt:/span'):
+						part = part.replace('</tt:span>','</font>')
+					else:
+						part = part.replace('<'+entry+'>','')
+				
 
-		fh.close()
+				buffer += str(i) + '\n'
+				buffer += begin+" --> "+end+"\n"
+				buffer += part + '\n\n'
+				i+=1
+		
+		f = xbmcvfs.File(subFile, 'w')
+		f.write(buffer)
+		f.close()
 		xbmc.sleep(1000)
 		xbmc.Player().setSubtitles(subFile)
 
@@ -74,41 +86,35 @@ def _oldSubtitle(url):
 	if content:
 		dict = _stylesSetup(re.compile('<styling>(.+?)</styling>', re.DOTALL).findall(content)[0])
 		matchLine = re.compile('<p id=".+?" begin="1(.+?)" end="1(.+?)".+?style="(.+?)">(.+?)</p>', re.DOTALL).findall(content)
-		fh = open(subFile, 'a')
+		#fh = open(subFile, 'a')
+		f = xbmcvfs.File(subFile, 'w')
 		count = 1
 		for begin, end, style, line in matchLine:
 			begin = "0"+begin.replace(".",",")[:-1]
 			end = "0"+end.replace(".",",")[:-1]
 			text = ''
+			line = line.replace('\n','').strip()
 			line = line.replace("<br />","\n")
+			
+			if dict[style]:
+				line = '<font color="'+dict[style]+'">'+line+'</font>'
+
 			s = line.split('<')
 			for entry in s:
 				if entry.startswith('span'):
 					if 'tts:color' in entry.split('>')[0]:
 						color = re.compile('tts:color="(.+?)"', re.DOTALL).findall(entry.split('>')[0])[0]
-						text += '<font color="'+color+'">'+entry.split('>')[1]+'</font>'
-					elif dict[style]:
-						text += '<font color="'+dict[style]+'">'+entry.split('>')[1]+'</font>'
-				elif entry.startswith('/span'):
-					if dict[style]:
-						text += '<font color="'+dict[style]+'">'+entry.split('>')[1]+'</font>'
-					else:
-						text += entry.split('>')[1]
-				#elif len(entry.split('>')) > 1:
-				elif len(entry.split('>')) > 1:
-					if dict[style]:
-						text += '<font color="'+dict[style]+'">'+entry.split('>')[1]+'</font>'
-					else:
-						text += entry.split('>')[1]
-				else:
-					if dict[style]:
-						text += '<font color="'+dict[style]+'">'+entry+'</font>'
-					else:
-						text += entry
+						line = line.replace('<'+entry.split('>')[0]+'>','<font color="'+color+'">')
+			line = line.replace('</span>','</font>')
 
-			fh.write(str(count)+"\n"+begin+" --> "+end+"\n"+_cleanTitle(text)+"\n\n")
+			while '  ' in line:
+				line = line.replace('  ',' ')
+			line = line.replace(' \n','\n').replace(' </font>\n','</font>\n')
+			#fh.write(str(count)+"\n"+begin+" --> "+end+"\n"+_cleanTitle(line)+"\n\n")
+			f.write(str(count)+"\n"+begin+" --> "+end+"\n"+_cleanTitle(line)+"\n\n")
+			
 			count+=1
-		fh.close()
+		f.close()
 		xbmc.sleep(1000)
 		xbmc.Player().setSubtitles(subFile)
 """	

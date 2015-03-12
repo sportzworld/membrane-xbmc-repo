@@ -30,3 +30,8 @@
 - Added "next page" button
 - Improved subtitle support
 - Podcasts will be ignored
+4.0.0
+- Redone menu structure
+- Show thumbnails will be cached at the highest available quality
+- Rewrote subtitle support
+- Misc fixes
