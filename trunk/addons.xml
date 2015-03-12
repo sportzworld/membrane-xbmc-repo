@@ -34,7 +34,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="3.1.0" provider-name="AddonScriptorDE, membrane">
+<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="4.0.0" provider-name="AddonScriptorDE, membrane">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <!--<import addon="script.module.f4mproxy" version="1.0.16"/>-->
@@ -51,9 +51,8 @@
         <description lang="en">Das Erste, Einsfestival, EinsPlus, Phoenix, WDR, SWR, HR, MDR, NDR, RBB, BR, ... Media Library</description>
         <disclaimer lang="en">Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
-        <source>https://github.com/AddonScriptorDE/plugin.video.ardmediathek_de</source>
-        <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
-        <email>AddonScriptorDE at yahoo dot de</email>
+        <source>http://code.google.com/p/membrane-xbmc-repo/source/browse/#svn%2Ftrunk%2Fplugin.video.ardmediathek_de</source>
+        <forum>http://forum.kodi.tv/showthread.php?tid=220852</forum>
         <website>http://www.ardmediathek.de</website>
     </extension>
 </addon>
