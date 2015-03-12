@@ -181,11 +181,15 @@ def LIST_LAOLA_EXTRA(url):#3
 	
 def LIST_LAOLA(url,extrainfo=False):#4
 	response=getUrl(url)
-	match_table=re.compile('<table cellpadding="0" cellspacing="0">(.+?)</table>', re.DOTALL).findall(response)
-	print match_table[0]
-	match=re.compile('<a href="(.+?)">(.+?)</a>.+?<span class="date">, (.+?)</span>', re.DOTALL).findall(match_table[0])
+	table=re.compile('<table cellpadding="0" cellspacing="0">(.+?)</table>', re.DOTALL).findall(response)[0]
+	#print table
+	rows = re.compile('<tr>(.+?)</tr>', re.DOTALL).findall(table)
 	i = 0
-	for url,name,date in match:
+	for row in rows:
+		
+		url=re.compile('<a href="(.+?)">', re.DOTALL).findall(row)[0]
+		name=re.compile('<a.+?>(.+?)</a>', re.DOTALL).findall(row)[0]
+		date=re.compile('<span class="date">(.+?)</span>', re.DOTALL).findall(row)[0]
 		if i < 100:
 			tmp = url.split('=')
 			id = tmp[-1]
