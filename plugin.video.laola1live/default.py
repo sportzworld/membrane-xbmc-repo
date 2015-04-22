@@ -23,21 +23,13 @@ __language__ = __settings__.getLocalizedString
 language_forced = True
 location_forced = True
 
-default_fanart = xbmc.validatePath(xbmc.translatePath('special://home')+'/addons/plugin.video.laola1live/fanart.jpg')
+default_fanart = 'http://www.laola1.tv/img/playercountdown/player_hg_new.jpg'
+default_thumb = xbmc.validatePath(xbmc.translatePath('special://home')+'/addons/plugin.video.laola1live/icon.png')
 play_m3u8 = xbmc.validatePath(xbmc.translatePath('special://home')+'/userdata/addon_data/plugin.video.laola1live/play.m3u8')
 
-background = 'http://www.laola1.tv/img/playercountdown/player_hg_new.jpg'
 
 #print xbmc.validatePath(xbmc.translatePath('special://home')+'/plugin.video.laola1live/fanart.jpg')
 
-lastrun = '2_2_2' ###TODO!!!
-def checklastrun():
-	if lastrun != '2_2_2':
-		buffer = getUrl(background)
-		file = default_fanart
-		f = xbmcvfs.File(file, 'w')
-		result = f.write(buffer)
-		f.close()
 
 if language_forced == False:
 	try:
@@ -95,18 +87,18 @@ auto_bw = False
 
 
 def MAIN():
-	checklastrun()
 	response=getUrl(baseurl+'/home/0.html')
 	#match_notifications=re.compile('<span class="notifications">(.+?)<').findall(response)
 	#addDir(__language__(32001)+' ('+match_notifications[0]+')',baseurl+'/calendar/0.html',5,'')
-	addDir(__language__(32001)+' ('+str(response.count('<li class="live">'))+')',baseurl+'/calendar/0.html',5,'')
+	addDir(__language__(32001)+' ('+str(response.count('<li class="live">'))+')',baseurl+'/calendar/0.html',5)
 	#item_latest_videos(response)
 	match_all_cats=re.compile('<li class="heading">Sport Channels</li>(.+?)<li class="heading">More</li>', re.DOTALL).findall(response)
 	match_cats=re.compile('<li class=" has_sub">.+?src="(.+?)".+?href="(.+?)">(.+?)<', re.DOTALL).findall(match_all_cats[0])
 	for thumb,url,name in match_cats:
 		name = name.replace("\n","")
 		name = name.replace("	","")
-		addDir(name,url,1,'')
+		addDir(name,url,1)
+	addDir('Specials',url,4)
 
 def MAIN_NEXT(url,name):#1
 	response=getUrl(url)
@@ -201,6 +193,7 @@ def LIST_LATEST(url):#3
 	vids = recall('stored_list')
 	list_vids(vids,url,'',0,False)
 
+
 def list_vids(videos,data,stuff='',i=0,update_view=False,list_them=True):
 	#log(videos)
 
@@ -283,7 +276,7 @@ def list_vids(videos,data,stuff='',i=0,update_view=False,list_them=True):
 	store(stuff,'stored_list')	
 	if list_them == True:
 		
-		addDir(__language__(32000).encode("utf-8"),data,2,'')
+		addDir(__language__(32000).encode("utf-8"),data,2)
 		if update_view == True:
 			try:
 				wnd = xbmcgui.Window(xbmcgui.getCurrentWindowId())
@@ -297,7 +290,16 @@ def list_vids(videos,data,stuff='',i=0,update_view=False,list_them=True):
 	else:
 		addDir(__language__(32004).encode("utf-8"),data+'#just_list#',2,'')
 		
-
+def SPECIALS(url):
+	base = 'http://www.laola1.tv/'+language+'-'+location
+	addLink('City TV',   base+'/video/citytv-folge-1/216799.html',10,'http://www.laola1.tv/img/cityTV.png',fanart=default_fanart)
+	addLink('Barca TV',  base+'/video/barcatv/214096.html',       10,'http://www.laola1.tv/img/barcaTV.png',fanart=default_fanart)
+	addLink('Real TV',   base+'/video/realmadridtv/214091.html',  10,'http://www.laola1.tv/img/realTV.png',fanart=default_fanart)
+	addDir('Ehf TV',     base+'/ehftv/266.html',                  2, 'http://www.laola1.tv/img/brands/org_2_80x45.png',fanart=default_fanart)
+	addDir('Epic TV',    base+'/epic-tv/1149.html',               2, 'http://www.laola1.tv/img/brands/org_153_80x45.png',fanart=default_fanart)
+	addDir('Fivb Web TV',base+'/fivb-web-tv/269.html',            2, 'http://www.laola1.tv/img/brands/org_32_80x45.png',fanart=default_fanart)
+	addDir('Ettu TV',    base+'/ettu-tv/272.html',                2, 'http://www.laola1.tv/img/brands/org_44_80x45.png',fanart=default_fanart)
+	addDir('CEV',        base+'/cev/275.html',                    2, 'http://www.laola1.tv/img/brands/org_29_80x45.png',fanart=default_fanart)
 def LIST_LIVE(url):
 	response=getUrl(url)
 	match_all_vids=re.compile('<div class="liveprogramm_full"(.+?)<div class="crane_footer has_rightbar inline_footer">', re.DOTALL).findall(response)
@@ -660,7 +662,7 @@ def postUrl(url,data):
 	return link
 
 
-def addLink(name,url,mode,iconimage,plot='',hd=False):###TODO!!
+def addLink(name,url,mode,iconimage,plot='',hd=False,fanart=False):###TODO!!
 	u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
 	ok=True
 	liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
@@ -668,7 +670,10 @@ def addLink(name,url,mode,iconimage,plot='',hd=False):###TODO!!
 	liz.setProperty('IsPlayable', 'true')
 	#liz.addContextMenuItems([('TEST', 'XBMC.RunPlugin(plugin://plugin.video.laola1live/?url='+urllib.quote_plus('http://www.laola1.tv/de-de/spanische-la-liga/5.html')+'&mode=2)',)])
 	if __settings__.getSetting('hq_thumbnail') == '2':
-		liz.setProperty('fanart_image',iconimage)
+		if fanart:
+			liz.setProperty('fanart_image',fanart)
+		else:
+			liz.setProperty('fanart_image',iconimage)
 	else:
 		liz.setProperty('fanart_image',default_fanart)
 	if hd:
@@ -677,14 +682,17 @@ def addLink(name,url,mode,iconimage,plot='',hd=False):###TODO!!
 	return ok
 	
 
-def addDir(name,url,mode,iconimage):
-        u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
-        ok=True
-        liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
-        liz.setInfo( type="Video", infoLabels={ "Title": name } )
-        liz.setProperty('fanart_image',default_fanart)
-        ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
-        return ok
+def addDir(name,url,mode,iconimage=default_thumb,fanart=False):
+	u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
+	ok=True
+	liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+	liz.setInfo( type="Video", infoLabels={ "Title": name } )
+	if fanart:
+		liz.setProperty('fanart_image',fanart)
+	else:
+		liz.setProperty('fanart_image',default_fanart)
+	ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
+	return ok
         
 
 params=get_params()
@@ -727,6 +735,10 @@ elif mode==2:
 elif mode==3:
         print ""+url
         LIST_LATEST(url)
+		
+elif mode==4:
+        print ""+url
+        SPECIALS(url)
 
 elif mode==5:
         print ""+url

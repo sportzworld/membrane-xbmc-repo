@@ -3,11 +3,6 @@ import urllib,urllib2,re,random,xbmcplugin,xbmcgui,xbmcaddon,cookielib,HTMLParse
 from time import gmtime, strftime
 
 urllib2.socket.setdefaulttimeout(30)
-try:
-	import StorageServer
-except:
-	import storageserverdummy as StorageServer
-cache = StorageServer.StorageServer("zdf_new", 24)
 
 html_parser = HTMLParser.HTMLParser()
 
@@ -26,7 +21,8 @@ COOKIEFILE = xbmc.translatePath(__settings__.getAddonInfo('profile')+"cookies.lw
 
 showSubtitles = __settings__.getSetting("showSubtitles") == "true"
 pluginhandle = int(sys.argv[1])
-
+print 'handle'
+print pluginhandle
 baseUrl = "http://www.zdf.de"
 fallbackImage = "http://www.zdf.de/ZDFmediathek/img/fallback/946x532.jpg"
 
@@ -71,15 +67,17 @@ else:
 
 
 def MAIN():
-	addDir('Startseite','Startseite',12)
-	addDir('Nachrichten','Nachrichten',13)
-	#addDir('Sendung verpasst?','TODO',1)
-	addDir('Live','http://www.zdf.de/ZDFmediathek/xmlservice/web/live?maxLength=50',2)#http://www.zdf.de/ZDFmediathek/xmlservice/web/beitragsDetails?ak=web&id=1822600
+	addDir('Neu','http://www.zdf.de/ZDFmediathek/xmlservice/web/aktuellste?maxLength=50&id=%5FSTARTSEITE',2)
+	addDir('Meistgesehen','http://www.zdf.de/ZDFmediathek/xmlservice/web/meistGesehen?maxLength=50&id=%5FGLOBAL',2)
 	addDir('Sendungen A-Z','abisz',1)
-	addDir('Rubriken','http://www.zdf.de/ZDFmediathek/xmlservice/web/rubriken',2)
-	addDir('Thema','http://www.zdf.de/ZDFmediathek/xmlservice/web/themen',2)
+	addDir('Sendungen nach Datum','http://www.zdf.de/ZDFmediathek/xmlservice/web/sendungVerpasst?enddate=080415&startdate=080415&maxLength=50',2)
+	addDir('Kategorien','http://www.zdf.de/ZDFmediathek/xmlservice/web/rubriken',2)
+	addDir('Themen','http://www.zdf.de/ZDFmediathek/xmlservice/web/themen',2)
+	#addDir('Startseite','Startseite',12)
+	#addDir('Nachrichten','Nachrichten',13)
+	#addDir('Live','http://www.zdf.de/ZDFmediathek/xmlservice/web/live?maxLength=50',2)#http://www.zdf.de/ZDFmediathek/xmlservice/web/beitragsDetails?ak=web&id=1822600
 	#addDir('sender','http://www.zdf.de/ZDFmediathek/xmlservice/web/senderliste?ak=web&details=true',2)
-	addDir('Specials','special',14)
+	#addDir('Specials','special',14)
 	
 	#addDir(__language__(30003),mainurl,4,'',__language__(30004))
 	#LIST_VIDEOCENTER(mainurl)
@@ -118,14 +116,7 @@ def SPECIALS():#14
 	xbmcplugin.endOfDirectory(int(sys.argv[1]))
 	
 
-def listShows(listurl):#2
-	if '&offset=' in listurl:
-		i,stuff = cache_list_stored()
-	else:
-		stuff = ''
-		i = 0
-		cache_clear()
-		
+def listShows(listurl):#2		
 	response = getUrl(listurl)
 	match_teasers=re.compile('<teasers>(.+?)</teasers>', re.DOTALL).findall(response)
 	match_teaser=re.compile('<teaser(.+?)</teaser>', re.DOTALL).findall(match_teasers[0])
@@ -142,25 +133,24 @@ def listShows(listurl):#2
 		type = match_type[0]
 
 		if type == 'sendung' and length != '0':
-			stuff = stuff + addDir(title + ' (' + length + ')',baseUrl+'/ZDFmediathek/xmlservice/web/aktuellste?maxLength=50&id='+assetId,2,thumb,plot,channel)
+			addDir(title + ' (' + length + ')',baseUrl+'/ZDFmediathek/xmlservice/web/aktuellste?maxLength=50&id='+assetId,2,thumb,plot,channel)
 		elif type == 'video':
-			stuff = stuff + addLink(title,assetId,3,thumb,plot,length,airtime,timetolive,fsk,hasCaption,channel=channel)
+			addLink(title,assetId,3,thumb,plot,length,airtime,timetolive,fsk,hasCaption,channel=channel)
 		#elif type == 'imageseries_informativ':#TODO
 		#	addLink(title,assetId,3,thumb,plot,length,airtime,timetolive,fsk,hasCaption)
 		elif type == 'rubrik' and length != '0':
-			stuff = stuff + addDir(title + ' (' + length + ')',baseUrl+'/ZDFmediathek/xmlservice/web/aktuellste?maxLength=50&ak=web&id='+assetId,2,thumb,plot,channel)
+			addDir(title + ' (' + length + ')',baseUrl+'/ZDFmediathek/xmlservice/web/aktuellste?maxLength=50&ak=web&id='+assetId,2,thumb,plot,channel)
 		elif type == 'topthema' or type == 'thema' and length != '0':
-			stuff = stuff + addDir(title + ' (' + length + ')',baseUrl+'/ZDFmediathek/xmlservice/web/aktuellste?maxLength=50&ak=web&id='+assetId,2,thumb,plot,channel)
+			addDir(title + ' (' + length + ')',baseUrl+'/ZDFmediathek/xmlservice/web/aktuellste?maxLength=50&ak=web&id='+assetId,2,thumb,plot,channel)
 		elif type == 'sender' and length != '0':
-			stuff = stuff + addDir(title + ' (' + length + ')',baseUrl+'/ZDFmediathek/xmlservice/web/aktuellste?maxLength=50&ak=web&id='+assetId,2,thumb,plot,channel)
+			addDir(title + ' (' + length + ')',baseUrl+'/ZDFmediathek/xmlservice/web/aktuellste?maxLength=50&ak=web&id='+assetId,2,thumb,plot,channel)
 		elif type == 'livevideo':
 			if match_member[0] == 'onAir':
-				stuff = stuff + addLink(title,assetId,3,thumb,plot,0,airtime,timetolive,fsk,hasCaption,channel=channel)
+				addLink(title,assetId,3,thumb,plot,0,airtime,timetolive,fsk,hasCaption,channel=channel)
 				
 		else:
 			print 'unknown type: '+type
 	
-	cache_store(stuff)
 	
 	if '<additionalTeaser>true</additionalTeaser>' in response:
 		if '&offset=' in listurl:
@@ -174,7 +164,7 @@ def listShows(listurl):#2
 				addDir('More',newurl,2)
 		else:
 			addDir('More',listurl+'&offset=50',2)
-		
+	"""	
 	if '&offset=' in listurl:
 		if __settings__.getSetting('back_hidden') != 'true':
 			i = i + 1
@@ -189,7 +179,8 @@ def listShows(listurl):#2
 		xbmcplugin.endOfDirectory(int(sys.argv[1]), updateListing=True)
 	else:
 		xbmcplugin.endOfDirectory(int(sys.argv[1]))
-
+	"""
+	xbmcplugin.endOfDirectory(int(sys.argv[1]))
 	if forceViewMode == True:
 
 		xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
@@ -290,80 +281,81 @@ def cleanTitle(title):
 
 #def playVideo(id):
 def playVideo(url):
-    id = url
-    content = getUrl(baseUrl+"/ZDFmediathek/xmlservice/web/beitragsDetails?id="+id)
-    match0 = re.compile('<formitaet basetype="h264_aac_mp4_rtmp_zdfmeta_http" isDownload="false">.+?<quality>hd</quality>.+?<url>(.+?)</url>', re.DOTALL).findall(content)
-    match1 = re.compile('<formitaet basetype="h264_aac_mp4_rtmp_zdfmeta_http" isDownload="false">.+?<quality>veryhigh</quality>.+?<url>(.+?)</url>', re.DOTALL).findall(content)
-    match2 = re.compile('<formitaet basetype="h264_aac_mp4_rtmp_zdfmeta_http" isDownload="false">.+?<quality>high</quality>.+?<url>(.+?)</url>', re.DOTALL).findall(content)
-    match3 = re.compile('<formitaet basetype="h264_aac_ts_http_m3u8_http" isDownload="false">.+?<quality>high</quality>.+?<url>(.+?)</url>', re.DOTALL).findall(content)
-    matchUT = re.compile('<caption>.+?<url>(.+?)</url>', re.DOTALL).findall(content)
-    url = ""
-    if content.find("<type>livevideo</type>") >= 0:
-        if match3:
-            url = match3[0]
-    elif content.find("<type>video</type>") >= 0:
-        if match0:
-            url = match0[0]
-        elif match1:
-            url = match1[0]
-        elif match2:
-            url = match2[1]
-        if "http://" in url:
-            content2 = getUrl(url)
-            match = re.compile('<default-stream-url>(.+?)</default-stream-url>', re.DOTALL).findall(content2)
-            url = match[0]
-    if channel_as_icon:
-        listitem = xbmcgui.ListItem(path=url)#, thumbnailImage=chooseThumb(content))
-    else:
-        listitem = xbmcgui.ListItem(path=url)
-    xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
-    if showSubtitles and matchUT:
-        setSubtitle(matchUT[0])
+	id = url
+	content = getUrl(baseUrl+"/ZDFmediathek/xmlservice/web/beitragsDetails?id="+id)
+	match0 = re.compile('<formitaet basetype="h264_aac_mp4_rtmp_zdfmeta_http" isDownload="false">.+?<quality>hd</quality>.+?<url>(.+?)</url>', re.DOTALL).findall(content)
+	match1 = re.compile('<formitaet basetype="h264_aac_mp4_rtmp_zdfmeta_http" isDownload="false">.+?<quality>veryhigh</quality>.+?<url>(.+?)</url>', re.DOTALL).findall(content)
+	match2 = re.compile('<formitaet basetype="h264_aac_mp4_rtmp_zdfmeta_http" isDownload="false">.+?<quality>high</quality>.+?<url>(.+?)</url>', re.DOTALL).findall(content)
+	match3 = re.compile('<formitaet basetype="h264_aac_ts_http_m3u8_http" isDownload="false">.+?<quality>high</quality>.+?<url>(.+?)</url>', re.DOTALL).findall(content)
+	matchUT = re.compile('<caption>.+?<url>(.+?)</url>', re.DOTALL).findall(content)
+	url = ""
+	if content.find("<type>livevideo</type>") >= 0:
+		if match3:
+			url = match3[0]
+	elif content.find("<type>video</type>") >= 0:
+		if match0:
+			url = match0[0]
+		elif match1:
+			url = match1[0]
+		elif match2:
+			url = match2[1]
+		if "http://" in url:
+			content2 = getUrl(url)
+			match = re.compile('<default-stream-url>(.+?)</default-stream-url>', re.DOTALL).findall(content2)
+			url = match[0]
+		url = url.replace('1456k_p13v11.mp4','2256k_p14v11.mp4')
+	if channel_as_icon:
+		listitem = xbmcgui.ListItem(path=url)#, thumbnailImage=chooseThumb(content))
+	else:
+		listitem = xbmcgui.ListItem(path=url)
+	xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+	if showSubtitles and matchUT:
+		setSubtitle(matchUT[0])
 
 
 def setSubtitle(url):
-    if os.path.exists(subFile):
-        os.remove(subFile)
-    try:
-        content = getUrl(url)
-    except:
-        content = ""
-    if content:
-        matchLine = re.compile('<p begin="(.+?)" end="(.+?)".+?>(.+?)</p>', re.DOTALL).findall(content)
-        fh = open(subFile, 'a')
-        count = 1
-        for begin, end, line in matchLine:
-            begin = float(begin)
-            beginS = str(round(begin%60, 1)).replace(".",",")
-            if len(beginS.split(",")[0])==1:
-                beginS = "0"+beginS
-            beginM = str(int(begin)/60)
-            if len(beginM)==1:
-                beginM = "0"+beginM
-            beginH = str(int(begin)/60/60)
-            if len(beginH)==1:
-                beginH = "0"+beginH
-            begin = beginH+":"+beginM+":"+beginS
-            end = float(end)
-            endS = str(round(end%60, 1)).replace(".",",")
-            if len(endS.split(",")[0])==1:
-                endS = "0"+endS
-            endM = str(int(end)/60)
-            if len(endM)==1:
-                endM = "0"+endM
-            endH = str(int(end)/60/60)
-            if len(endH)==1:
-                endH = "0"+endH
-            end = endH+":"+endM+":"+endS
-            match = re.compile('<span(.+?)>', re.DOTALL).findall(line)
-            for span in match:
-                line = line.replace("<span"+span+">","")
-            line = line.replace("<br />","\n").replace("</span>","").strip()
-            fh.write(str(count)+"\n"+begin+" --> "+end+"\n"+cleanTitle(line)+"\n\n")
-            count+=1
-        fh.close()
-        xbmc.sleep(1000)
-        xbmc.Player().setSubtitles(subFile)
+	if os.path.exists(subFile):
+		os.remove(subFile)
+	try:
+		content = getUrl(url)
+	except:
+		content = ""
+	if content:
+		matchLine = re.compile('<p begin="(.+?)" end="(.+?)".+?>(.+?)</p>', re.DOTALL).findall(content)
+		fh = open(subFile, 'a')
+		count = 1
+		for begin, end, line in matchLine:
+			begin = float(begin)
+			beginS = str(round(begin%60, 1)).replace(".",",")
+			if len(beginS.split(",")[0])==1:
+				beginS = "0"+beginS
+			beginM = str(int(begin)/60)
+			if len(beginM)==1:
+				beginM = "0"+beginM
+			beginH = str(int(begin)/60/60)
+			if len(beginH)==1:
+				beginH = "0"+beginH
+			begin = beginH+":"+beginM+":"+beginS
+			end = float(end)
+			endS = str(round(end%60, 1)).replace(".",",")
+			if len(endS.split(",")[0])==1:
+				endS = "0"+endS
+			endM = str(int(end)/60)
+			if len(endM)==1:
+				endM = "0"+endM
+			endH = str(int(end)/60/60)
+			if len(endH)==1:
+				endH = "0"+endH
+			end = endH+":"+endM+":"+endS
+			match = re.compile('<span(.+?)>', re.DOTALL).findall(line)
+			for span in match:
+				line = line.replace("<span"+span+">","")
+			line = line.replace("<br />","\n").replace("</span>","").strip()
+			fh.write(str(count)+"\n"+begin+" --> "+end+"\n"+cleanTitle(line)+"\n\n")
+			count+=1
+		fh.close()
+		xbmc.sleep(1000)
+		xbmc.Player().setSubtitles(subFile)
 		
 def cache_store(stuff,name=''):
 	stuff = stuff.decode('utf-8')
@@ -506,8 +498,8 @@ def addLink(name,url,mode,iconimage,plot='',duration=False,airtime='',timetolive
 	if hasCaption:
 		liz.addStreamInfo('subtitle', { 'language': 'de' })
 	if channelId:
-		commands.append(('Weitere Beitraege', 'RunPlugin('+sys.argv[0]+'?mode=2&url='+urllib.quote_plus('http://www.zdf.de/ZDFmediathek/xmlservice/web/weitereBeitraege?id='+channelId    +'&maxLength=50')+')',))
-		#liz.addContextMenuItems([('Weitere Beitraege', 'RunPlugin(plugin://'+addonID+'/?mode=2&url='+urllib.quote_plus('http://www.zdf.de/ZDFmediathek/xmlservice/web/weitereBeitraege?id='+channelId    +'&maxLength=50')+')',)])
+		commands.append(('Weitere Beitraege', 'RunPlugin('+sys.argv[0]+'?mode=2&url='+urllib.quote_plus('http://www.zdf.de/ZDFmediathek/xmlservice/web/weitereBeitraege?id='+channelId	+'&maxLength=50')+')',))
+		#liz.addContextMenuItems([('Weitere Beitraege', 'RunPlugin(plugin://'+addonID+'/?mode=2&url='+urllib.quote_plus('http://www.zdf.de/ZDFmediathek/xmlservice/web/weitereBeitraege?id='+channelId	+'&maxLength=50')+')',)])
 		#liz.addContextMenuItems([('Weitere Beitraege', 'RunPlugin(plugin://'+'plugin.video.zdf_new)',)])
 	#if otherChannels != '':
 	#	liz.addContextMenuItems(['Aehnliche Videos',   'RunPlugin(plugin://'+'plugin.video.zdf_new'+'/?mode=2&url='+urllib.quote_plus('http://www.zdf.de/ZDFmediathek/xmlservice/web/weitereBeitraege?id='+otherChannels+'&maxLength=50')+')',)])

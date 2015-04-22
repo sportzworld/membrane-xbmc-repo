@@ -1,3 +1,6 @@
+2.3.3
+- Small menu improvements
+- Added a 'Specials' entry
 2.3.2
 - Fixed playback
 2.3.1
