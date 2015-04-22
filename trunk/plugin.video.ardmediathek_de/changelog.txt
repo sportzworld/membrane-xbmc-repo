@@ -39,3 +39,5 @@
 - Fixed a rare error
 - Added categories
 - Changed some strings
+4.0.2
+- Small fix
